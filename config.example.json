@@ -1,0 +1,39 @@
+{
+  "metabase": {
+    "scripts": "C:/Users/<USER>/.claude/skills/sinopac-metabase/scripts"
+  },
+  "news": {
+    "source": "both",
+    "lookback_days": 3,
+    "cache_ttl_sec": 120,
+    "cnyes_categories": ["tw_stock", "us_stock"],
+    "cnyes_pages": 3,
+    "udn_feeds": [
+      "https://money.udn.com/rssfeed/news/1001/5591?ch=money",
+      "https://money.udn.com/rssfeed/news/1001/5590?ch=money",
+      "https://money.udn.com/rssfeed/news/1001/12017?ch=money"
+    ],
+    "udn_limit": 30,
+    "ctee_pages": [
+      "https://www.ctee.com.tw/livenews/stock",
+      "https://www.ctee.com.tw/livenews/finance",
+      "https://www.ctee.com.tw/livenews/tech"
+    ],
+    "ctee_limit": 60,
+    "anue_categories": ["wd_stock", "forex"],
+    "anue_pages": 2,
+    "moneydj_pages": [
+      "https://www.moneydj.com/kmdj/news/newsreallist.aspx?a=mb010000"
+    ],
+    "moneydj_limit": 40,
+    "yahoo_feeds": [
+      "https://tw.stock.yahoo.com/rss?category=tw-market"
+    ],
+    "yahoo_limit": 40,
+    "fetch_body": true,
+    "body_max_chars": 600,
+    "body_fetch_limit": 40,
+    "individual_only": false,
+    "tag_sentiment": true
+  }
+}

@@ -1,0 +1,4 @@
+# stock-news-skill 第三方相依(stdlib 以外)
+# Metabase 腿另需隔壁 sinopac-metabase skill 的 metabase_client(見 SKILL.md 前置需求)
+beautifulsoup4
+feedparser

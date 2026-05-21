@@ -1,0 +1,17 @@
+# --- 本地實際設定(含內部路徑/工號) — 不上傳;改用 config.example.json ---
+config.json
+
+# --- 個人選股腳本 / 真實查詢輸出(內部新聞資料) — 不上傳 ---
+_pick.py
+out/
+
+# --- Python 快取 ---
+__pycache__/
+*.pyc
+*.pyo
+
+# --- skill 停用標記 / 暫存 ---
+*.hidden
+*.bak
+*.tmp
+*.swp
