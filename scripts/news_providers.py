@@ -416,7 +416,11 @@ def match_news_to_codes(items, code_to_name, lookback_days=3):
                 + it.get("body", "") + " "        # cnyes body 已在,提高命中率
                 + " ".join(it.get("keywords", [])))
         for code, name in code_to_name.items():
-            if name and (name in blob or code in blob):
+            if not name:
+                continue
+            # 代號加數字/金額單位邊界,避免「逾2330億」「12330張」誤命中
+            if name in blob or re.search(
+                    r"(?<!\d)" + re.escape(str(code)) + r"(?![\d億萬點元張])", blob):
                 by_code.setdefault(code, []).append({
                     "time": pub or _now_iso(),
                     "title": it["title"],

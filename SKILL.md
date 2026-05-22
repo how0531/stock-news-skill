@@ -172,7 +172,7 @@ stock-news-skill/
 │   │                       + fetch_sanbao / metabase關鍵字 TTL 快取(clear_news_cache())
 │   ├── news_providers.py   6 家來源 cnyes/udn/ctee/anue/moneydj/yahoo
 │   │                       ThreadPool 並行抓取 + 內文(urllib/bs4/feedparser)
-│   ├── news_sentiment.py   規則層利多/利空(131/130 詞)+ 20 類事件分類
+│   ├── news_sentiment.py   規則層利多/利空(155/156 詞)+ 20 類事件分類
 │   │                       + 否定/轉折/反轉/主體 上下文規則(純標準庫)
 │   ├── news_formatters.py  console/md/json 三格式 + 個股深度報告 builder
 │   └── news.py             CLI(--codes/--keyword/--days/--source/
@@ -200,7 +200,7 @@ stock-news-skill/
 | `confidence` | 0~1 float | 差距 / (總分+1) |
 | `events`     | list[str] | 20 類事件(法說/購併/警示/獲利預警/產能/訂單/訴訟/股利/增資/減資/公開收購/漲停/跌停/踩雷/財報/營收/庫藏股/法人動向/財務危機/重大訊息) |
 
-詞庫規模:利多 131 詞、利空 130 詞、事件 20 類(自我測試 25 例全過)。除字面
+詞庫規模:利多 155 詞、利空 156 詞、事件 20 類(自我測試 27 例全過)。除字面
 計分外已內建上下文規則:**否定翻轉**(命中詞前 6 字內有「未/沒/不…」則翻轉
 計分)、**轉折加權**(「但/卻/然而…」後子句 ×2)、**反轉慣用語**(「利空出盡」
 判多、「利多出盡」判空)、**主體區分**(「客戶砍單」對被報導公司計利空)。
