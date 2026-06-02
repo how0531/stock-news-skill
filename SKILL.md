@@ -30,9 +30,9 @@ description: >-
 2. **依關鍵字**:給關鍵字 → 回命中新聞(Metabase 標題搜尋 + 6 家標題/摘要/
    內文全文比對),用於查證某消息是否有報導、彙整某題材新聞
 
-每則新聞自動補上 **sentiment(利多/利空/中性)+ confidence + events(20 類:法說/
+每則新聞自動補上 **sentiment(利多/利空/中性)+ confidence + events(24 類:法說/
 購併/警示/獲利預警/產能/訂單/訴訟/股利/增資/減資/公開收購/漲停/跌停/踩雷/
-財報/營收/庫藏股/法人動向/財務危機/重大訊息)**,規則層、純標準庫、可由
+財報/營收/庫藏股/法人動向/財務危機/重大訊息/運價/房市/利率/理賠)**,規則層、純標準庫、可由
 `tag_sentiment=False` 關掉。
 
 可獨立使用(CLI),也被 **Sino-notify-skill** 當新聞來源呼叫。
@@ -62,13 +62,13 @@ Sino-notify-skill**。Sino-notify-skill 內部自會呼叫本 skill 拿新聞,�
 |---|---|---|---|
 | Metabase `cmoney.證券市場新聞` | 依代號/日期直查(借 sinopac-metabase client) | 有 | 內部、**歷史可回溯**(關鍵字搜尋主力) |
 | cnyes 鉅亨 | `api.cnyes.com` 公開 JSON(`tw_stock`台股+`us_stock`美股),**內文已在回應內** | 有 | **即時最快**,內文免額外請求 |
-| udn 經濟日報 | money RSS:`5590`證券 / `5591`產業 / `12017`金融 | 有 | 即時+深度,命中後抓內文 |
+| udn 經濟日報 | money RSS:`5590`證券 / `5591`產業 / `12017`金融 / `5588`國際 / `5592`理財 / `5595`專欄 | 有 | 即時+深度,命中後抓內文 |
 | ctee 工商時報 | `livenews/stock`+`/finance`+`/tech` HTML 爬 | URL 還原 | 補充,命中後抓內文 |
 | anue 鉅亨子站(註) | 同 cnyes newslist API 但取不同 category(`wd_stock` 美股雷達 + `forex` 外匯) | 有 | 跟 cnyes 預設互補,**內文已在回應內** |
 | MoneyDJ | `newsreallist.aspx` HTML 爬(table → newsviewer 連結) | 有(無年份自動補) | 補財金/產業/國際,命中後抓內文 |
 | Yahoo 奇摩股市 | RSS:`tw.stock.yahoo.com/rss?category=tw-market` | 有 | 補台股盤面/個股,命中後抓內文 |
 
-> 來源已收斂為**財金版面**(已排除 cnyes 綜合頭條、ctee 全站 livenews 的觀光/職場等非財金雜訊;udn「行情」非新聞無 RSS、ctee「要聞/專題」僅前端假分版故未納)。要更純或更廣改 `config.json` 的 `cnyes_categories`/`udn_feeds`/`ctee_pages`/`anue_categories`/`moneydj_pages`/`yahoo_feeds`。
+> 來源已收斂為**財金版面**(已排除 cnyes 綜合頭條、ctee 全站 livenews 的觀光/職場等非財金雜訊;udn「行情」非新聞無 RSS、ctee「要聞/專題」僅前端假分版故未納)。**例外:udn `5588`國際版以國際財經為主(美伊/油價/債市/國際企業併購),但混少量國際時事(移民/疫情/生活),靠 codes/keyword 查詢時自然過濾。** 要更純或更廣改 `config.json` 的 `cnyes_categories`/`udn_feeds`/`ctee_pages`/`anue_categories`/`moneydj_pages`/`yahoo_feeds`。
 >
 > 註:`anue` source 標籤實際走 cnyes 公開 newslist API,因 `forum.cnyes.com` 在公司網路常 504,改取 cnyes 主流程未涵蓋的子站(美股雷達/外匯)避免完全重複,跟「鉅亨論壇」原意有差。詳見 `SUGGESTED_CONFIG.md`。
 
@@ -149,7 +149,7 @@ res = NC.query_news(keyword="台積電", tag_sentiment=False)  # 不標 sentimen
 | `news.lookback_days` | 預設回溯天數 | 3 |
 | `news.cache_ttl_sec` | fetch_sanbao 進程內 TTL 快取秒數(0=關閉;同進程連查多次免重抓) | 120 |
 | `news.cnyes_categories` / `cnyes_pages` | cnyes 抓的分類/頁數 | tw_stock,us_stock / 3 |
-| `news.udn_feeds` / `udn_limit` | udn RSS 清單/每feed上限 | 證券/產業/金融 / 30 |
+| `news.udn_feeds` / `udn_limit` | udn RSS 清單/每feed上限 | 證券/產業/金融/國際/理財/專欄 / 30 |
 | `news.ctee_pages` / `ctee_limit` | ctee 列表頁/上限 | livenews/stock+finance+tech / 60 |
 | `news.anue_categories` / `anue_pages` | anue 取 cnyes API 的子站/頁數 | wd_stock,forex / 2 |
 | `news.moneydj_pages` / `moneydj_limit` | MoneyDJ 列表頁/上限 | newsreallist a=mb010000 / 40 |
@@ -173,7 +173,7 @@ stock-news-skill/
 │   │                       + fetch_sanbao / metabase關鍵字 TTL 快取(clear_news_cache())
 │   ├── news_providers.py   6 家來源 cnyes/udn/ctee/anue/moneydj/yahoo
 │   │                       ThreadPool 並行抓取 + 內文(urllib/bs4/feedparser)
-│   ├── news_sentiment.py   規則層利多/利空(155/156 詞)+ 20 類事件分類
+│   ├── news_sentiment.py   規則層利多/利空(193/188 詞)+ 24 類事件分類
 │   │                       + 否定/轉折/反轉/主體 上下文規則(純標準庫)
 │   ├── news_formatters.py  console/md/json 三格式 + 個股深度報告 builder
 │   └── news.py             CLI(--codes/--keyword/--days/--source/
@@ -199,9 +199,9 @@ stock-news-skill/
 |---|---|---|
 | `sentiment`  | `"bullish"` / `"bearish"` / `"neutral"` | 利多/利空/中性 |
 | `confidence` | 0~1 float | 差距 / (總分+1) |
-| `events`     | list[str] | 20 類事件(法說/購併/警示/獲利預警/產能/訂單/訴訟/股利/增資/減資/公開收購/漲停/跌停/踩雷/財報/營收/庫藏股/法人動向/財務危機/重大訊息) |
+| `events`     | list[str] | 24 類事件(法說/購併/警示/獲利預警/產能/訂單/訴訟/股利/增資/減資/公開收購/漲停/跌停/踩雷/財報/營收/庫藏股/法人動向/財務危機/重大訊息/運價/房市/利率/理賠) |
 
-詞庫規模:利多 155 詞、利空 156 詞、事件 20 類(自我測試 27 例全過)。除字面
+詞庫規模:利多 193 詞、利空 188 詞、事件 24 類(自我測試 37 例全過)。除字面
 計分外已內建上下文規則:**否定翻轉**(命中詞前 6 字內有「未/沒/不…」則翻轉
 計分)、**轉折加權**(「但/卻/然而…」後子句 ×2)、**反轉慣用語**(「利空出盡」
 判多、「利多出盡」判空)、**主體區分**(「客戶砍單」對被報導公司計利空)。

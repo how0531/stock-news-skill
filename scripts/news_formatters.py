@@ -20,7 +20,7 @@ from __future__ import annotations
 import datetime
 import unicodedata
 from collections import Counter
-from typing import Dict, List, Any, Iterable
+from typing import Dict, List, Iterable
 
 _SENT_ZH = {"bullish": "利多", "bearish": "利空", "neutral": "中性"}
 
