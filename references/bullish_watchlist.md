@@ -121,7 +121,7 @@ powershell -ExecutionPolicy Bypass -File scripts\register_bullish_task.ps1 -Remo
 
 彙整到個股：
 
-- 有任何利空票的股票排除，記在 `excluded`（`why: "mixed"`），同一檔同時有利多與利空新聞不列入。
+- 同一檔同時有利多票和利空票（混合）的股票排除：不進 `items`，記在 `excluded`（`why: "mixed"`），證據仍留在 `candidates`。只有利空票的股票不算混合，不進 `excluded`，只出現在 `candidates`。
 - 沒有利空票、至少一張利多票的股票進 `items`。
 - 沒有利多票的股票（含只有利空票的）只出現在 `candidates`。
 
@@ -149,7 +149,7 @@ powershell -ExecutionPolicy Bypass -File scripts\register_bullish_task.ps1 -Remo
 整段貼進排程任務，只需要換第 1 步的路徑。
 
 ```text
-每天 08:00 執行（休市日的判斷在第 2 步）。你只能維護名為「新聞利多」的自選股清單，其他清單一律不碰；不要用 delete_watchlist、rename_watchlist 或 shioaji CLI。
+每天 08:00 執行（休市日的判斷在第 2 步）。你只能維護名為「新聞利多」的自選股清單，其他清單一律不碰；不要用 delete_watchlist、rename_watchlist 或 shioaji CLI。各工具的參數名稱與格式以 MCP server 公告的 schema 為準；所有寫入動作（create_watchlist、add_to_watchlist、remove_from_watchlist、reorder_watchlist）都用新的 idempotency_key。
 1. 讀檔 <latest.json 的絕對路徑>。今天的日期以台北時間為準。
 2. 判斷目標成員：
    a. trade_date 等於今天：status 是 ok，目標是 items 的 code，照檔案順序；status 是 empty，目標是空清單；status 是 error，視同失敗。
@@ -158,7 +158,7 @@ powershell -ExecutionPolicy Bypass -File scripts\register_bullish_task.ps1 -Remo
    失敗時目標是空清單。
 3. 用 list_watchlists 找「新聞利多」的 watchlist_id，找不到就用 create_watchlist 建立。
 4. 每個目標代號先用 search_products 解析成台股商品，解析不到的跳過並記下。
-5. 用 get_watchlist 取現有成員，多的用 remove_from_watchlist 移除，缺的用 add_to_watchlist 加入，順序不同就用 reorder_watchlist 照目標順序排。每個寫入動作用新的 idempotency_key。
+5. 用 get_watchlist 取現有成員，多的用 remove_from_watchlist 移除，缺的用 add_to_watchlist 加入，順序不同就用 reorder_watchlist 照目標順序排。
 6. 再用 get_watchlist 讀回，確認成員與順序和目標一致。
 7. 失敗或清空時用 notify_user 說明原因（附 status 與 error）；有解析不到的代號一併列出。正常有清單時不通知。
 ```
@@ -168,7 +168,6 @@ powershell -ExecutionPolicy Bypass -File scripts\register_bullish_task.ps1 -Remo
 - 為什麼用差集更新，不用 `delete_watchlist` 加 `create_watchlist`：delete 會跳確認，重建後 id 也會變。
 - 休市日靠 `next_trade_date` 判斷：週末與休市日 skill 不產出，`latest.json` 還是上一個交易日的內容，今天早於它的 `next_trade_date` 就代表今天休市。
 - 失敗時清空清單，是使用者決定的規則：當天一檔都沒有，或排程失敗沒有產出，專用清單都清空（spec 規則 9）。
-- 這段 prompt 沒有寫各工具的參數名稱，agent 要依 MCP server 公告的 schema 呼叫。實測時若發現參數用錯，在 prompt 開頭加一句「各工具的參數名稱與格式，以 MCP server 公告的 schema 為準」。
 - 08:00 只讀一次 `latest.json`。07:50 到 08:00 之間要手動重跑 `--bullish` 時，見「已知限制」。
 
 ## 進階版(對話追問)
