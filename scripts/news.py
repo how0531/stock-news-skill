@@ -47,6 +47,7 @@ def parse_args(argv):
         "report": None,                # list[str] or None
         "format": "console",           # console | md | json
         "today": False,                # 今日盤後四象限重點 digest 模式
+        "bullish": False,              # --bullish:新聞利多自選股清單,寫 out/bullish/latest.json
         "match_all": False,            # --all:多關鍵字 AND
         "intl": False,                 # --intl:只留國際/總經分類
         "out": None,                   # --out=PATH|auto
@@ -54,6 +55,9 @@ def parse_args(argv):
     for a in argv:
         if a in ("--today", "--digest"):
             args["today"] = True
+            continue
+        if a == "--bullish":
+            args["bullish"] = True
             continue
         if a == "--all":
             args["match_all"] = True
@@ -175,6 +179,11 @@ def run_today_digest(args):
 
 def main():
     args = parse_args(sys.argv[1:])
+
+    # 新聞利多自選股清單(排程用,結束碼 1 代表產出了 error 檔)
+    if args["bullish"]:
+        import news_bullish
+        sys.exit(news_bullish.run())
 
     # 今日議題重點 digest 模式(不需 codes/keyword)
     if args["today"]:

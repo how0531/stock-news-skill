@@ -2,16 +2,24 @@
 """
 新聞利多自選股清單: 計票、混合排除與排序。
 輸入是已打好情緒標籤的新聞(sentiment / confidence / events),輸出是依利多票排序的個股清單。
-本模組目前只含純函式, 不連網、不讀寫檔案。
+計票的 vote / score_news 是純函式; 組檔 make_payload / error_payload 純計算(只查休市日曆),
+write_payload / run 才寫 out/bullish/ 下的檔案, 不碰 out/news_result.json。
 
   RULE                           計票門檻與權重
   vote(item, rule)               一則新聞的票: "bull" / "bear" / None
   score_news(news, lex, rule)    回傳 {"items": [...], "excluded": [...], "candidates": [...]}
+  make_payload(news, now, lex)   組成 spec 5.2 的檔案內容(status 為 ok / empty / error)
+  error_payload(now, message)    同一組鍵, 三個清單為空, 多一個 error
+  write_payload(payload, dir)    寫 bullish_YYYYMMDD.json 再寫 latest.json
+  run(now, out_dir, fetch)       抓新聞、組檔、寫檔, 回結束碼(error 為 1, 其餘 0)
 """
+import sys
 import news_core as NC
 import stock_mentions as SM
+import update_holidays as UH
 
 RULE = {"confidence_min": 0.5, "title_weight": 3, "body_weight": 1, "body_max_stocks_per_news": 3}
+OUT_DIR = NC.BASE / "out" / "bullish"
 
 
 def vote(item, rule=RULE):
@@ -94,3 +102,66 @@ def score_news(news, lex, rule=RULE):
     _sort(excluded, (lambda r: r["code"], False))
     _sort(candidates, (lambda r: len(r["evidence"]), True), (_latest, True), (lambda r: r["code"], False))
     return {"items": items, "excluded": excluded, "candidates": candidates}
+
+
+def _next_trade_date(now):
+    import storage                        # 會載入 pandas(約 1 秒), 只在需要時才付
+    return storage._next_trading_day(now.date()).isoformat()
+
+
+def _window(now):
+    return {"from": NC.market_session_cutoff(now)[0].isoformat(), "to": now.isoformat(timespec="seconds")}
+
+
+def _body(now, status, next_trade_date, window, r=None):
+    """spec 5.2 的檔案內容; r 是 score_news 的結果, 錯誤檔沒有就三個清單都空。"""
+    r = r or {}
+    return {"schema_version": 1, "status": status, "trade_date": now.date().isoformat(),
+            "next_trade_date": next_trade_date, "generated_at": now.isoformat(timespec="seconds"),
+            "window": window, "method": "rule", "rule": dict(RULE),
+            "items": r.get("items", []), "excluded": r.get("excluded", []),
+            "candidates": r.get("candidates", [])}
+
+
+def error_payload(now, message):
+    def safe(fn, *a):                    # 錯誤檔本身不能再出錯, 算不出的欄位填 None
+        try:
+            return fn(*a)
+        except Exception:
+            return None
+    p = _body(now, "error", safe(_next_trade_date, now), safe(_window, now))
+    p["error"] = message
+    return p
+
+
+def make_payload(news, now, lex):
+    if not news:
+        return error_payload(now, "沒有抓到任何新聞")
+    if not any("sentiment" in n for n in news):
+        return error_payload(now, "新聞沒有情緒標籤,news_sentiment 可能載入失敗")
+    r = score_news(news, lex)
+    return _body(now, "ok" if r["items"] else "empty", _next_trade_date(now), _window(now), r)
+
+
+def write_payload(payload, out_dir=OUT_DIR):
+    """先寫日期檔再寫 latest.json(內容相同), 回傳日期檔路徑。"""
+    dated = out_dir / f"bullish_{payload['trade_date'].replace('-', '')}.json"
+    UH._write(dated, payload)
+    UH._write(out_dir / "latest.json", payload)
+    return dated
+
+
+def run(now=None, out_dir=OUT_DIR, fetch=None):
+    now = now or NC._now_tw()
+    if NC._is_closed(now):
+        print("[利多清單] 今天休市,不產出", file=sys.stderr)
+        return 0
+    fetch = fetch or (lambda: NC.fetch_market_news(since="last_close", keep_codes=True))
+    try:
+        payload = make_payload(fetch(), now, SM.load_lexicon())
+    except Exception as e:
+        payload = error_payload(now, repr(e))
+    path = write_payload(payload, out_dir)
+    print(f"[輸出] {path}", file=sys.stderr)
+    print(f"[利多清單] {payload['trade_date']} {payload['status']} {len(payload['items'])} 檔", file=sys.stderr)
+    return 1 if payload["status"] == "error" else 0

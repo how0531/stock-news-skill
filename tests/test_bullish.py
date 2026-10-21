@@ -5,18 +5,26 @@ test_bullish.py, 新聞利多自選股清單的離線測試。
 目前涵蓋:
   1) stock_mentions: 全市場股名反查(標題級 / 內文級、常用詞與主題詞剔除、最長匹配、英數邊界)
   2) news_bullish: 計票、混合排除與排序(vote / score_news)
+  3) news_bullish: 組檔、寫檔、run() 與 news.py --bullish 旗標
 
 設計鐵則: 完全不觸網, 不讀 config.json。
 退出碼: 全 OK → 0;任一 FAIL → 1。
 """
 import sys
+import json
+import shutil
 import pathlib
+import tempfile
+import datetime
 
 BASE = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BASE / "scripts"))
 
+import news_core as NC  # noqa: E402
 import stock_mentions as SM  # noqa: E402
 import news_bullish as NB  # noqa: E402
+import storage  # noqa: E402
+import update_holidays as UH  # noqa: E402
 
 results = []  # (name, ok, msg)
 
@@ -165,6 +173,94 @@ def test_snippet():
     check("候選附個股片段", "南亞科" in ev["snippet"] and ev["match"] == "body", str(ev))
 
 
+D = lambda *a: datetime.datetime(*a, tzinfo=NC.TAIPEI)
+KEYS = {"schema_version", "status", "trade_date", "next_trade_date", "generated_at", "window",
+        "method", "rule", "items", "excluded", "candidates"}
+
+
+def test_payload_ok_shape():
+    p = NB.make_payload([N("南亞科報價調漲")], D(2026, 10, 22, 7, 50), LEX)
+    check("欄位齊全", set(p) == KEYS, str(set(p) ^ KEYS))
+    check("狀態與日期", (p["status"], p["trade_date"], p["next_trade_date"]) == ("ok", "2026-10-22", "2026-10-23"))
+    check("時間窗", p["window"]["from"] == "2026-10-21T14:00:00+08:00", str(p["window"]))
+
+
+def test_payload_next_trade_date_holiday():
+    p = NB.make_payload([N("南亞科報喜")], D(2026, 10, 23, 7, 50), LEX)
+    check("週五的下一交易日跳過 10/26 休市", p["next_trade_date"] == "2026-10-27", p["next_trade_date"])
+
+
+def test_payload_year_rollover():
+    saved = (storage._HOLIDAYS, set(storage._HOLIDAY_YEARS), set(storage._MISSING_YEAR_HANDLED), UH.update)
+    UH.update = lambda *a, **k: (_ for _ in ()).throw(RuntimeError("離線測試不連網"))
+    try:
+        p = NB.make_payload([N("南亞科報喜")], D(2026, 12, 31, 7, 50), LEX)
+    finally:
+        storage._HOLIDAYS, storage._HOLIDAY_YEARS = saved[0], saved[1]
+        storage._MISSING_YEAR_HANDLED.clear()
+        storage._MISSING_YEAR_HANDLED.update(saved[2])
+        UH.update = saved[3]
+    check("跨年離線也算得出", p["next_trade_date"] == "2027-01-04", p["next_trade_date"])
+
+
+def test_payload_empty():
+    p = NB.make_payload([N("南亞科法說", s="neutral", c=0.0)], D(2026, 10, 22, 7, 50), LEX)
+    check("沒有利多是 empty", p["status"] == "empty" and p["items"] == [])
+
+
+def test_payload_zero_news():
+    p = NB.make_payload([], D(2026, 10, 22, 7, 50), LEX)
+    check("零則新聞是 error", p["status"] == "error" and "沒有抓到任何新聞" in p["error"], str(p))
+
+
+def test_payload_no_sentiment():
+    raw = [{k: v for k, v in N("南亞科報喜").items() if k not in ("sentiment", "confidence", "events")}]
+    p = NB.make_payload(raw, D(2026, 10, 22, 7, 50), LEX)
+    check("沒有情緒標籤是 error", p["status"] == "error", str(p))
+
+
+def test_run_writes_files():
+    tmp = pathlib.Path(tempfile.mkdtemp())
+    shared = NC.BASE / "out" / "news_result.json"
+    before = shared.stat().st_mtime_ns if shared.exists() else None
+    try:
+        rc = NB.run(now=D(2026, 10, 22, 7, 50), out_dir=tmp, fetch=lambda: [N("南亞科報價調漲")])
+        dated, latest = tmp / "bullish_20261022.json", tmp / "latest.json"
+        check("run 回 0 並寫兩個檔", rc == 0 and dated.exists() and latest.exists())
+        check("兩檔內容相同", dated.read_bytes() == latest.read_bytes())
+        check("清單內容", json.loads(latest.read_text(encoding="utf-8"))["items"][0]["code"] == "2408")
+        check("沒動到 news_result.json", (shared.stat().st_mtime_ns if shared.exists() else None) == before)
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+def test_run_closed_day():
+    tmp = pathlib.Path(tempfile.mkdtemp())
+    try:
+        rc = NB.run(now=D(2026, 10, 24, 7, 50), out_dir=tmp, fetch=lambda: [N("南亞科報喜")])
+        check("休市日回 0 且不寫檔", rc == 0 and not any(tmp.iterdir()))
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+def test_run_fetch_error():
+    tmp = pathlib.Path(tempfile.mkdtemp())
+
+    def boom():
+        raise RuntimeError("缺套件")
+    try:
+        rc = NB.run(now=D(2026, 10, 22, 7, 50), out_dir=tmp, fetch=boom)
+        p = json.loads((tmp / "latest.json").read_text(encoding="utf-8"))
+        check("抓取失敗回 1 並寫 error 檔", rc == 1 and p["status"] == "error" and "缺套件" in p["error"], str(p))
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+def test_cli_flag():
+    import news
+    check("--bullish 旗標", news.parse_args(["--bullish"])["bullish"] is True)
+
+
 def main():
     test_mentions_title_and_body()
     test_mentions_filters()
@@ -181,6 +277,16 @@ def main():
     test_one_vote_per_article()
     test_score_missing_fields()
     test_snippet()
+    test_payload_ok_shape()
+    test_payload_next_trade_date_holiday()
+    test_payload_year_rollover()
+    test_payload_empty()
+    test_payload_zero_news()
+    test_payload_no_sentiment()
+    test_run_writes_files()
+    test_run_closed_day()
+    test_run_fetch_error()
+    test_cli_flag()
     ok = sum(1 for _, o, _ in results if o)
     fail = len(results) - ok
     print(f"\n=== 結果: {ok}/{len(results)} pass, {fail} fail ===")
