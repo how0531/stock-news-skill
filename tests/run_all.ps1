@@ -1,4 +1,4 @@
-﻿# run_all.ps1 — 一鍵跑 stock-news-skill 所有測試
+﻿# run_all.ps1: 一鍵跑 stock-news-skill 所有測試
 # 設好 UTF-8 環境,逐一跑三個 test 檔,匯總 pass/fail。
 
 $ErrorActionPreference = "Continue"
@@ -19,7 +19,8 @@ $Tests = @(
     @{ Name = "test_sentiment";             File = "test_sentiment.py" },
     @{ Name = "test_formatters";            File = "test_formatters.py" },
     @{ Name = "test_query_news_internals";  File = "test_query_news_internals.py" },
-    @{ Name = "test_digest_render";         File = "test_digest_render.py" }
+    @{ Name = "test_digest_render";         File = "test_digest_render.py" },
+    @{ Name = "test_bullish";               File = "test_bullish.py" }
 )
 
 $Results = @()

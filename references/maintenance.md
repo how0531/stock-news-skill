@@ -48,7 +48,7 @@
 | `python tests/test_sentiment.py` | classify 結構契約、強訊號方向、事件抽取 | 否 | 25 項 |
 | `python tests/test_formatters.py` | 排版、`build_report`、digest、snippets | 否 | 79 項 |
 | `python tests/test_digest_render.py` | 盤前信 HTML renderer | 否 | 24 項，樣本在 `tests/fixtures/digest_sample.md` |
-| `python tests/test_bullish.py` | 股名反查、計票、排序、組檔、寫檔、--bullish | 否 | 2026-10-21 共 51 項；要有 `config.json`（`news_core` 匯入時讀），輸出寫暫存目錄 |
+| `python tests/test_bullish.py` | 股名反查、計票、排序、組檔（含 `codes` 欄位）、寫檔、--bullish | 否 | 2026-10-21 共 83 項；要有 `config.json`（`news_core` 匯入時讀），輸出寫暫存目錄 |
 | `python scripts/news_sentiment.py` | 詞庫自我測試 | 否 | 37 例 |
 | `python tests/test_query_news_api.py` | 簽名（前 6 參數順序、預設 None）與回傳結構 | 部分會 | 結構檢查會連 Metabase 與即時流 |
 | `python tests/test_cli_smoke.py` | CLI 黑箱 7 組 | 是 | 每組會刪除並重寫 `out/news_result.json`，07:30 到 08:30 不要跑 |
@@ -57,7 +57,7 @@
 | `pytest scripts/test_collect.py` | 採集層 | 否 | 需要 pytest；檔內沒有 `__main__`，直接用 python 執行不會跑任何測試 |
 | `python scripts/test_storage.py` | PIT 儲存層 | 否 | 會把測試資料寫進真實的 `data/` 目錄而且不清理 |
 
-`tests/run_all.ps1` 跑 8 項（上表的 test_health、healthcheck、test_query_news_api、test_cli_smoke、test_sentiment、test_formatters、test_query_news_internals、test_digest_render），含連網測試，也會洗掉 `out/news_result.json`。改邏輯後先跑四個離線測試做快速回歸。測試要設 `$env:PYTHONIOENCODING='utf-8'`；PowerShell 5.1 不要用 `2>&1`（會誤報 NativeCommandError），stdout 與 stderr 分開導向。
+`tests/run_all.ps1` 跑 9 項（上表的 test_health、healthcheck、test_query_news_api、test_cli_smoke、test_sentiment、test_formatters、test_query_news_internals、test_digest_render、test_bullish），含連網測試，也會洗掉 `out/news_result.json`。改邏輯後先跑五個離線測試做快速回歸（test_query_news_internals、test_sentiment、test_formatters、test_digest_render、test_bullish）。測試要設 `$env:PYTHONIOENCODING='utf-8'`；PowerShell 5.1 不要用 `2>&1`（會誤報 NativeCommandError），stdout 與 stderr 分開導向。
 
 ## 07:40 自動盤前信
 

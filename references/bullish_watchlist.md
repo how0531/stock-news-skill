@@ -61,6 +61,7 @@ powershell -ExecutionPolicy Bypass -File scripts\register_bullish_task.ps1 -Remo
 | `status` | `ok`（`items` 非空）、`empty`（成功但沒有符合的股票）、`error`（失敗，另有 `error` 欄） |
 | `trade_date` | 產出當天（台北時間）`YYYY-MM-DD` |
 | `next_trade_date` | `trade_date` 之後的下一個交易日。Pro 端靠它分辨「今天休市」與「今天該有清單卻沒有」。error 檔算不出時是 `null` |
+| `codes` | `items` 的 `code` 依 `items` 順序組成的字串陣列，例如 `["2317", "2352"]`。`status` 是 `ok` 以外（`empty`、`error`）時是空陣列。Pro 排程只讀它就夠：整份檔很大（一般新聞量約 18 萬字元、5,000 行以上，其中 `items` 就占約 5 萬字元），讀檔工具有行數上限，整份載入可能被截斷 |
 | `generated_at` | 產出時間，帶 `+08:00` |
 | `window` | `{"from", "to"}`：`from` 是前一交易日 14:00，`to` 是產出時間。error 檔算不出時是 `null` |
 | `method` | 固定 `"rule"` |
@@ -70,7 +71,7 @@ powershell -ExecutionPolicy Bypass -File scripts\register_bullish_task.ps1 -Remo
 | `candidates` | 給進階版讀：被提到但沒進 `items` 的股票 |
 | `error` | 只在 `status` 是 `error` 時才有，錯誤說明字串 |
 
-`status: error` 的情況：沒抓到任何新聞、新聞沒有情緒標籤（`news_sentiment` 載入失敗）、或執行中丟了例外。error 檔的 `items`、`excluded`、`candidates` 都是空陣列，結束碼 1。Pro 端靠 `status` 分辨「沒有利多」（`empty`）和「出錯」（`error`）。
+`status: error` 的情況：沒抓到任何新聞、新聞沒有情緒標籤（`news_sentiment` 載入失敗）、或執行中丟了例外。error 檔的 `codes`、`items`、`excluded`、`candidates` 都是空陣列，結束碼 1。Pro 端靠 `status` 分辨「沒有利多」（`empty`）和「出錯」（`error`）。
 
 `items[]`：
 
@@ -100,7 +101,7 @@ powershell -ExecutionPolicy Bypass -File scripts\register_bullish_task.ps1 -Remo
 
 程式在 `scripts/stock_mentions.py`（點名）與 `scripts/news_bullish.py`（計票、排序、組檔）。全部是規則，不呼叫 AI。
 
-新聞原料：`fetch_market_news(since="last_close", keep_codes=True)`，前一交易日 14:00 到現在的九家即時流，約 200 則，每則已標 `sentiment`、`confidence`、`events`，並保留出版商標的 `stock_codes`。
+新聞原料：`fetch_market_news(since="last_close", keep_codes=True, tag_sentiment=True)`，前一交易日 14:00 到現在的九家即時流，約 200 則，每則已標 `sentiment`、`confidence`、`events`，並保留出版商標的 `stock_codes`。`tag_sentiment` 明確傳 `True`，不讀 `config.json` 的 `news.tag_sentiment`（設成 `false` 也不會讓每天都產出 error 檔）。
 
 一則新聞點名了哪些股票：
 
@@ -110,7 +111,11 @@ powershell -ExecutionPolicy Bypass -File scripts\register_bullish_task.ps1 -Remo
 - 最長匹配優先：命中「南亞科」就不再算「南亞」。
 - 主題詞別名（DRAM、AI伺服器、ABF載板、MLCC、散熱、IC設計等）是產業名詞，不算點名。
 - 常用詞股名（世界、全新、中華、光明、幸福、泰山等）不當股名比對，這些股票只能靠代號命中。別名同時屬於兩檔以上、或是別檔的正式簡稱時，別名也丟掉。
-- 代號是 4 到 6 碼數字且是已知代號。前面不能緊接英數字、`.`、`/`、`$`；後面不能緊接英數字、`.`、`%`、點、元、億、萬、張，也不能接年、月、日（中間隔空白也不行），所以「2027年」不是 2027 大成鋼。網址內的數字先剝除。
+- 代號只認兩種寫法，而且必須是已知代號（4 到 6 碼）。內文裡的裸數字常是年度、人數、金額，一律不算：
+  - 括號內，半形或全形都可以，可帶 `-TW`、`-TWO`、`.TW`、`.TWO`，例如「世界(5347)」「（2330）」「（2330-TWO）」。右括號後面（中間隔空白也算）不能接年、月、日，所以「明（2027）年度」不是 2027 大成鋼。
+  - 數字直接接 `-TW`、`-TWO`、`.TW`、`.TWO`（不分大小寫），例如「2330-TW」。
+  - 「2027會計年度」「7萬6751人」「2027 元」「3632戶」這類裸數字都不算。出版商標的 `stock_codes` 不受這條影響。網址內的文字先剝除。
+- 阻擋詞（`stock_mentions.BLOCK_TERMS`）：簡訊連、東南亞、台灣大學、可成為、和大家、信義區、元太外匯。掃描時整段吃掉但不對應任何股票，避免「簡訊連結」命中訊連、「東南亞科技」命中南亞科、「元太外匯」命中元太。
 - 英數字股名（例如 M31、TSMC）前後不能緊鄰英數字，區分大小寫。
 
 一則新聞的票：
@@ -141,7 +146,7 @@ powershell -ExecutionPolicy Bypass -File scripts\register_bullish_task.ps1 -Remo
 2. 專用清單：名稱固定為「新聞利多」。可以自己先在 App 建，也可以讓排程第一次執行時用 `create_watchlist` 建。之後一律用它的 `watchlist_id` 操作，不要改名（改名會換 id）。AI 只准動這一份，其他清單一律不碰。
 3. 授權：在 App 把 `ui.control`（自選股工具需要）與 `task.manage`（排程工具需要）設成永久允許。兩個權限各自獨立、預設拒絕。注意上游公開文件找不到「永久允許」的說法，`AGENT_HARNESS_CONTRACT.md` 還寫授權重啟後失效，授權能不能撐過重啟要靠下面「實測清單」第 2 項驗證。
 4. 建排程：在 App 建一個每天 08:00 的排程任務（晚於 skill 的 07:50），內容貼下一節的 prompt。可以請 AI 用 `create_task` 建，或用 App 的排程介面（介面細節以實際版本為準，未驗證）。
-5. 路徑填法：prompt 第 1 步的 `<latest.json 的絕對路徑>` 換成實際的完整路徑。skill 放在預設位置時是 `C:\Users\<使用者名稱>\.claude\skills\stock-news-skill\out\bullish\latest.json`（也就是 `~/.claude/skills/stock-news-skill/out/bullish/latest.json` 展開後的樣子）；放在別處就填別處。寫完整路徑，不要留 `~` 或環境變數，agent 不一定會展開。
+5. 路徑填法：prompt 第 1 步的 `<latest.json 的絕對路徑>`（出現兩次）換成實際的完整路徑。skill 放在預設位置時是 `C:\Users\<使用者名稱>\.claude\skills\stock-news-skill\out\bullish\latest.json`（也就是 `~/.claude/skills/stock-news-skill/out/bullish/latest.json` 展開後的樣子）；放在別處就填別處。寫完整路徑，不要留 `~` 或環境變數，agent 不一定會展開。
 6. 執行條件：App 要開著（可縮到系統匣）排程才會跑；每次排程消耗一次 AI 額度；provider 要選連得上的（網路連不到 OpenAI 時 Codex 跑不起來，改用 Claude Code 或 Pi）。
 
 ## 每日排程任務 prompt
@@ -150,29 +155,32 @@ powershell -ExecutionPolicy Bypass -File scripts\register_bullish_task.ps1 -Remo
 
 ```text
 每天 08:00 執行（休市日的判斷在第 2 步）。你只能維護名為「新聞利多」的自選股清單，其他清單一律不碰；不要用 delete_watchlist、rename_watchlist 或 shioaji CLI。各工具的參數名稱與格式以 MCP server 公告的 schema 為準；所有寫入動作（create_watchlist、add_to_watchlist、remove_from_watchlist、reorder_watchlist）都用新的 idempotency_key。
-1. 讀檔 <latest.json 的絕對路徑>。今天的日期以台北時間為準。
+1. 讀檔 <latest.json 的絕對路徑>，只取 trade_date、next_trade_date、status、error、codes 這五個欄位。用程式解析 JSON 再印出這五個欄位，例如這一行（沒有 Python 時用等效的 PowerShell ConvertFrom-Json）：python -X utf8 -c "import json; d = json.load(open(r'<latest.json 的絕對路徑>', encoding='utf-8')); print(json.dumps({k: d.get(k) for k in ('trade_date', 'next_trade_date', 'status', 'error', 'codes')}, ensure_ascii=False))"。不要把整份檔載入對話（檔案很大，讀檔工具可能截斷，會套用不完整的清單）；items、candidates 這些欄位排程用不到。今天的日期以台北時間為準。
 2. 判斷目標成員：
-   a. trade_date 等於今天：status 是 ok，目標是 items 的 code，照檔案順序；status 是 empty，目標是空清單；status 是 error，視同失敗。
+   a. trade_date 等於今天：status 是 ok，目標是 codes（已照優先順序排好）；status 是 empty，目標是空清單；status 是 error，視同失敗。
    b. trade_date 不是今天，而且今天早於 next_trade_date：今天休市，什麼都不做、不通知，直接結束。
-   c. 其他情況（讀不到檔、格式不對、trade_date 過期、next_trade_date 是 null）：視同失敗。
+   c. trade_date 不是今天，而且今天不早於 next_trade_date（今天是交易日但檔案還是舊的）：等 5 分鐘再重讀一次，重讀後仍不符合 a 才視同失敗。
+   d. 其他情況（讀不到檔、格式不對例如 status 是 ok 卻沒有 codes、next_trade_date 是 null）：視同失敗。
    失敗時目標是空清單。
-3. 用 list_watchlists 找「新聞利多」的 watchlist_id，找不到就用 create_watchlist 建立。
-4. 每個目標代號先用 search_products 解析成台股商品，解析不到的跳過並記下。
+3. 用 list_watchlists 找「新聞利多」的 watchlist_id，找不到就用 create_watchlist 建立。如果有兩份以上名為「新聞利多」的清單，停止，兩份都不動，用 notify_user 通知後結束。
+4. 每個目標代號先用 search_products 解析成台股商品。解析不到的代號從目標移除，並記下來，最後在通知裡列出。
 5. 用 get_watchlist 取現有成員，多的用 remove_from_watchlist 移除，缺的用 add_to_watchlist 加入，順序不同就用 reorder_watchlist 照目標順序排。
-6. 再用 get_watchlist 讀回，確認成員與順序和目標一致。
-7. 失敗或清空時用 notify_user 說明原因（附 status 與 error）；有解析不到的代號一併列出。正常有清單時不通知。
+6. 再用 get_watchlist 讀回，只比對第 4 步解析到的代號：成員與順序要和目標一致。不一致就重做一次第 5 步並再讀回；仍不一致就用 notify_user 通知（附目標與實際成員），不要清空清單。
+7. 失敗或清空時用 notify_user 說明原因（附 status 與 error）；有解析不到的代號、或第 6 步仍不一致，一併說明。其餘正常情況不通知。
 ```
 
 說明：
 
 - 為什麼用差集更新，不用 `delete_watchlist` 加 `create_watchlist`：delete 會跳確認，重建後 id 也會變。
 - 休市日靠 `next_trade_date` 判斷：週末與休市日 skill 不產出，`latest.json` 還是上一個交易日的內容，今天早於它的 `next_trade_date` 就代表今天休市。
-- 失敗時清空清單，是使用者決定的規則：當天一檔都沒有，或排程失敗沒有產出，專用清單都清空（spec 規則 9）。
-- 08:00 只讀一次 `latest.json`。07:50 到 08:00 之間要手動重跑 `--bullish` 時，見「已知限制」。
+- 失敗時清空清單，是使用者決定的規則：當天一檔都沒有，或排程失敗沒有產出，專用清單都清空（spec 規則 9）。第 6 步讀回不一致不算來源失敗，是寫入出了問題，所以只通知、不清空。
+- 第 1 步只讀五個欄位：整份檔約 18 萬字元，整份讀進對話有被截斷的風險，截斷後會套用不完整的清單，第 6 步比對的是同一份目標，也抓不到。`codes` 就是 `items` 的代號依序排好的精簡版。
+- 解析不到的代號（`search_products` 找不到的）只影響那一檔：從目標移除、通知時列出，不會讓整份清單被清空。
+- 08:00 讀一次 `latest.json`（今天是交易日但檔案還是舊的，等 5 分鐘再讀一次）。07:50 到 08:00 之間要手動重跑 `--bullish` 時，見「已知限制」。
 
 ## 進階版(對話追問)
 
-在 Shioaji Pro 的 AI 對話裡主動詢問時才用，由那邊的 AI 做語意判斷，不是排程自動做。請 AI 讀同一份 `latest.json`：
+在 Shioaji Pro 的 AI 對話裡主動詢問時才用，由那邊的 AI 做語意判斷，不是排程自動做。請 AI 讀同一份 `latest.json`（整份約 18 萬字元，讀檔工具可能截斷，請它用程式取出要看的欄位或幾檔，不要整份載入）：
 
 - `items`：簡易版結果，每檔有 `reason` 和 `evidence`。
 - `candidates`：被提到但沒進清單的股票（中性、信心不足、只有利空、混合排除）。
@@ -193,18 +201,21 @@ powershell -ExecutionPolicy Bypass -File scripts\register_bullish_task.ps1 -Remo
 1. App 的工具清單出現 `list_watchlists` 等自選股工具。
 2. 授權 `ui.control`、`task.manage` 後重啟 App，確認授權還在；排程在沒人操作時不跳授權詢問。（上游 `AGENT_HARNESS_CONTRACT.md` 寫授權重啟後失效，這項最可能不過；不過就代表 spec 規則 11 的前提不成立。）
 3. agent 讀得到 `latest.json` 的絕對路徑。
-4. 把排程時間設成兩分鐘後跑一次：清單成員與順序等於 `items`，其他清單沒變。
+4. 把排程時間設成兩分鐘後跑一次：清單成員與順序等於 `codes`（也就是 `items` 的代號），其他清單沒變。
 5. 換成 `status: "empty"` 的檔：清單清空並收到通知。換成 `trade_date` 是昨天、今天早於 `next_trade_date` 的檔：清單不動、沒有通知。
+6. 新聞多的日子（`codes` 有二十幾檔以上），跑完後清單成員數等於 `len(codes)`（扣掉通知裡列出的解析不到的代號），順序與 `codes` 相同；確認 agent 只讀了五個欄位，沒有把整份檔載入對話。
 
 ## 已知限制
 
 - 新聞覆蓋不完整：每個來源只抓最新 10 到 15 則（cnyes 每類 15，其他每條 feed 10），前一天傍晚的新聞可能被擠掉，清單會漏幾檔，混合排除也可能漏判。第一版接受，之後做增量收集再補。
 - 情緒是整篇新聞一個標籤，一篇提到多檔時無法分開判斷；規則層的已知誤判見 [sentiment.md](sentiment.md)。
 - `-KY` 股名要完整寫出才比得到：新聞把「亞德客-KY」寫成「亞德客」時不會命中（代號仍可命中）。
-- 常用詞股名只能靠代號命中：標題寫「世界」不算，寫「5347」才算。
+- 27 檔名稱帶「-創」的股票（例如「鴻華先進-創」）和 `-KY` 一樣，要寫完整股名才比得到。
+- 常用詞股名只能靠代號命中：標題寫「世界」不算，寫「世界(5347)」或「5347-TW」才算。內文裡的裸代號（例如「買進 2330」）不算點名。
+- 只靠別名命中的股票（例如寫「TSMC」「台積」而不是「台積電」），`snippet` 可能是空字串或不相關的片段：片段是用正式簡稱與代號去找的，找不到別名出現的位置。
 - 沒有市場別（上市或上櫃）：Pro 端加入自選前要先用 `search_products` 解析代號。
 - `out/bullish/` 每個交易日留一個 `bullish_YYYYMMDD.json`，不會自動清，需要時自己刪舊檔（保留 `latest.json`）。
-- 同一天手動重跑若抓取失敗，error 檔會蓋掉當天已成功的清單檔（日期檔與 `latest.json` 都會被換掉）。Pro 端只在 08:00 讀一次，所以只有 07:50 到 08:00 之間重跑失敗才會影響當天清單。
+- 同一天手動重跑若抓取失敗，error 檔會蓋掉當天已成功的清單檔（日期檔與 `latest.json` 都會被換掉）。Pro 端只在 08:00 讀（遇到舊檔才在 5 分鐘後再讀一次），所以只有 07:50 到 08:00 之間重跑失敗才會影響當天清單。
 - 排程只在使用者登入時執行（不存密碼），電腦關機或沒登入就不會產出。
 
 文中的 spec 是設計文件 `docs/superpowers/specs/2026-10-21-bullish-watchlist-design.md`，裡面有使用者已決定的規則 1 到 13 與各項取捨。
