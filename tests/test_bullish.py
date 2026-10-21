@@ -5,9 +5,9 @@ test_bullish.py, 新聞利多自選股清單的離線測試。
 目前涵蓋:
   1) stock_mentions: 全市場股名反查(標題級 / 內文級、常用詞與主題詞剔除、最長匹配、英數邊界)
   2) news_bullish: 計票、混合排除與排序(vote / score_news)
-  3) news_bullish: 組檔、寫檔、run() 與 news.py --bullish 旗標
+  3) news_bullish: 組檔、codes 欄位、寫檔、run()(含預設抓取參數)與 news.py --bullish 旗標、結束碼
 
-設計鐵則: 完全不觸網, 不讀 config.json。
+設計鐵則: 完全不觸網。匯入 news_core 時會讀 config.json(沒有這個檔會直接報錯), 測試本身不依賴它的內容。
 退出碼: 全 OK → 0;任一 FAIL → 1。
 """
 import sys
@@ -217,7 +217,7 @@ def test_snippet():
 
 
 D = lambda *a: datetime.datetime(*a, tzinfo=NC.TAIPEI)
-KEYS = {"schema_version", "status", "trade_date", "next_trade_date", "generated_at", "window",
+KEYS = {"schema_version", "status", "trade_date", "next_trade_date", "codes", "generated_at", "window",
         "method", "rule", "items", "excluded", "candidates"}
 
 
@@ -226,6 +226,21 @@ def test_payload_ok_shape():
     check("欄位齊全", set(p) == KEYS, str(set(p) ^ KEYS))
     check("狀態與日期", (p["status"], p["trade_date"], p["next_trade_date"]) == ("ok", "2026-10-22", "2026-10-23"))
     check("時間窗", p["window"]["from"] == "2026-10-21T14:00:00+08:00", str(p["window"]))
+
+
+def test_payload_codes():
+    p = NB.make_payload([N("南亞科報價調漲"), N("聯發科報喜", t="2026-10-22T06:00:00+08:00")],
+                        D(2026, 10, 22, 7, 50), LEX)
+    keys = list(p)
+    check("ok 的 codes 等於 items 的代號與順序",
+          p["status"] == "ok" and len(p["items"]) == 2 and p["codes"] == [i["code"] for i in p["items"]], str(p["codes"]))
+    check("codes 緊接在 next_trade_date 後面", keys.index("codes") == keys.index("next_trade_date") + 1, str(keys))
+    empty = NB.make_payload([N("南亞科法說", s="neutral", c=0.0)], D(2026, 10, 22, 7, 50), LEX)
+    check("empty 的 codes 是空陣列", empty["status"] == "empty" and empty["codes"] == [])
+    zero = NB.make_payload([], D(2026, 10, 22, 7, 50), LEX)
+    raw = [{k: v for k, v in N("南亞科報喜").items() if k not in ("sentiment", "confidence", "events")}]
+    nosent = NB.make_payload(raw, D(2026, 10, 22, 7, 50), LEX)
+    check("error 的 codes 是空陣列", zero["status"] == nosent["status"] == "error" and zero["codes"] == nosent["codes"] == [])
 
 
 def test_payload_next_trade_date_holiday():
@@ -295,13 +310,51 @@ def test_run_fetch_error():
         rc = NB.run(now=D(2026, 10, 22, 7, 50), out_dir=tmp, fetch=boom)
         p = json.loads((tmp / "latest.json").read_text(encoding="utf-8"))
         check("抓取失敗回 1 並寫 error 檔", rc == 1 and p["status"] == "error" and "缺套件" in p["error"], str(p))
+        check("error 檔的 codes 是空陣列", p["codes"] == [])
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
+
+
+def test_run_default_fetch_args():
+    tmp = pathlib.Path(tempfile.mkdtemp())
+    seen = {}
+
+    def fake_fetch(*a, **kw):
+        seen["args"], seen["kw"] = a, kw
+        return [N("南亞科報價調漲")]
+    orig = NC.fetch_market_news
+    NC.fetch_market_news = fake_fetch
+    try:
+        rc = NB.run(now=D(2026, 10, 22, 7, 50), out_dir=tmp)
+    finally:
+        NC.fetch_market_news = orig
+        shutil.rmtree(tmp, ignore_errors=True)
+    kw = seen.get("kw", {})
+    check("預設抓取明確帶 keep_codes 與 tag_sentiment", rc == 0 and kw.get("keep_codes") is True
+          and kw.get("tag_sentiment") is True and kw.get("since") == "last_close", str(seen))
 
 
 def test_cli_flag():
     import news
     check("--bullish 旗標", news.parse_args(["--bullish"])["bullish"] is True)
+
+
+def test_cli_exit_code():
+    import news
+    saved_run, saved_argv = NB.run, sys.argv
+    got = {}
+    try:
+        for rc in (0, 1):
+            NB.run = lambda rc=rc: rc
+            sys.argv = ["news.py", "--bullish"]
+            try:
+                news.main()
+                got[rc] = "no exit"
+            except SystemExit as e:
+                got[rc] = e.code
+    finally:
+        NB.run, sys.argv = saved_run, saved_argv
+    check("news.main 的結束碼等於 run() 的回傳", got == {0: 0, 1: 1}, str(got))
 
 
 def main():
@@ -324,6 +377,7 @@ def main():
     test_score_missing_fields()
     test_snippet()
     test_payload_ok_shape()
+    test_payload_codes()
     test_payload_next_trade_date_holiday()
     test_payload_year_rollover()
     test_payload_empty()
@@ -332,7 +386,9 @@ def main():
     test_run_writes_files()
     test_run_closed_day()
     test_run_fetch_error()
+    test_run_default_fetch_args()
     test_cli_flag()
+    test_cli_exit_code()
     ok = sum(1 for _, o, _ in results if o)
     fail = len(results) - ok
     print(f"\n=== 結果: {ok}/{len(results)} pass, {fail} fail ===")

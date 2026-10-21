@@ -2,13 +2,14 @@
 """
 新聞利多自選股清單: 計票、混合排除與排序。
 輸入是已打好情緒標籤的新聞(sentiment / confidence / events),輸出是依利多票排序的個股清單。
-計票的 vote / score_news 是純函式; 組檔 make_payload / error_payload 純計算(只查休市日曆),
-write_payload / run 才寫 out/bullish/ 下的檔案, 不碰 out/news_result.json。
+計票的 vote / score_news 是純函式; 組檔 make_payload / error_payload 不寫檔, 只查休市日曆
+(十二月與一月可能經 storage._ensure_year 連證交所補休市表), write_payload / run 才寫
+out/bullish/ 下的檔案, 不碰 out/news_result.json。
 
   RULE                           計票門檻與權重
   vote(item, rule)               一則新聞的票: "bull" / "bear" / None
   score_news(news, lex, rule)    回傳 {"items": [...], "excluded": [...], "candidates": [...]}
-  make_payload(news, now, lex)   組成 spec 5.2 的檔案內容(status 為 ok / empty / error)
+  make_payload(news, now, lex)   組成 spec 5.2 的檔案內容(status 為 ok / empty / error, 含 codes 欄)
   error_payload(now, message)    同一組鍵, 三個清單為空, 多一個 error
   write_payload(payload, dir)    寫 bullish_YYYYMMDD.json 再寫 latest.json
   run(now, out_dir, fetch)       抓新聞、組檔、寫檔, 回結束碼(error 為 1, 其餘 0)
@@ -116,10 +117,13 @@ def _window(now):
 def _body(now, status, next_trade_date, window, r=None):
     """spec 5.2 的檔案內容; r 是 score_news 的結果, 錯誤檔沒有就三個清單都空。"""
     r = r or {}
+    items = r.get("items", [])
+    # codes 是 items 代號依序的精簡清單, Pro 端只讀它就夠, 不必把整份檔讀進對話
     return {"schema_version": 1, "status": status, "trade_date": now.date().isoformat(),
-            "next_trade_date": next_trade_date, "generated_at": now.isoformat(timespec="seconds"),
+            "next_trade_date": next_trade_date, "codes": [i["code"] for i in items],
+            "generated_at": now.isoformat(timespec="seconds"),
             "window": window, "method": "rule", "rule": dict(RULE),
-            "items": r.get("items", []), "excluded": r.get("excluded", []),
+            "items": items, "excluded": r.get("excluded", []),
             "candidates": r.get("candidates", [])}
 
 
@@ -156,7 +160,8 @@ def run(now=None, out_dir=OUT_DIR, fetch=None):
     if NC._is_closed(now):
         print("[利多清單] 今天休市,不產出", file=sys.stderr)
         return 0
-    fetch = fetch or (lambda: NC.fetch_market_news(since="last_close", keep_codes=True))
+    # tag_sentiment 明確傳 True, 不讀 config(config 設 false 會讓每天都產出 error 檔)
+    fetch = fetch or (lambda: NC.fetch_market_news(since="last_close", keep_codes=True, tag_sentiment=True))
     try:
         payload = make_payload(fetch(), now, SM.load_lexicon())
     except Exception as e:
