@@ -72,12 +72,12 @@ Shioaji Pro（公開 repo 調查，私有 repo 看不到）
 
 新增 CLI 模式（建議 `news.py --bullish`）與對應函式（建議 `news_core.bullish_watchlist()`），步驟如下：
 
-1. 取原料：優先讀當天 07:40 自動信已產出的 `out/news_result.json`（`mode == "today_digest"` 且 `generated_at` 的前 10 字是今天；`date` 是「2026-10-22 盤前（涵蓋…）」這種顯示字串，`generated_at` 是沒有時區的 `YYYY-MM-DD HH:MM`，見 `news.py:146-158`）；沒有就自己呼叫 `fetch_market_news(since="last_close")`。不要寫回 `out/news_result.json`。（我的判斷：省一次約 2 分鐘的全量抓取，也確保兩者用同一份新聞。）
+1. 取原料：呼叫 `fetch_market_news(since="last_close")`，新增參數讓它保留出版商代號 `stock_codes`。不讀也不寫 `out/news_result.json`。（我的判斷，寫計畫時修訂：`news_result.json` 的項目沒有 `stock_codes`；而 07:40 抓完的新聞會留在 15 分鐘的共用磁碟快取 `out/.sanbao_cache.json`，裡面有 `stock_codes`，07:50 呼叫時直接命中，一樣不會重抓、用的是同一份新聞。）
 2. 每則新聞對應個股（我的判斷，依使用者「標題就寫股名的越好」）：
    - 標題級：股票自己的名稱（`tw_names.json` 簡稱，或 `tw_stocks.json` 裡指向單一公司的別名，例如 TSMC）或代號出現在標題。
    - 內文級：只出現在內文。出版商標記的代號（cnyes 的 `stock_codes`，需要讓 `fetch_market_news` 保留下來）也算內文級，除非股名同時出現在標題；cnyes 的標籤來自整篇文章，盤勢彙整文常一次標很多檔（`cnyes.py:39-51`）。
    - 主題詞別名（DRAM、AI伺服器、ABF載板、MLCC、散熱、IC設計、CCL 這類對到一檔以上或本身是產業名詞的詞）不算點名，不計票。
-   - 比對要比 `match_news_to_codes` 嚴格，因為要拿全市場約 2,000 個股名反查：最長匹配優先（命中「南亞科」就不再算「南亞」，共約 85 組互為子字串）；常用詞股名（世界、全新、中華、光明、幸福、泰山等）只在標題同時出現代號時才算；代號後面緊接「年」不算（2023 到 2031 都是股票代號）。這套比對只給利多清單用，不改 `match_news_to_codes`，以免影響 `--codes` 與 Sino-notify-skill。
+   - 比對要比 `match_news_to_codes` 嚴格，因為要拿全市場約 2,000 個股名反查：最長匹配優先（命中「南亞科」就不再算「南亞」，共約 85 組互為子字串）；常用詞股名（世界、全新、中華、光明、幸福、泰山等）只在標題同時出現代號時才算；代號後面緊接「年」不算（2002 到 2035 之間有 25 個股票代號，例如 2027 大成鋼；2026 不是）。這套比對只給利多清單用，不改 `match_news_to_codes`，以免影響 `--codes` 與 Sino-notify-skill。
    - 一則新聞的內文級對應超過 3 檔時，這則的內文級對應都不計票（多半是盤勢彙整或排行榜，整篇情緒不代表個別股票）。門檻可調。
 3. 每則新聞的票：`sentiment == bullish` 且 `confidence >= 0.5` 算一張利多票；`bearish` 且 `confidence >= 0.5` 算一張利空票；其他不計。（我的判斷。內文只命中一個詞時信心是 0.5，標題命中一個詞是 0.667，兩者都過門檻，見 `news_sentiment.py:256,510`。）
 4. 彙整到個股：
@@ -134,7 +134,7 @@ Shioaji Pro（公開 repo 調查，私有 repo 看不到）
 
 - 新增一支會進版控的排程登記腳本（例如 `scripts/register_bullish_task.ps1`），用 Windows 工作排程登記「週一到週五 07:50 執行 `python -X utf8 scripts/news.py --bullish`」。路徑用 `$PSScriptRoot` 推算，不寫死使用者名稱、工號、email 或內部路徑（repo 是公開的）；重跑會覆蓋同名工作，另提供移除用的參數。
 - `--bullish` 自己判斷休市（`storage._is_closed`），休市日不寫檔、正常結束。
-- 使用者本機也用同一支排程：07:40 的盤前信已寫好當天的 `out/news_result.json` 就直接沿用；還在抓的話，既有的跨進程抓取鎖與 15 分鐘磁碟快取會讓 `--bullish` 等它抓完再用同一份，不會抓兩次。同事那邊沒有盤前信，就自己抓一次（約 2 分鐘）。（我的判斷，一條路徑給所有人。）
+- 使用者本機也用同一支排程：07:40 的盤前信抓完的新聞還在 15 分鐘磁碟快取裡，`--bullish` 直接沿用；還在抓的話，既有的跨進程抓取鎖會讓 `--bullish` 等它抓完再用同一份，不會抓兩次。同事那邊沒有盤前信，就自己抓一次（約 2 分鐘）。（我的判斷，一條路徑給所有人。）
 - 同事需要的前置：Python 與 `requirements.txt`、skill 放在 Pro agent 讀得到的位置；不需要 Metabase。
 
 ### 5.4 Shioaji Pro 端
@@ -157,7 +157,7 @@ Shioaji Pro（公開 repo 調查，私有 repo 看不到）
 
 - Windows 環境；App 要開著，排程任務才會跑；每次排程消耗一次 AI 額度。
 - 使用者這台電腦連不到 api.openai.com，Codex 跑不起來，provider 要用 Claude Code 或 Pi；同事的環境可能也一樣。
-- Shioaji Pro 的 AI agent 能不能無人值守讀本機檔案（例如 `~/.claude/skills/stock-news-skill/out/bullish/latest.json`，同事的 skill 位置可能不同），以及永久允許設定是否存在，都還沒驗證（見 5.4 權限）。
+- Shioaji Pro 的 AI agent 能不能無人值守讀本機檔案（例如 `~/.claude/skills/stock-news-skill/out/bullish/latest.json`，同事的 skill 位置可能不同），以及永久允許設定是否存在，都還沒驗證（見 5.4 權限）。寫計畫時查到的反證：上游公開文件找不到「永久允許」的說法，`docs/AGENT_HARNESS_CONTRACT.md` 的重啟政策寫「Pending approvals and capability grants｜Expire」，表示 App 重啟後權限可能要重給。
 - 新聞覆蓋不完整：每個來源只抓最新 10 到 15 則，前一天傍晚的新聞可能被擠掉，清單會漏幾檔，混合排除也可能漏判。第一版接受（規則 12），寫進 `references/` 的已知問題。
 - 規則層情緒是整篇新聞一個標籤，一篇提到多檔時無法分開判斷；已知誤判見 `references/sentiment.md`。
 - 不准覆寫 `out/news_result.json`；離線單元測試要涵蓋對應、計票、排除、排序、空清單、檔案格式。
