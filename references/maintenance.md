@@ -17,6 +17,9 @@
 | `scripts/news_providers.py` | `fetch_sanbao()`（呼叫主路徑，失敗直接報錯）、補內文（6 條並行）、個股直取、即時流比對、離線股名 |
 | `scripts/news_sentiment.py` | 規則層情緒與事件，純標準庫；直接執行會跑自我測試 |
 | `scripts/news_formatters.py` | console、md、json 排版，`--report`，digest 排版 |
+| `scripts/stock_mentions.py` | 全市場股名反查：一則新聞點名了哪些個股、在標題還是只在內文（讀 `tw_names.json`、`tw_stocks.json`，不連網） |
+| `scripts/news_bullish.py` | 利多清單：計票、混合排除、排序、組檔、寫 `out/bullish/`，`news.py --bullish` 的實作；說明見 [bullish_watchlist.md](bullish_watchlist.md) |
+| `scripts/register_bullish_task.ps1` | 登記或移除 Windows 工作排程 `stock-news-bullish`（週一到週五 07:50），檔案必須存成 UTF-8 with BOM |
 | `scripts/main.py` | 主路徑 `aggregate()`：九家並行加跨來源去重；直接執行才會寫 `data/raw/` |
 | `scripts/cnyes.py`、`udn.py`、`ctee.py`、`rss_sources.py`、`chinatimes.py` | 各家採集器（中時已移出主路徑） |
 | `scripts/common.py` | UA、時間正規化、內文抽取、request |
@@ -45,6 +48,7 @@
 | `python tests/test_sentiment.py` | classify 結構契約、強訊號方向、事件抽取 | 否 | 25 項 |
 | `python tests/test_formatters.py` | 排版、`build_report`、digest、snippets | 否 | 79 項 |
 | `python tests/test_digest_render.py` | 盤前信 HTML renderer | 否 | 24 項，樣本在 `tests/fixtures/digest_sample.md` |
+| `python tests/test_bullish.py` | 股名反查、計票、排序、組檔、寫檔、--bullish | 否 | 2026-10-21 共 51 項；要有 `config.json`（`news_core` 匯入時讀），輸出寫暫存目錄 |
 | `python scripts/news_sentiment.py` | 詞庫自我測試 | 否 | 37 例 |
 | `python tests/test_query_news_api.py` | 簽名（前 6 參數順序、預設 None）與回傳結構 | 部分會 | 結構檢查會連 Metabase 與即時流 |
 | `python tests/test_cli_smoke.py` | CLI 黑箱 7 組 | 是 | 每組會刪除並重寫 `out/news_result.json`，07:30 到 08:30 不要跑 |
@@ -102,4 +106,6 @@ Windows 工作排程：`premarket-news-digest` 週一到週五 07:40 跑 `script
 | `twse_announce.py:87` | 抓取失敗訊息印到 stdout（目前不在 `news.py` 路徑上） |
 | `scripts/test_collect.py` | 匯入 `ctee._url_date_iso`，但這個函式已不在 `ctee.py`，整支測試無法載入（2026-10-21 以前就壞了） |
 | `scripts/test_storage.py` | 會把測試資料寫進真實 `data/` 而且不清理（`test_cli_smoke.py` 已改用 `--out=auto`，不再覆寫 `out/news_result.json`） |
+| 利多清單（`news_bullish.py`）新聞覆蓋 | 每個來源只抓最新 10 到 15 則，前一天傍晚的新聞可能被擠掉，清單會漏股、混合排除也可能漏判。第一版接受，之後做增量收集再補 |
+| `stock_mentions.py` 股名比對 | `-KY` 股名在新聞裡省略連字號（寫成「亞德客」而不是「亞德客-KY」）時比不到，只能靠代號命中 |
 | Sino-notify-skill `references/news_api.md` | news 欄位寫成含 `tag_sentiment`、來源寫六家，已落後本 skill 的 API 契約 |

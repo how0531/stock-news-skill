@@ -86,6 +86,13 @@ python -X utf8 -c "import sys; sys.path.insert(0, r'$S'); import news_core as NC
 
 每天 07:40 的自動盤前信由 `scripts/premarket_digest.ps1` 產生，用的是它自己內嵌的規則，不讀 today_digest.md，改其中一邊不會影響另一邊。
 
+## 每日利多清單(排程)
+
+用途：每天產出「新聞利多」個股清單，給 Shioaji Pro 的自選股排程使用（skill 只產檔，不寫自選股）。
+指令：`python -X utf8 scripts/news.py --bullish`，輸出 `out/bullish/latest.json`；休市日不產出，檔案維持上一個交易日的內容。
+可隨時手動跑，不碰 `out/news_result.json`，不影響 07:40 盤前信；排程登記用 `scripts\register_bullish_task.ps1`。
+前置、檔案欄位、判斷規則、Pro 端設定見 [references/bullish_watchlist.md](references/bullish_watchlist.md)。
+
 ## 程式化呼叫(供其他 skill)
 
 ```python
@@ -101,7 +108,7 @@ API 契約（Sino-notify-skill 的 `scripts/core.py` `get_news()` 用 codes 加 
 
 - `query_news()` 前 6 個參數順序固定為 `(codes, keyword, days, source, fetch_body, individual_only)`，全部預設 None；之後依序是 `tag_sentiment`、`names`、`match_all`、`intl`。新參數只能加在最後、預設 None，呼叫端一律用關鍵字傳參。`tests/test_query_news_api.py` 檢查簽名（要手動跑，部分 case 會連網）。
 - 回傳 `{"by_code": {代號: [news]}, "keyword_hits": [news]}`。news 穩定欄位是 `time, title, source, url, summary, body`；`tag_sentiment=True`（預設）時另有 `sentiment`（`bullish`、`bearish`、`neutral`）、`confidence`（0 到 1）、`events`（list）。`keyword_hits` 另帶 `code`、`name`（只有 Metabase 命中有值）、`category`、`snippets`。
-- 其他公開函式：`news_cfg()`（Sino-notify 讀它的 `source`）、`clear_news_cache(disk=False)`、`fetch_market_news(since="last_close")`、`resolve_stock_names(codes)`、`metabase_available()`。
+- 其他公開函式：`news_cfg()`（Sino-notify 讀它的 `source`）、`clear_news_cache(disk=False)`、`fetch_market_news(since="last_close", keep_codes=False)`、`resolve_stock_names(codes)`、`metabase_available()`。
 - 各模式的細節（關鍵字模式回溯至少 10 天、報告型標題的 `report_days`、去重先後、`fetch_body` 參數只管補內文步驟）見 [references/cli.md](references/cli.md) 與 [references/config_fields.md](references/config_fields.md)。
 
 ## 需要時再讀
@@ -111,6 +118,7 @@ API 契約（Sino-notify-skill 的 `scripts/core.py` `get_news()` 用 codes 加 
 | 調 `config.json` 或確認預設值 | [references/config_fields.md](references/config_fields.md) |
 | 解讀或質疑 sentiment、events 標籤 | [references/sentiment.md](references/sentiment.md) |
 | 執行 `--today` 前 | [references/today_digest.md](references/today_digest.md) |
+| 每日利多清單、Shioaji Pro 自選股排程 | [references/bullish_watchlist.md](references/bullish_watchlist.md) |
 | 全部 CLI 旗標、輸出格式、`--report` 細節 | [references/cli.md](references/cli.md) |
 | 來源清單、抓取流程、某家 0 則或被擋 | [references/sources.md](references/sources.md) |
 | 快取、編碼、PowerShell、時區等踩雷紀錄 | [references/gotchas.md](references/gotchas.md) |

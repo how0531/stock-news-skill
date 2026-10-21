@@ -5,7 +5,7 @@
 ## 語法
 
 - 只認 `--旗標=值`。`--days 7` 這種空格寫法與拼錯的旗標一律靜默忽略。
-- `--days=abc` 會直接 traceback；`--format` 只接受 `console`、`md`、`json`（不分大小寫，其他值 exit 2）；`--codes`、`--keyword`、`--report`、`--today` 一個都沒給時 exit 1。
+- `--days=abc` 會直接 traceback；`--format` 只接受 `console`、`md`、`json`（不分大小寫，其他值 exit 2）；`--codes`、`--keyword`、`--report`、`--today`、`--bullish` 一個都沒給時 exit 1；`--bullish` 另外在產出 error 檔時 exit 1。
 - 開關旗標（`--all`、`--intl`、`--today`、`--individual-only`、`--no-sentiment`）只能單寫，寫成 `--all=true` 會被忽略；`--out` 兩種都收。
 - `--source` 不檢查值。打錯（例如 `--source=cnyes`）不會報錯：`--keyword` 三條腿都不跑，結果是空的；`--codes`、`--report` 只剩個股直取（`cnyes-search`、`yahoo-quote`）的結果。
 
@@ -25,6 +25,7 @@
 | `--out=auto`、`--out=路徑`（單寫 `--out` 等同 auto） | 寫到自己的 JSON 檔，內文截到 `body_max_chars`，不碰共用的 `out/news_result.json`。對 `--today` 無效 |
 | `--report=2330,2454` | 個股深度報告，會蓋掉 `--codes` 與 `--keyword` |
 | `--today`（別名 `--digest`） | 今日議題重點的原料 |
+| `--bullish` | 新聞利多自選股清單，寫 `out/bullish/latest.json`，細節見 [bullish_watchlist.md](bullish_watchlist.md)。優先於其他模式，`--out`、`--format` 等其餘旗標都不生效 |
 
 ## 各模式在做什麼
 
@@ -60,6 +61,13 @@
 - 靜默忽略 `--codes`、`--keyword`、`--days`、`--source`、`--individual-only`、`--report`；`--out`、`--intl`、`--all` 會在 stderr 提示後忽略；`--no-sentiment` 有效。
 - 一定會寫兩個檔：`out/news_result.json`（結構是 `mode`、`date`、`count`、`items`，`items[].body` 是全文），以及 `out/today_news_YYYYMMDD.md`（表頭統計加依來源分組的清單，每則一行時間、情緒、事件、標題連結，沒有內文）。
 - stdout：console 版沒有連結；`--format=md` 有連結；`--format=json` 是含全文的完整內容。標題固定寫成「盤前（涵蓋 MM/DD 14:00～現在）」，盤後執行也一樣，要當日的部分請看 `time` 欄。
+
+### --bullish
+
+- 新聞原料同 `--today` 的時間窗（前一交易日 14:00 到現在），另保留出版商標的代號；不讀也不寫 `out/news_result.json`。
+- 寫 `out/bullish/bullish_YYYYMMDD.json` 與 `out/bullish/latest.json`（同內容）；stdout 沒有輸出，進度與 `[輸出] 路徑` 走 stderr。
+- 休市日不寫檔、結束碼 0；status 是 `ok` 或 `empty` 結束碼 0；status 是 `error`（抓不到新聞、沒有情緒標籤、執行中例外）結束碼 1。
+- 欄位、判斷規則、排程登記與 Shioaji Pro 端設定見 [bullish_watchlist.md](bullish_watchlist.md)。
 
 ### --report
 
