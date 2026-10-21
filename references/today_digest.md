@@ -25,7 +25,7 @@ python -X utf8 "$S\news.py" --today --format=md
 
 - 窗只是下界過濾，不保證收齊。每個分類或 feed 只取最新 10 到 15 則（cnyes 五類各 15；udn 八條、Yahoo 四條與其他五家每條 feed 10；ctee 每分類 10），去重後合計約 200 則；高頻來源大約只涵蓋最近十幾小時，窗的前段可能只剩少數來源。
 - 沒有發布時間的新聞不會進來。
-- `tw_holidays.json` 目前只有 2026 年、尚未對照證交所公告；缺年度或漏列的休市日會讓窗算錯，而且不會有警告。
+- `tw_holidays.json` 來自證交所官方休市表。缺少當年度時程式會自動更新一次，更新不到會在 stderr 印 `[holiday] 休市表沒有 YYYY 年`；看到這行時，窗可能把國定假日當成交易日，回報時要提醒使用者。
 - 標題固定寫「盤前（涵蓋 MM/DD 14:00～現在）」，盤後執行也一樣；要當日的部分請看 `time` 欄。
 - Python 呼叫可以改窗：`news_core.fetch_market_news(since="today")`（只今天）或 `since="days", days=N`（近 N 日），CLI 沒有對應旗標。
 

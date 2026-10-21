@@ -26,4 +26,5 @@ __pycache__/
 *.hidden
 *.bak
 *.tmp
+*.lock
 *.swp

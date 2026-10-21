@@ -25,7 +25,7 @@
 ## 時間
 
 - Metabase 新聞時間是假 UTC（2026-10-09）：`發布日期時間` 回 `2026-10-09T18:21:19Z`，其實是台北牆鐘。直接當 UTC 解析會偏 8 小時（排序永遠浮到最前、近 N 日過濾偏移），`news_core._mb_time()` 去掉 Z、補 +08:00。
-- 連假後的前一交易日（2026-10-09）：`_prev_business_day` 原本只跳週末，10/12（一）會算成 10/09（補假），整段 10/08 盤後新聞漏掉。現在用 `storage._is_closed`（讀 `tw_holidays.json`），該檔每年要更新，見 [maintenance.md](maintenance.md)。
+- 連假後的前一交易日（2026-10-09）：`_prev_business_day` 原本只跳週末，10/12（一）會算成 10/09（補假），整段 10/08 盤後新聞漏掉。現在用 `storage._is_closed`（讀 `tw_holidays.json`）。這份檔原本是依規則推算，漏了教師節、光復節補假等 5 天（9/29 的窗因此算錯過），也沒有 7/10 颱風停市；2026-10-21 起改由 `update_holidays.py` 從證交所取官方資料，颱風等臨時停市手動放 `_adhoc`，缺年度時自動更新，見 [maintenance.md](maintenance.md)。
 - 本機時區：now 與 cutoff 一律用台北時區（`common.TAIPEI`），不依賴本機設定（Git Bash 設了 TZ 時 `astimezone()` 會偏）。
 
 ## Metabase

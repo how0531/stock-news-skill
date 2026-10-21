@@ -157,8 +157,12 @@ def test_build_event_carries_unified_fields():
 def test_actionable_ts_holiday_aware():
     # 2026-01-01（週四，元旦休市）盤中發布 -> 1/2（週五）開盤
     assert storage.compute_actionable_ts(datetime(2026, 1, 1, 10, 0)) == datetime(2026, 1, 2, 9, 0)
-    # 春節前最後交易日（2/13 週五）盤後 -> 跳過 2/16-2/20 連假與週末 -> 2/23（週一）開盤
+    # 春節前最後交易日（2/11 週三）盤後 -> 跳過 2/12、2/13 只辦結算與 2/16-2/20 連假 -> 2/23（週一）開盤
+    assert storage.compute_actionable_ts(datetime(2026, 2, 11, 20, 0)) == datetime(2026, 2, 23, 9, 0)
+    # 2/13（只辦結算、不交易）發布 -> 2/23（週一）開盤
     assert storage.compute_actionable_ts(datetime(2026, 2, 13, 20, 0)) == datetime(2026, 2, 23, 9, 0)
+    # 7/10 颱風臨時停市（_adhoc）前一天盤後 -> 7/13（週一）開盤
+    assert storage.compute_actionable_ts(datetime(2026, 7, 9, 14, 0)) == datetime(2026, 7, 13, 9, 0)
     # 連假中（2/18 週三）發布 -> 2/23（週一）開盤
     assert storage.compute_actionable_ts(datetime(2026, 2, 18, 10, 0)) == datetime(2026, 2, 23, 9, 0)
     # 一般交易日規則不受影響

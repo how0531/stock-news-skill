@@ -18,6 +18,9 @@ Backtests MUST filter by actionable_ts, never by publish_ts.
 from __future__ import annotations
 
 import json
+import sys
+import threading
+import time as time_mod                     # 下面的 time 是 datetime.time(開收盤時刻)
 from datetime import datetime, time, timedelta
 from pathlib import Path
 from typing import Iterable
@@ -28,6 +31,11 @@ try:
     import duckdb  # type: ignore
 except Exception:  # pragma: no cover
     duckdb = None
+
+try:
+    from . import update_holidays                # 以套件匯入(scripts/__init__.py)
+except ImportError:
+    import update_holidays
 
 
 # --------------------------------------------------------------------------- #
@@ -53,24 +61,95 @@ MARKET_CLOSE = time(13, 30)
 
 HOLIDAY_FILE = DATA / "calendar" / "tw_holidays.json"
 _HOLIDAYS: set[str] | None = None
+_HOLIDAY_YEARS: set[str] = set()
+_MISSING_YEAR_HANDLED: set[str] = set()
+_HOLIDAY_LOCK = threading.Lock()
+
+
+def _load_holidays() -> tuple[set[str], set[str]]:
+    """讀休市檔 → (休市日, 有資料的年度)。年度清單之外也併入 _adhoc(颱風等臨時停市);
+    _adhoc 寫錯的項目跳過並警告,不讓整張表失效。接受 UTF-8 BOM;別的進程正在寫時重試。"""
+    if not HOLIDAY_FILE.exists():
+        return set(), set()
+    for i in range(5):
+        try:
+            raw = json.loads(HOLIDAY_FILE.read_bytes().decode("utf-8-sig"))
+            break
+        except PermissionError:                  # Windows 上另一個進程正在 os.replace
+            if i == 4:
+                raise
+            time_mod.sleep(0.2)
+    dates_all, years = set(), set()
+    for key, dates in raw.items():
+        if not key.startswith("_") and isinstance(dates, list):
+            dates_all.update(d for d in dates if isinstance(d, str))
+            years.add(key)
+    adhoc = raw.get("_adhoc") or {}
+    if not isinstance(adhoc, dict):
+        print("[holiday] 休市檔的 _adhoc 格式不對(要 {年: [YYYY-MM-DD...]}),已略過", file=sys.stderr)
+        adhoc = {}
+    for year, ds in adhoc.items():               # 逐項用 update 端同一套規則,壞一項只丟那一項
+        if not isinstance(ds, list):
+            print(f"[holiday] 休市檔的 _adhoc 格式不對,已略過:_adhoc[{year!r}] 不是日期清單", file=sys.stderr)
+            continue
+        for d in ds:
+            try:
+                update_holidays.validate_adhoc({year: [d]})
+                dates_all.add(d)
+            except ValueError as e:
+                print(f"[holiday] 休市檔的 _adhoc 格式不對,已略過:{e}", file=sys.stderr)
+    return dates_all, years
 
 
 def _tw_holidays() -> set[str]:
-    """Load TW market closure dates (YYYY-MM-DD) once; empty set if file missing."""
-    global _HOLIDAYS
-    if _HOLIDAYS is None:
-        _HOLIDAYS = set()
-        if HOLIDAY_FILE.exists():
-            raw = json.loads(HOLIDAY_FILE.read_text(encoding="utf-8"))
-            for key, dates in raw.items():
-                if not key.startswith("_") and isinstance(dates, list):
-                    _HOLIDAYS.update(dates)
-    return _HOLIDAYS
+    """Load TW market closure dates (YYYY-MM-DD) once; empty set if file missing.
+    讀檔失敗不快取,下次再試。"""
+    global _HOLIDAYS, _HOLIDAY_YEARS
+    h = _HOLIDAYS
+    if h is None:
+        dates_all, years = _load_holidays()
+        _HOLIDAYS = h = dates_all                # 先換休市日再換年度,別的執行緒才不會「有年度、沒日子」
+        _HOLIDAY_YEARS = years
+    return h
+
+
+def _ensure_year(year: int) -> None:
+    """休市表缺今年或明年時,每個進程自動向證交所更新一次;更新不到就在 stderr 警告一次。
+    缺年度時 _is_closed 只跳週末加元旦,其他國定假日會被當成交易日,--today 時間窗會算錯。"""
+    global _HOLIDAYS, _HOLIDAY_YEARS
+    y = str(year)
+    if y in _HOLIDAY_YEARS or y in _MISSING_YEAR_HANDLED:
+        return
+    with _HOLIDAY_LOCK:                          # 其他執行緒等第一個更新完再判斷
+        if y in _HOLIDAY_YEARS or y in _MISSING_YEAR_HANDLED:
+            return
+        this_year = datetime.now().year
+        if this_year <= year <= this_year + 1:
+            try:
+                update_holidays.update(years=[year], path=HOLIDAY_FILE)
+            except Exception as e:
+                print(f"[holiday] 自動更新休市表失敗:{e!r}", file=sys.stderr)
+            try:                                 # 不論成敗都重讀(別的進程可能剛寫好);成功才整組替換
+                dates_all, years = _load_holidays()
+                _HOLIDAYS = dates_all
+                _HOLIDAY_YEARS = years
+            except Exception as e:
+                print(f"[holiday] 讀取休市表失敗:{e!r}", file=sys.stderr)
+        _MISSING_YEAR_HANDLED.add(y)
+        if y not in _HOLIDAY_YEARS:
+            hint = (f"證交所可能尚未公布,公布後執行 python scripts/update_holidays.py {y}"
+                    if year >= this_year else f"可執行 python scripts/update_holidays.py {y} 補上")
+            print(f"[holiday] 休市表沒有 {y} 年,{y} 年只跳週末與元旦;{hint}", file=sys.stderr)
 
 
 def _is_closed(d: datetime) -> bool:
     """True on weekends and TW market holidays (data/calendar/tw_holidays.json)."""
-    return d.weekday() >= 5 or d.strftime("%Y-%m-%d") in _tw_holidays()
+    _tw_holidays()
+    _ensure_year(d.year)
+    if d.weekday() >= 5 or d.strftime("%Y-%m-%d") in _tw_holidays():
+        return True
+    # 該年還沒有休市表時,至少元旦每年固定休市
+    return str(d.year) not in _HOLIDAY_YEARS and (d.month, d.day) == (1, 1)
 
 
 def _next_trading_day(d: datetime) -> datetime:

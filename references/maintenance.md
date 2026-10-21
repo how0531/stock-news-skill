@@ -31,7 +31,8 @@
 | `scripts/news_raw_ctee.py` | 把 ctee 新聞寫成 g-brain（外部管線）的 news-raw schema-v1 JSON |
 | `scripts/premarket_digest.ps1` 等七支 | 07:40 自動盤前信管線，見下方 |
 | `data/stocks/` | `tw_stocks.json`（策展約 160 檔，含別名）、`tw_names.json`（上市加上櫃約 2,000 檔代號對簡稱）、`us_stocks.json`、`jp_stocks.json` |
-| `data/calendar/tw_holidays.json` | 台股休市日，見「年度維護」 |
+| `data/calendar/tw_holidays.json` | 台股休市日（證交所官方資料），見「年度維護」 |
+| `scripts/update_holidays.py` | 從證交所網站休市表（www.twse.com.tw/rwd）更新休市表 |
 | `data/site_maps/` | 各來源版型與驗證狀態 |
 | `data/raw/`、`stream/`、`state/`、`processed/`、`factors/` | 採集層產物（新聞全文與狀態），已列入 `.gitignore` |
 | `out/` | 查詢結果、快取、自動信產物（已在 `.gitignore`） |
@@ -68,16 +69,20 @@ Windows 工作排程：`premarket-news-digest` 週一到週五 07:40 跑 `script
 注意：
 
 - 內嵌 prompt 的規則和 `references/today_digest.md` 不同（固定區塊、有數量上限、例行月營收不列、不用紅綠圖示、每則標 `[#編號]`），改其中一邊不會影響另一邊。
-- 只擋週末，國定假日仍會跑。
+- 休市日自動略過（2026-10-21 起）：主管線與 watchdog 開頭都用 `storage._is_closed` 判斷，休市就不抓、不寄、不檢查心跳；判斷失敗則照常執行。休市日要強制產出，手動跑 `premarket_digest.ps1 -Force`。
 - `premarket_digest.ps1`、`send_digest.ps1`、`digest_watchdog.ps1` 含公司 email，已列入 `.gitignore`，不在公開的 GitHub repo 裡，只存在本機。
 - 收件者與告警地址寫死在 `send_digest.ps1`、`premarket_digest.ps1`、`digest_watchdog.ps1`，改收件者要改三支；不要把內容貼到對話或文件裡。
 - 自動信依賴 `out/news_result.json`，所以互動查詢除了 `--today` 一律加 `--out=auto`。
 
 ## 年度維護
 
-- `data/calendar/tw_holidays.json` 目前只有 2026 年，而且 `_meta.verified` 是 false（依國定假日規則推算，沒對照證交所公告）。缺年度或漏列日期時不會有警告：`storage._is_closed` 退回只跳週末，`--today` 的時間窗與 `process_day.py` 的可交易時間都會算錯；`storage` 匯入失敗（例如缺 pandas）時也一樣。依賴這份檔案的還有 `sinotrade-morning-briefing/scripts/render_premarket.py`（推下一交易日）。
-- 每年底依證交所公告（https://www.twse.com.tw/zh/trading/holiday.html）加下一年度的鍵，核對後把 `verified` 改成 true。
-- 2026 年已確認漏列：`out/` 留存的新聞寫「台股今（28）日休市」，9/28 教師節是休市日卻不在清單裡，所以 2026-09-29 的盤前窗從 09/28 14:00 起算（應該從 09/24 14:00 起算）。10/25 光復節與補假、12/25 行憲紀念日、春節封關日也不在清單，尚未對照證交所 2026 年休市公告；10/26 若休市，10/27 的盤前窗也會算錯，請儘快補上。
+- `data/calendar/tw_holidays.json` 的資料來源是證交所網站休市表（`www.twse.com.tw/rwd/zh/holidaySchedule/holidaySchedule?response=json&date=YYYY0101`，可以指定年度，2021 年起有資料），由 `python scripts/update_holidays.py [年度…] [--force]` 更新，預設抓今年與明年。
+  - 分類規則：名稱含「交易日」的列（開始交易日、最後交易日）照常開盤，但名稱或說明寫明「M月D日市場無交易」的算休市（2021、2022 年春節前只辦結算的日子也叫「最後交易日」）。其餘列都算休市。
+  - 安全規則：任何一列日期格式不對或欄位殘缺就整批放棄；官方資料會移除既有日期時拒絕寫入（確認後加 `--force`）；內容沒變就不寫檔；檔案壞掉時直接報錯，不會自動重建（以免手動補的 `_adhoc` 遺失）；帶 BOM 的檔讀得懂，下次寫入時改存成無 BOM；寫入有跨進程鎖，讀寫都有重試；`_adhoc` 單一日期寫錯時 storage 只略過那一項並在 stderr 點名；`_meta.verified_years` 記錄哪些年度對過官方資料。
+- 颱風等臨時停市不在證交所休市表裡，要手動加在檔內 `_adhoc`（例如 `{"2026": ["2026-07-10"]}`），再跑一次 `update_holidays.py` 併進年度清單（`render_premarket.py` 只讀年度清單）。更新永遠不會移除 `_adhoc` 的日子，格式錯（不是 `{年: [YYYY-MM-DD]}`）會拒絕寫入。2026 年已加 7/10 巴威颱風停市；若要回填 2023、2024 年，對照證交所成交資料還有 2023-08-03、2024-07-24、07-25、10-02、10-03、10-31 這幾天颱風停市要加進 `_adhoc`。
+- 缺少今年或明年時，`storage._is_closed` 每個進程會自動更新一次；證交所還沒公布（例如 12 月時的次年）就在 stderr 印 `[holiday] 休市表沒有 YYYY 年`，該年只跳週末與元旦。休市檔讀不到時 `news_core` 會印 `[holiday] 休市判斷失敗,只跳週末`。證交所公布次年行事曆後跑一次 `update_holidays.py` 最保險。
+- 依賴這份檔案的還有 `sinotrade-morning-briefing/scripts/render_premarket.py`（推下一交易日），格式維持 `{"YYYY": [日期…]}`。
+- 2026-10-21 更新前漏列 2/12、2/13、7/10、9/28、10/26、12/25 六個平日休市日，9/29 的盤前窗曾因此從 9/28 14:00 起算（正確是 9/24 14:00）。
 - `data/stocks/tw_names.json` 偶爾重抓：`python scripts/build_stock_dict.py --names`（需能連 openapi.twse.com.tw 與 www.tpex.org.tw）。
 
 ## 已知問題（2026-10-21 審計，尚未修）
@@ -95,5 +100,6 @@ Windows 工作排程：`premarket-news-digest` 週一到週五 07:40 跑 `script
 | `news_providers.py` `_get` | SSL 失敗退回未驗證連線的設計攔的是 `ssl.SSLError`，但 urllib 丟的是 `URLError`，實際不會生效 |
 | `news_core.py` 匯入 | 直接讀 `config.json`，沒有退回 `config.example.json` |
 | `twse_announce.py:87` | 抓取失敗訊息印到 stdout（目前不在 `news.py` 路徑上） |
+| `scripts/test_collect.py` | 匯入 `ctee._url_date_iso`，但這個函式已不在 `ctee.py`，整支測試無法載入（2026-10-21 以前就壞了） |
 | `scripts/test_storage.py` | 會把測試資料寫進真實 `data/` 而且不清理（`test_cli_smoke.py` 已改用 `--out=auto`，不再覆寫 `out/news_result.json`） |
 | Sino-notify-skill `references/news_api.md` | news 欄位寫成含 `tag_sentiment`、來源寫六家，已落後本 skill 的 API 契約 |

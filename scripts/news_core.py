@@ -690,14 +690,21 @@ def query_news(codes=None, keyword=None, days=None, source=None,
 
 def _is_closed(d):
     """休市日:週末 + data/calendar/tw_holidays.json(沿用 storage._is_closed)。
-    storage 載入失敗時退回只跳週末。"""
+    storage 載入失敗時退回只跳週末,並在 stderr 警告一次(時間窗可能把國定假日當交易日)。"""
+    global _CLOSED_FALLBACK_WARNED
     try:
         if str(SCRIPTS) not in sys.path:
             sys.path.insert(0, str(SCRIPTS))
         import storage
         return storage._is_closed(d)
-    except Exception:
+    except Exception as e:
+        if not _CLOSED_FALLBACK_WARNED:
+            _CLOSED_FALLBACK_WARNED = True
+            print(f"  [holiday] 休市判斷失敗,只跳週末:{e!r}", file=sys.stderr)
         return d.weekday() >= 5
+
+
+_CLOSED_FALLBACK_WARNED = False
 
 
 def _prev_business_day(d):

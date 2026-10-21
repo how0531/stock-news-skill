@@ -353,6 +353,123 @@ def test_prev_business_day_holiday():
           cutoff.isoformat())
 
 
+def test_holiday_calendar():
+    """休市表:分類規則、安全寫入、_adhoc、缺年度備援。全部用暫存複本,不碰正式檔也不連網。"""
+    import io
+    import json
+    import shutil
+    import tempfile
+    import contextlib
+    import update_holidays as UH
+    import storage
+    D = datetime.datetime
+    rows = [
+        ["2026-01-02", "國曆新年開始交易日", "國曆新年開始交易。"],
+        ["2026-02-11", "農曆春節前最後交易日", "農曆春節前最後交易。"],
+        ["2026-02-12", "市場無交易，僅辦理結算交割作業", ""],
+        ["2026-09-28", "孔子誕辰紀念日/ 教師節", "依規定放假1日。"],
+        ["2021-02-08", "農曆春節前最後交易日", "2月8日市場無交易，僅辦理結算交割作業。"],
+        ["2023-01-17", "農曆春節前最後交易日", "農曆春節前最後交易。\n1月18日及1月19日市場無交易，僅辦理結算交割作業。"],
+    ]
+    check("休市表:開始與最後交易日開盤;名稱或說明寫明當日無交易的算休市",
+          UH.closed_dates(rows) == ["2021-02-08", "2026-02-12", "2026-09-28"], str(UH.closed_dates(rows)))
+
+    def raises(fn):
+        try:
+            fn()
+        except (ValueError, RuntimeError):
+            return True
+        return False
+    check("休市表:日期格式不對或欄位殘缺就整批失敗",
+          raises(lambda: UH.closed_dates([["abc", "壞資料", ""]]))
+          and raises(lambda: UH.closed_dates([["2026-03-03"]])))
+    check("休市表:_adhoc 格式錯就拒絕",
+          all(raises(lambda a=a: UH.validate_adhoc(a)) for a in
+              [["2026-07-10"], {"2026": "2026-07-10"}, {"2026": ["2026-7-10"]}, {"2026": ["2027-01-05"]}]))
+
+    tmpdir = pathlib.Path(tempfile.mkdtemp())
+    tmp = tmpdir / "h.json"
+    tmp.write_text(json.dumps({"_comment": "保留", "_adhoc": {"2026": ["2026-07-10"]},
+                               "2026": ["2026-01-01", "2026-03-03"]}), encoding="utf-8")
+    orig_fetch = UH.fetch_year
+    UH.fetch_year = lambda y, timeout=15: ["2026-09-28", "2026-01-01"] if y == 2026 else []
+    try:
+        check("休市表:官方資料會移除既有日期時拒絕寫入",
+              raises(lambda: UH.update(years=[2026], path=tmp))
+              and json.loads(tmp.read_text(encoding="utf-8"))["2026"] == ["2026-01-01", "2026-03-03"])
+        UH.update(years=[2026], path=tmp, force=True)
+        saved = json.loads(tmp.read_text(encoding="utf-8"))
+        check("休市表:--force 寫入時保留 _adhoc 與其他底線鍵",
+              saved["2026"] == ["2026-01-01", "2026-07-10", "2026-09-28"] and saved.get("_comment") == "保留",
+              str(saved))
+        mtime = tmp.stat().st_mtime_ns
+        check("休市表:內容沒變就不寫檔", UH.update(years=[2026], path=tmp) == {} and tmp.stat().st_mtime_ns == mtime)
+        tmp.write_bytes(b"\xef\xbb\xbf" + tmp.read_bytes())          # 模擬記事本存成帶 BOM
+        UH.update(years=[2026], path=tmp)
+        check("休市表:帶 BOM 的檔讀得懂,並改存成無 BOM", not tmp.read_bytes().startswith(b"\xef\xbb\xbf"))
+        broken = tmpdir / "broken.json"
+        broken.write_text('{"_adhoc": {"2026": ["2026-07-10",]}, "2026": []}', encoding="utf-8")
+        before = broken.read_bytes()
+        check("休市表:壞檔直接報錯,不改名、不重建",
+              raises(lambda: UH.update(years=[2026], path=broken))
+              and broken.read_bytes() == before and not (tmpdir / "broken.json.bak").exists())
+    finally:
+        UH.fetch_year = orig_fetch
+
+    # storage:指到只有 2026 的複本,測官方漏列日與颱風停市、壞 _adhoc、缺年度備援
+    iso = tmpdir / "iso.json"
+    real = json.loads(storage.HOLIDAY_FILE.read_text(encoding="utf-8-sig"))
+    iso.write_text(json.dumps({"_adhoc": {"2026": ["2026-07-10"]}, "2026": real["2026"]}), encoding="utf-8")
+    saved_state = (storage.HOLIDAY_FILE, storage._HOLIDAYS, set(storage._HOLIDAY_YEARS),
+                   set(storage._MISSING_YEAR_HANDLED))
+    orig_update = UH.update
+    UH.update = lambda *a, **k: (_ for _ in ()).throw(RuntimeError("離線測試不連網"))
+
+    def reset(path):
+        storage.HOLIDAY_FILE = path
+        storage._HOLIDAYS = None
+        storage._HOLIDAY_YEARS.clear()
+        storage._MISSING_YEAR_HANDLED.clear()
+    try:
+        reset(iso)
+        check("休市表:官方 2026 年漏列過的日子與 7/10 颱風停市都已休市",
+              all(storage._is_closed(D(2026, m, d)) for m, d in
+                  [(2, 12), (2, 13), (7, 10), (9, 28), (10, 26), (12, 25)])
+              and not storage._is_closed(D(2026, 2, 11)))
+        bad = tmpdir / "bad_adhoc.json"
+        bad.write_text(json.dumps({"_adhoc": ["2026-07-10"], "2026": real["2026"]}), encoding="utf-8")
+        reset(bad)
+        err = io.StringIO()
+        with contextlib.redirect_stderr(err):
+            ok = storage._is_closed(D(2026, 10, 26)) and not storage._is_closed(D(2026, 10, 27))
+        check("休市表:_adhoc 壞掉只跳過並警告,其他休市日照常", ok and "_adhoc 格式不對" in err.getvalue())
+        bad.write_text(json.dumps({"_adhoc": {"2026": ["2026-7-10", "2026-12-28"]},
+                                   "2026": [d for d in real["2026"] if d != "2026-07-10"]}), encoding="utf-8")
+        reset(bad)
+        err = io.StringIO()
+        with contextlib.redirect_stderr(err):
+            ok = not storage._is_closed(D(2026, 7, 10)) and storage._is_closed(D(2026, 12, 28))
+        check("休市表:_adhoc 單一日期寫錯只丟那一項並點名警告", ok and "2026-7-10" in err.getvalue(), err.getvalue()[:160])
+        reset(iso)
+        err = io.StringIO()
+        ny = datetime.date.today().year + 1
+        wed = next(datetime.date(ny, 3, d) for d in range(1, 8) if datetime.date(ny, 3, d).weekday() == 2)
+        with contextlib.redirect_stderr(err):
+            closed_mid = storage._is_closed(D(wed.year, wed.month, wed.day))
+            closed_ny = storage._is_closed(D(ny, 1, 1))
+        check("休市表:缺年度且更新失敗時平日照開盤、元旦仍休市,並警告",
+              closed_mid is False and closed_ny is True and f"休市表沒有 {ny} 年" in err.getvalue(),
+              err.getvalue()[:160])
+    finally:
+        UH.update = orig_update
+        storage.HOLIDAY_FILE, storage._HOLIDAYS = saved_state[0], saved_state[1]
+        storage._HOLIDAY_YEARS.clear()
+        storage._HOLIDAY_YEARS.update(saved_state[2])
+        storage._MISSING_YEAR_HANDLED.clear()
+        storage._MISSING_YEAR_HANDLED.update(saved_state[3])
+        shutil.rmtree(tmpdir, ignore_errors=True)
+
+
 def test_sanbao_cache_timestamp_and_disk():
     """回歸:時間戳要記在抓完之後(抓取 > TTL 時舊版快取一出生就過期);
     磁碟快取跨進程共用;被 monkeypatch 的假抓取不碰磁碟。"""
@@ -552,6 +669,7 @@ def main():
     print("\n--- 8) 時間正確性(Metabase 假 Z / 連假前一交易日) ---")
     test_mb_time()
     test_prev_business_day_holiday()
+    test_holiday_calendar()
     print("\n--- 9) 快取時間戳 + 磁碟快取 ---")
     test_sanbao_cache_timestamp_and_disk()
     print("\n--- 10) 沒有 Metabase 的代號查詢 ---")
