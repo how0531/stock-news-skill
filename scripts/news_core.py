@@ -730,7 +730,7 @@ def market_session_cutoff(now=None):
     return cutoff, prev
 
 
-def fetch_market_news(since="last_close", days=1, tag_sentiment=None):
+def fetch_market_news(since="last_close", days=1, tag_sentiment=None, keep_codes=False):
     """彙整『全市場』新聞(不需 codes/keyword),供「盤前四象限重點」digest 模式。
 
     與 query_news 不同:它不依代號/關鍵字過濾,而是把六家即時流(cnyes/udn/
@@ -744,6 +744,7 @@ def fetch_market_news(since="last_close", days=1, tag_sentiment=None):
       'days'       : 近 days 日(無日期者保留;向後相容舊行為)。
     days          : since='days' 時的回溯天數。
     tag_sentiment : 是否補 sentiment/confidence/events(預設讀 config,預設 True)。
+    keep_codes    : True 時每則多帶 stock_codes(出版商標的代號,缺則 []);預設 False 不帶。
 
     回傳: list[news],news = {time,title,source,url,summary,body
                             [, sentiment,confidence,events]}。
@@ -783,9 +784,12 @@ def fetch_market_news(since="last_close", days=1, tag_sentiment=None):
     for it in sb:
         if not _keep(_dt(it.get("published_at", ""))):
             continue
-        items.append({"time": it.get("published_at", ""), "title": it["title"],
-                      "source": it["source"], "url": it["url"],
-                      "summary": it.get("summary", ""), "body": it.get("body", "")})
+        rec = {"time": it.get("published_at", ""), "title": it["title"],
+               "source": it["source"], "url": it["url"],
+               "summary": it.get("summary", ""), "body": it.get("body", "")}
+        if keep_codes:                             # 預設不帶,07:40 盤前信輸出逐鍵不變
+            rec["stock_codes"] = list(it.get("stock_codes") or [])
+        items.append(rec)
 
     _MIN = datetime.datetime.min.replace(tzinfo=datetime.timezone.utc)
     items.sort(key=lambda h: _dt(h.get("time")) or _MIN, reverse=True)

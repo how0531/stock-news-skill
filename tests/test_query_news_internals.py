@@ -644,6 +644,30 @@ def test_local_stock_name_fallback():
         NP._FULL_NAMES = orig
 
 
+def test_market_news_keep_codes():
+    """keep_codes=True 才帶 stock_codes;預設輸出不變(07:40 盤前信依賴)。"""
+    import copy
+    now = datetime.datetime(2026, 10, 22, 7, 50, tzinfo=NC.TAIPEI)
+    fake = [{"source": "cnyes", "title": "南亞科報價調漲", "summary": "", "body": "內文",
+             "url": "http://x/1", "published_at": "2026-10-22T07:00:00+08:00",
+             "keywords": [], "stock_codes": ["2408", "US-MU"], "category": ""}]
+    orig = (NP.fetch_sanbao, NC._now_tw)
+    NP.fetch_sanbao = lambda cfg: copy.deepcopy(fake)
+    NC._now_tw = lambda: now
+    try:
+        NC.clear_news_cache()
+        plain = NC.fetch_market_news(since="last_close", tag_sentiment=False)
+        NC.clear_news_cache()
+        kept = NC.fetch_market_news(since="last_close", tag_sentiment=False, keep_codes=True)
+    finally:
+        NP.fetch_sanbao, NC._now_tw = orig
+        NC.clear_news_cache()
+    check("fetch_market_news:預設不帶 stock_codes",
+          set(plain[0]) == {"time", "title", "source", "url", "summary", "body"}, str(plain[0].keys()))
+    check("fetch_market_news:keep_codes=True 帶出版商代號",
+          kept[0].get("stock_codes") == ["2408", "US-MU"], str(kept[0]))
+
+
 def main():
     print("\n=== query_news keyword 分支內部邏輯測試(monkeypatch,不觸網) ===")
     has_clear = any(callable(getattr(NC, n, None))
@@ -676,6 +700,7 @@ def main():
     test_codes_without_metabase()
     test_local_stock_name_fallback()
     test_fetch_lock_and_codes_merge()
+    test_market_news_keep_codes()
     print("\n--- 11) monkeypatch 還原 ---")
     test_patch_restored()
 
