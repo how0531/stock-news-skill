@@ -5,7 +5,7 @@
 ## 什麼時候用
 
 - 想每天自動拿到一份「前一交易日 14:00 到現在，新聞偏利多的個股」清單，給 Shioaji Pro 的自選股使用。
-- skill 只產出檔案，不寫自選股、不下單、不碰券商帳號；把清單搬進自選股是 Shioaji Pro 的 AI agent 的工作。
+- skill 只產出檔案，不寫自選股、不下單、不碰券商帳號；把清單搬進自選股是 Shioaji Pro 的 AI agent 的工作（設定見「Shioaji Pro 端設定」）。
 - 只看新聞，不看股價與量能，不限檔數。清單是規則算出來的新聞分群，不是買賣建議。
 - 要查證單一股票或題材的新聞，改用 [SKILL.md](../SKILL.md) 的 `--codes`、`--keyword`；要做客戶推播，改用 Sino-notify-skill。
 
@@ -129,6 +129,74 @@ powershell -ExecutionPolicy Bypass -File scripts\register_bullish_task.ps1 -Remo
 
 日期：`trade_date` 是執行當天的台北日期；休市日不產出。
 
+## Shioaji Pro 端設定
+
+前提：上游 `feat/340-agent-watchlist-tools`（讓 AI agent 操作自選股的工具）合併並發佈之後才能設定。截至 2026-10-21 還沒合併，之後的狀態未驗證。用到的工具名稱取自該分支的 `MCP_TOOLS.md`：`list_watchlists`、`get_watchlist`、`create_watchlist`、`add_to_watchlist`、`remove_from_watchlist`、`reorder_watchlist`、`search_products`、`create_task`、`notify_user`。各工具的參數名稱公開文件沒寫，以 App 的 MCP server 公告的 schema 為準。
+
+分工：skill 在 07:50 產出 `latest.json`，Pro 的每日排程任務在 08:00 讀它，把專用自選股清單「新聞利多」整份替換成檔案裡的內容。
+
+設定步驟（只做一次）：
+
+1. skill 端先備妥：能手動產出 `out/bullish/latest.json`，並登記好 07:50 的工作排程（見「執行與排程」）。
+2. 專用清單：名稱固定為「新聞利多」。可以自己先在 App 建，也可以讓排程第一次執行時用 `create_watchlist` 建。之後一律用它的 `watchlist_id` 操作，不要改名（改名會換 id）。AI 只准動這一份，其他清單一律不碰。
+3. 授權：在 App 把 `ui.control`（自選股工具需要）與 `task.manage`（排程工具需要）設成永久允許。兩個權限各自獨立、預設拒絕。注意上游公開文件找不到「永久允許」的說法，`AGENT_HARNESS_CONTRACT.md` 還寫授權重啟後失效，授權能不能撐過重啟要靠下面「實測清單」第 2 項驗證。
+4. 建排程：在 App 建一個每天 08:00 的排程任務（晚於 skill 的 07:50），內容貼下一節的 prompt。可以請 AI 用 `create_task` 建，或用 App 的排程介面（介面細節以實際版本為準，未驗證）。
+5. 路徑填法：prompt 第 1 步的 `<latest.json 的絕對路徑>` 換成實際的完整路徑。skill 放在預設位置時是 `C:\Users\<使用者名稱>\.claude\skills\stock-news-skill\out\bullish\latest.json`（也就是 `~/.claude/skills/stock-news-skill/out/bullish/latest.json` 展開後的樣子）；放在別處就填別處。寫完整路徑，不要留 `~` 或環境變數，agent 不一定會展開。
+6. 執行條件：App 要開著（可縮到系統匣）排程才會跑；每次排程消耗一次 AI 額度；provider 要選連得上的（網路連不到 OpenAI 時 Codex 跑不起來，改用 Claude Code 或 Pi）。
+
+## 每日排程任務 prompt
+
+整段貼進排程任務，只需要換第 1 步的路徑。
+
+```text
+每天 08:00 執行（休市日的判斷在第 2 步）。你只能維護名為「新聞利多」的自選股清單，其他清單一律不碰；不要用 delete_watchlist、rename_watchlist 或 shioaji CLI。
+1. 讀檔 <latest.json 的絕對路徑>。今天的日期以台北時間為準。
+2. 判斷目標成員：
+   a. trade_date 等於今天：status 是 ok，目標是 items 的 code，照檔案順序；status 是 empty，目標是空清單；status 是 error，視同失敗。
+   b. trade_date 不是今天，而且今天早於 next_trade_date：今天休市，什麼都不做、不通知，直接結束。
+   c. 其他情況（讀不到檔、格式不對、trade_date 過期、next_trade_date 是 null）：視同失敗。
+   失敗時目標是空清單。
+3. 用 list_watchlists 找「新聞利多」的 watchlist_id，找不到就用 create_watchlist 建立。
+4. 每個目標代號先用 search_products 解析成台股商品，解析不到的跳過並記下。
+5. 用 get_watchlist 取現有成員，多的用 remove_from_watchlist 移除，缺的用 add_to_watchlist 加入，順序不同就用 reorder_watchlist 照目標順序排。每個寫入動作用新的 idempotency_key。
+6. 再用 get_watchlist 讀回，確認成員與順序和目標一致。
+7. 失敗或清空時用 notify_user 說明原因（附 status 與 error）；有解析不到的代號一併列出。正常有清單時不通知。
+```
+
+說明：
+
+- 為什麼用差集更新，不用 `delete_watchlist` 加 `create_watchlist`：delete 會跳確認，重建後 id 也會變。
+- 休市日靠 `next_trade_date` 判斷：週末與休市日 skill 不產出，`latest.json` 還是上一個交易日的內容，今天早於它的 `next_trade_date` 就代表今天休市。
+- 失敗時清空清單，是使用者決定的規則：當天一檔都沒有，或排程失敗沒有產出，專用清單都清空（spec 規則 9）。
+- 這段 prompt 沒有寫各工具的參數名稱，agent 要依 MCP server 公告的 schema 呼叫。實測時若發現參數用錯，在 prompt 開頭加一句「各工具的參數名稱與格式，以 MCP server 公告的 schema 為準」。
+- 08:00 只讀一次 `latest.json`。07:50 到 08:00 之間要手動重跑 `--bullish` 時，見「已知限制」。
+
+## 進階版(對話追問)
+
+在 Shioaji Pro 的 AI 對話裡主動詢問時才用，由那邊的 AI 做語意判斷，不是排程自動做。請 AI 讀同一份 `latest.json`：
+
+- `items`：簡易版結果，每檔有 `reason` 和 `evidence`。
+- `candidates`：被提到但沒進清單的股票（中性、信心不足、只有利空、混合排除）。
+- 判斷依據：`evidence` 裡的 `snippet`（提到該股前後 60 字）、`title`、`url`、`time`。`snippet` 是空字串時只能看標題；`counted: false` 的那幾則是盤勢彙整類文章，不代表個別股票。
+
+問法範例（三個以內）：
+
+- 「讀 `<latest.json 的絕對路徑>`，看 `candidates` 裡有哪幾檔其實是利多，依 `snippet` 說明理由。」
+- 「`items` 裡有哪幾檔的利多其實是別家公司的新聞、只是順帶提到它？」
+- 「`excluded` 的混合股，利多和利空新聞各是什麼？」
+
+要不要把結果寫回「新聞利多」清單，由對話當下決定。注意隔天 08:00 的排程會整份替換，對話裡手動加的股票不會保留。
+
+## 實測清單
+
+這是關卡：要等 `feat/340` 合併發佈後，在 App 裡逐項做。任一項不過就停下來回報使用者，不要自行改成 skill 直接寫自選股。
+
+1. App 的工具清單出現 `list_watchlists` 等自選股工具。
+2. 授權 `ui.control`、`task.manage` 後重啟 App，確認授權還在；排程在沒人操作時不跳授權詢問。（上游 `AGENT_HARNESS_CONTRACT.md` 寫授權重啟後失效，這項最可能不過；不過就代表 spec 規則 11 的前提不成立。）
+3. agent 讀得到 `latest.json` 的絕對路徑。
+4. 把排程時間設成兩分鐘後跑一次：清單成員與順序等於 `items`，其他清單沒變。
+5. 換成 `status: "empty"` 的檔：清單清空並收到通知。換成 `trade_date` 是昨天、今天早於 `next_trade_date` 的檔：清單不動、沒有通知。
+
 ## 已知限制
 
 - 新聞覆蓋不完整：每個來源只抓最新 10 到 15 則（cnyes 每類 15，其他每條 feed 10），前一天傍晚的新聞可能被擠掉，清單會漏幾檔，混合排除也可能漏判。第一版接受，之後做增量收集再補。
@@ -140,4 +208,4 @@ powershell -ExecutionPolicy Bypass -File scripts\register_bullish_task.ps1 -Remo
 - 同一天手動重跑若抓取失敗，error 檔會蓋掉當天已成功的清單檔（日期檔與 `latest.json` 都會被換掉）。Pro 端只在 08:00 讀一次，所以只有 07:50 到 08:00 之間重跑失敗才會影響當天清單。
 - 排程只在使用者登入時執行（不存密碼），電腦關機或沒登入就不會產出。
 
-設計背景與取捨見 `docs/superpowers/specs/2026-10-21-bullish-watchlist-design.md`。
+文中的 spec 是設計文件 `docs/superpowers/specs/2026-10-21-bullish-watchlist-design.md`，裡面有使用者已決定的規則 1 到 13 與各項取捨。
