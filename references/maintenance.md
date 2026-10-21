@@ -10,12 +10,11 @@
 | `references/` | 細節，需要時讀（索引在 SKILL.md「需要時再讀」） |
 | `config.example.json` | 設定範本，複製成 `config.json` 使用（`config.json` 不進版控） |
 | `requirements.txt` | 第三方套件 |
-| `SUGGESTED_CONFIG.md` | 備援路徑的細部設定參考 |
 | `NEWS_COVERAGE_PLAN.md` | 2026-06 的個股新聞覆蓋計畫（歷史文件，A1 到 A3、B1 已實作） |
 | `evals/` | 觸發邊界題（`trigger_eval.json`）與任務評測題（`evals.json`），執行期不讀 |
 | `scripts/news.py` | CLI |
 | `scripts/news_core.py` | `query_news()` 公開 API、Metabase 連線與可用性偵測、股名解析、TTL 快取、`fetch_market_news()` |
-| `scripts/news_providers.py` | `fetch_sanbao()`（主路徑失敗時退備援六家）、個股直取、即時流比對、離線股名 |
+| `scripts/news_providers.py` | `fetch_sanbao()`（呼叫主路徑，失敗直接報錯）、補內文（6 條並行）、個股直取、即時流比對、離線股名 |
 | `scripts/news_sentiment.py` | 規則層情緒與事件，純標準庫；直接執行會跑自我測試 |
 | `scripts/news_formatters.py` | console、md、json 排版，`--report`，digest 排版 |
 | `scripts/main.py` | 主路徑 `aggregate()`：九家並行加跨來源去重；直接執行才會寫 `data/raw/` |
@@ -85,20 +84,16 @@ Windows 工作排程：`premarket-news-digest` 週一到週五 07:40 跑 `script
 
 | 位置 | 問題 |
 |---|---|
-| `news_sentiment.py` 否定詞 | 單字否定詞（未、沒、不、無、免、非）用子字串比對，「未來、非農、無人機、不動產、免稅」出現在命中詞前 6 字內會把該詞翻到反方向（「未來訂單能見度高」判利空，「不動產景氣下滑」判利多） |
-| `news_sentiment.py` 轉折詞 | 「但、卻、惟、唯」用子字串比對（「不但」「卻步」也算），加權範圍到文末 |
-| `news_sentiment.py` `_scan_with_pos` | 長文近似平方成長（2 萬字約 0.5 秒），`--today` 全文會變慢 |
-| `news_core.py` codes 去重 | 先到先留，Metabase 的空內文版本會擋掉同標題的全文版 |
-| `news_providers.py` `recent_ok` | 報告型新聞用 `report_days` 取代 `days`，`days` 大於 10 時反而變短 |
+| `news_sentiment.py` 否定詞與轉折詞 | 已排除未來、非農、無人機、不動產、免稅、不但、卻步等常見詞（2026-10-21）；其他含「未、非、無、不、但、卻」的詞仍可能誤觸，加權範圍仍到文末 |
+| `news_sentiment.py` `_scan_with_pos` | 命中詞極密集的長文近似平方成長；一般新聞接近線性，`--today` 目前不是瓶頸 |
 | `news_core.py` `query_news(fetch_body=...)` | 參數不會傳進主路徑，`fetch_body=False` 不會省掉逐篇抓內文 |
 | `news_core.py` `per_stock_fetch` | `source=metabase` 時仍會打 cnyes 搜尋與 Yahoo 個股頁 |
 | `news_providers.py` Yahoo 個股頁與無時間項目 | `time` 補成查詢當下，看起來像剛發布 |
 | `news_core.py` `_sql_in_list` | 只跳脫單引號、沒處理反斜線（ClickHouse），呼叫端目前都是內部，風險低 |
 | `news_core.py` `query_news(codes="2330")` | 字串會被拆成單一字元，codes 必須傳 list |
 | `news_core.py` `match_all` | cnyes 搜尋腿只有短片段，AND 時那條腿幾乎失效 |
-| `news_core.py` 快取 | 沒有跨進程鎖，冷快取時同時起多個進程會各抓一次全量 |
 | `news_providers.py` `_get` | SSL 失敗退回未驗證連線的設計攔的是 `ssl.SSLError`，但 urllib 丟的是 `URLError`，實際不會生效 |
 | `news_core.py` 匯入 | 直接讀 `config.json`，沒有退回 `config.example.json` |
 | `twse_announce.py:87` | 抓取失敗訊息印到 stdout（目前不在 `news.py` 路徑上） |
-| `tests/test_cli_smoke.py`、`scripts/test_storage.py` | 會覆寫正式的 `out/news_result.json`、寫入真實 `data/` |
+| `scripts/test_storage.py` | 會把測試資料寫進真實 `data/` 而且不清理（`test_cli_smoke.py` 已改用 `--out=auto`，不再覆寫 `out/news_result.json`） |
 | Sino-notify-skill `references/news_api.md` | news 欄位寫成含 `tag_sentiment`、來源寫六家，已落後本 skill 的 API 契約 |

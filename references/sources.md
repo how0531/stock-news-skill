@@ -7,7 +7,7 @@
 `query_news` 與 `fetch_market_news` 都經 `_fetch_sanbao_cached`（TTL 快取，記憶體加 `out/.sanbao_cache.json`）呼叫 `news_providers.fetch_sanbao`：
 
 1. 主路徑 `main.aggregate()`：九家各佔一個執行緒並行（`ThreadPoolExecutor(max_workers=10)`），同一家內序列，最後跨來源去重。
-2. 備援路徑：只有在 `import main` 失敗（通常是缺套件）或 `aggregate()` 整個拋例外時，才退回 `news_providers.py` 裡的舊版六家並行爬蟲，stderr 會有 `New modular aggregator failed`。單一來源失敗只會印 `[來源] 抓取失敗`，不會觸發備援。
+2. 沒有備援路徑（2026-10-21 刪除舊版六家爬蟲）。`import main` 失敗（通常是缺套件）或 `aggregate()` 拋例外時，`fetch_sanbao` 直接報錯並提示 `pip install -r requirements.txt`：`--today` 會中止；`--codes`、`--keyword` 只回 Metabase 的結果，stderr 寫明即時新聞流失敗。單一來源失敗只會印 `[來源] 抓取失敗`，該家 0 則。
 
 判斷主路徑是否健康：看 stderr 每家的 `[來源] 完成 N 則 (X s)`，或跑 `python scripts/healthcheck.py`。
 
@@ -35,15 +35,6 @@
 
 - Metabase `cmoney.證券市場新聞`：關鍵字推進 SQL（`positionUTF8` 比對標題與內文），依代號直查只回標題。需要 `sinopac-metabase` 的 client 與帳密；`metabase_available()` 測不通時整條腿跳過。發布時間是假 UTC（台北牆鐘帶 Z），`_mb_time()` 改成 +08:00。
 - 個股直取（只在 `--codes`）：cnyes 全站搜尋 API（有股名用股名，沒有就用代號）加 Yahoo 個股頁新聞，`per_stock_fetch` 控制，不受 `--source` 影響。
-
-## 備援路徑六家（平常不跑）
-
-`cnyes`、`udn`、`ctee`、`anue`、`moneydj`、`yahoo`，ThreadPool 並行。設定讀 `config.json` 的 `*_categories`、`*_feeds`、`*_pages`、`*_limit`（主路徑不讀這些鍵，改了只會讓快取失效一次）。和主路徑的差異：
-
-- 沒有 `stock_codes` 與 `category` 欄位，所以出版商代號比對失效，`--intl` 只剩 cnyes 搜尋腿的結果。
-- `anue` 不是鉅亨論壇：`forum.cnyes.com` 在公司網路常 504，改用 cnyes 公開 newslist API 取 `wd_stock` 與 `forex`。主路徑的 cnyes 已含這兩類。
-- MoneyDJ 走 `newsreallist.aspx` 的 HTML 列表，時間欄只有 `MM/DD HH:MM`，parser 補當年，日期大於今天就退回去年。
-- 細部設定參考：[../SUGGESTED_CONFIG.md](../SUGGESTED_CONFIG.md)（只影響備援路徑）。
 
 ## 調整來源
 

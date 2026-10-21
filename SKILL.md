@@ -16,7 +16,7 @@ description: >-
 ## 前置需求
 
 1. `config.json`：第一次使用先把 skill 根目錄的 `config.example.json` 複製成同目錄的 `config.json`（`news_core` 匯入時就讀，缺檔會直接報錯）。有 Metabase 的人把 `metabase.scripts` 裡的 `<USER>` 換成實際路徑，沒有的人不用改。
-2. 套件：`pip install -r requirements.txt`。缺 requests、python-dateutil、pandas 任一個時，主路徑會悄悄退到舊版備援路徑（stderr 出現 `New modular aggregator failed`）；缺 lxml 時 udn 內文全空、ctee 整家 0 則。
+2. 套件：`pip install -r requirements.txt`。缺 requests、python-dateutil、pandas、beautifulsoup4、feedparser、tzdata 任一個時，即時新聞流會直接報錯並提示安裝（`--codes`、`--keyword` 只剩 Metabase 的結果）；缺 lxml 時 udn 內文全空、ctee 整家 0 則。
 3. Metabase（選用）：隔壁 `sinopac-metabase` skill 的 `metabase_client`，加環境變數 `METABASE_USER`、`METABASE_PASS`、`METABASE_URL`（沒設時會從 Windows 使用者環境變數讀）。
 4. 網路：要能連各家新聞網站，網域清單見 [references/sources.md](references/sources.md)。
 
@@ -49,7 +49,7 @@ python -X utf8 "$S\news.py" --today --format=md
 - 旗標只認 `--旗標=值` 的寫法，用空格隔開或拼錯都會被靜默忽略。全部旗標、輸出格式與更多範例見 [references/cli.md](references/cli.md)。
 - 除了 `--today`，一律加 `--out=auto`。結果寫到自己的 `out/news_<時間戳>_<pid>.json`（stderr 的 `[輸出]` 那行有路徑），不會覆寫共用的 `out/news_result.json`；那份是 `--today` 的原料，也是每天 07:40 自動盤前信的輸入。
 - 先讀 `--format=md` 的 stdout。要用程式讀 JSON 就讀 `--out` 的檔；Windows PowerShell 5.1 的 `|` 與 `>` 會弄壞中文，不要用管線接 JSON。
-- 快取冷的時候，第一次查詢要 1 到 2 分鐘：先告訴使用者，工具逾時設 5 分鐘以上，或改用背景執行。抓完的即時流快取 15 分鐘（`cache_ttl_sec`），這段時間其他查詢與其他進程都直接沿用。要平行查證多個題材，先單獨跑一次暖快取，不然每個進程會各抓一次全量。
+- 快取冷的時候，第一次查詢要 1 到 2 分鐘：先告訴使用者，工具逾時設 5 分鐘以上，或改用背景執行。抓完的即時流快取 15 分鐘（`cache_ttl_sec`），這段時間其他查詢與其他進程都直接沿用。平行查證多個題材可以直接同時跑：快取冷的時候只有一個進程會抓全量，其他進程會等它抓完再沿用（最多等 3 分鐘）。
 - 盤中要最新資料：只查一兩次就先刪 `out/.sanbao_cache.json`；要連續查很多次就把 `cache_ttl_sec` 調小（例如 300）。不要設成 0，設 0 之後每次查詢都要重抓 1 到 2 分鐘。
 
 ### 3. 回報

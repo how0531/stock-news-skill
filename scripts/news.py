@@ -206,15 +206,16 @@ def main():
           f"all={args['match_all']} intl={args['intl']}",
           file=sys.stderr)
 
+    # 股名只解析一次,傳進 query_news(它就不會再查一次 Metabase),報告標頭也用同一份
+    code_to_name = _resolve_code_to_name(codes, args["source"]) if codes else {}
     res = NC.query_news(
         codes=codes, keyword=keyword,
         days=args["days"], source=args["source"],
         individual_only=args["individual_only"],
         tag_sentiment=not args["no_sentiment"],
+        names=code_to_name or None,
         match_all=args["match_all"], intl=args["intl"],
     )
-
-    code_to_name = _resolve_code_to_name(codes, args["source"]) if codes else {}
 
     # 組 reports(若 --report)
     reports_data = None

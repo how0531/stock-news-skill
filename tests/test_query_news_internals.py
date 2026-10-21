@@ -473,6 +473,42 @@ def test_codes_without_metabase():
           f"direct={calls['direct']}")
 
 
+def test_fetch_lock_and_codes_merge():
+    """跨進程抓取鎖:別人持鎖時等它寫好磁碟快取直接沿用;代號去重:全文版取代只有標題的 Metabase 版。"""
+    import tempfile
+    import threading
+    import time as _time
+    tmpdir = pathlib.Path(tempfile.mkdtemp())
+    orig = (NC._SB_DISK, NC._SB_LOCKFILE)
+    try:
+        NC._SB_DISK = tmpdir / ".sanbao_cache.json"
+        NC._SB_LOCKFILE = tmpdir / ".sanbao_fetch.lock"
+        got = NC._wait_fetch_lock("k", 60, wait=10)
+        check("lock:沒人持鎖時自己拿到鎖", got == (True, None) and NC._SB_LOCKFILE.exists(), str(got))
+        threading.Timer(1.2, lambda: NC._disk_cache_save("k", _time.time(), [{"title": "別人抓的"}])).start()
+        owned, disk = NC._wait_fetch_lock("k", 60, wait=10)          # 鎖還在 → 等磁碟快取
+        check("lock:別人持鎖時等它寫好快取並沿用",
+              not owned and disk and disk[1][0]["title"] == "別人抓的", f"owned={owned} disk={disk}")
+    finally:
+        NC._SB_DISK, NC._SB_LOCKFILE = orig
+
+    title = "台積電法說會登場 重點整理"
+    origs = (NC.get_news_metabase, NP.fetch_stock_news)
+    NC.get_news_metabase = lambda codes, days: {"2330": [
+        {"time": _iso(1), "title": title, "source": "metabase", "url": "", "summary": "", "body": ""}]}
+    NP.fetch_stock_news = lambda code, name, **k: [
+        {"time": _iso(1), "title": title, "source": "cnyes-search", "url": "http://fake/full",
+         "summary": "", "body": "全文內容"}]
+    try:
+        res = NC.query_news(codes=["2330"], names={"2330": "台積電"}, source="metabase",
+                            days=3, fetch_body=False, tag_sentiment=False)
+    finally:
+        NC.get_news_metabase, NP.fetch_stock_news = origs
+    lst = res["by_code"].get("2330", [])
+    check("codes 去重:同標題時全文版取代只有標題的 Metabase 版",
+          len(lst) == 1 and lst[0]["body"] == "全文內容" and lst[0]["url"], f"got {lst}")
+
+
 def test_local_stock_name_fallback():
     """離線股名:官方全市場 tw_names.json 優先,其次策展字典,都沒有回空字串。"""
     NP.local_stock_name("2330")                     # 先觸發載入,再換成假清單
@@ -521,6 +557,7 @@ def main():
     print("\n--- 10) 沒有 Metabase 的代號查詢 ---")
     test_codes_without_metabase()
     test_local_stock_name_fallback()
+    test_fetch_lock_and_codes_merge()
     print("\n--- 11) monkeypatch 還原 ---")
     test_patch_restored()
 

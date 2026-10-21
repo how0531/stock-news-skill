@@ -15,6 +15,7 @@ classify() 是 news_core.query_news() 在 keyword/codes 模式最後一步呼叫
   B. 強訊號方向(僅取無爭議的極端案例):
      - 「訂單滿手 / 獲利大增 / 創新高」等 → bullish
      - 「跌停 / 踩雷 / 認列損失 / 砍單」等 → bearish
+  D. 否定/轉折誤判回歸(未來、非農、不動產、卻步等常見詞不可誤翻)
 
 刻意「不」對模糊/中性偏邊界的標題寫死斷言 —— news_sentiment.py 詞庫正由
 另一 agent 同步強化,邊界案例的判定可能浮動,只測結構 + 強訊號才穩。
@@ -149,6 +150,30 @@ def main():
             ok = expect_ev in r["events"]
             record(f"event:{name}:hit", ok,
                    f"events={r['events']} (expect 含 '{expect_ev}')")
+
+    # --- D. 否定/轉折誤判回歸:含否定字或轉折字的常見詞不可誤翻方向 ---
+    # 「未來/非農/無人機/不動產/免稅/不僅/非常/不斷」的「未非無不免」不是否定;
+    # 「卻步」的「卻」不是轉折。修正前這些句子會被判反方向或中性。
+    print("\n--- D. 否定/轉折誤判回歸 ---")
+    regression_cases = [
+        ("neg-weilai", "未來訂單能見度高", "bullish"),
+        ("neg-feinong", "非農就業數據優於預期", "bullish"),
+        ("neg-budongchan-up", "不動產營收創新高", "bullish"),
+        ("neg-mianshui", "免稅店來客數成長", "bullish"),
+        ("neg-wurenji", "無人機訂單滿手 出貨暢旺", "bullish"),
+        ("neg-budongchan-down", "不動產景氣下滑", "bearish"),
+        ("neg-bujin", "不僅營收創新高 獲利大增", "bullish"),
+        ("neg-feichang", "非常看好 營收不斷攀升", "bullish"),
+        ("pivot-quebu", "外資賣超 減碼 投資人卻步 法人看好", "bearish"),
+        # 真否定仍要生效(排除清單不可誤傷)
+        ("neg-real", "面板報價未見回升 廠商營運仍承壓", "bearish"),
+    ]
+    for name, title, expect in regression_cases:
+        r = assert_contract(f"regress:{name}", title)
+        if r is not None:
+            ok = r["sentiment"] == expect
+            record(f"regress:{name}:direction", ok,
+                   f"got={r['sentiment']} (expect {expect}) | {title}")
 
     ok = sum(1 for _, p, _ in results if p)
     fail = sum(1 for _, p, _ in results if not p)

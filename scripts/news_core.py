@@ -48,16 +48,8 @@ _SB_LOCK = threading.Lock()          # 保護 _SB_CACHE get/set(query_news 為�
 _SB_DISK = BASE / "out" / ".sanbao_cache.json"
 
 # 只有這些 key 會影響 fetch_sanbao 抓到的內容;納入指紋。
-# 注意:fetch_sanbao(n) 不吃 source、六家照抓,故 source 不影響抓取內容、不納入指紋。
-_CACHE_FINGERPRINT_KEYS = (
-    "cnyes_categories", "cnyes_pages",
-    "udn_feeds", "udn_limit",
-    "ctee_pages", "ctee_limit",
-    "anue_categories", "anue_pages",
-    "moneydj_pages", "moneydj_limit",
-    "yahoo_feeds", "yahoo_limit",
-    "fetch_body",                    # 主路徑 main.aggregate 依它決定抓不抓內文
-)
+# 主路徑 main.aggregate 的來源寫死在程式,config 只有 fetch_body 會改變抓取內容。
+_CACHE_FINGERPRINT_KEYS = ("fetch_body",)
 
 
 def _cache_key(n):
@@ -127,6 +119,39 @@ def _disk_cache_save(key, ts, items):
             pass
 
 
+_SB_LOCKFILE = _SB_DISK.with_name(".sanbao_fetch.lock")
+
+
+def _wait_fetch_lock(key, ttl, wait=180):
+    """冷快取時只讓一個進程抓全量,其他進程等它寫好磁碟快取再沿用(平行查證不再各抓一次)。
+    回 (拿到鎖?, 磁碟快取或 None)。等超過 wait 秒、或建不了鎖檔,就自己抓。"""
+    deadline = time.time() + wait
+    while True:
+        try:
+            _SB_LOCKFILE.parent.mkdir(parents=True, exist_ok=True)
+            os.close(os.open(_SB_LOCKFILE, os.O_CREAT | os.O_EXCL | os.O_WRONLY))
+            disk = _disk_cache_load(key, ttl)    # 前一個持有者可能剛寫完快取才放鎖
+            if disk is not None:
+                _SB_LOCKFILE.unlink()
+                return False, disk
+            return True, None
+        except FileExistsError:
+            try:
+                if time.time() - _SB_LOCKFILE.stat().st_mtime > wait:   # 持有者當掉留下的舊鎖
+                    _SB_LOCKFILE.unlink()
+                    continue
+            except Exception:
+                pass
+            disk = _disk_cache_load(key, ttl)
+            if disk is not None:
+                return False, disk
+            if time.time() > deadline:
+                return False, None
+            time.sleep(1)
+        except Exception:
+            return False, None
+
+
 def _fetch_sanbao_cached(NP, n):
     """fetch_sanbao 的 TTL 快取包裝(記憶體 → 磁碟 → 重抓)。
     - TTL 內同指紋 → 回快取的**深拷貝**(不重抓;深拷貝避免呼叫端 mutate 污染快取)。
@@ -144,20 +169,30 @@ def _fetch_sanbao_cached(NP, n):
         if hit is not None and (now - hit[0]) < ttl:
             return copy.deepcopy(hit[1])         # TTL 內 → 命中(回拷貝防污染)
     use_disk = _is_real_fetch(NP)
+    owned = False
     if use_disk:
         disk = _disk_cache_load(key, ttl)
+        if disk is None:                         # 沒快取:搶跨進程抓取鎖,搶不到就等別人抓完
+            owned, disk = _wait_fetch_lock(key, ttl)
         if disk is not None:                     # 別的進程剛抓過 → 直接沿用
-            print(f"  [cache] 沿用 {int(now - disk[0])} 秒前的即時新聞快取 "
+            print(f"  [cache] 沿用 {int(time.time() - disk[0])} 秒前的即時新聞快取 "
                   f"({len(disk[1])} 則,TTL {ttl}s)", file=sys.stderr)
             with _SB_LOCK:
                 _SB_CACHE[key] = disk
             return copy.deepcopy(disk[1])
-    items = NP.fetch_sanbao(n)                    # miss/過期 → 鎖外重抓
-    done = time.time()                            # 抓完才記時間
-    with _SB_LOCK:
-        _SB_CACHE[key] = (done, items)
-    if use_disk and items:                        # 空結果(網路瞬斷)不落磁碟,免得 15 分鐘內別的進程(含 07:40 自動信)都拿 0 則
-        _disk_cache_save(key, done, items)
+    try:
+        items = NP.fetch_sanbao(n)                # miss/過期 → 鎖外重抓
+        done = time.time()                        # 抓完才記時間
+        with _SB_LOCK:
+            _SB_CACHE[key] = (done, items)
+        if use_disk and items:                    # 空結果(網路瞬斷)不落磁碟,免得 15 分鐘內別的進程(含 07:40 自動信)都拿 0 則
+            _disk_cache_save(key, done, items)
+    finally:                                      # 先寫好磁碟快取再放鎖,等待中的進程才拿得到
+        if owned:
+            try:
+                _SB_LOCKFILE.unlink()
+            except Exception:
+                pass
     return copy.deepcopy(items)                   # 原件留快取,回拷貝給呼叫端
 # --------------------------------------------------------------------------
 
@@ -182,11 +217,18 @@ def _load_mb_env():
                 os.environ[k] = v
 
 
+_MB_CLIENT = None
+
+
 def mb():
-    _load_mb_env()
-    sys.path.insert(0, CFG["metabase"]["scripts"])
-    from metabase_client import MetabaseClient
-    return MetabaseClient()
+    """同一進程共用一個 client:每建一個新 client,第一次查詢前都要多一次 token 驗證請求。"""
+    global _MB_CLIENT
+    if _MB_CLIENT is None:
+        _load_mb_env()
+        sys.path.insert(0, CFG["metabase"]["scripts"])
+        from metabase_client import MetabaseClient
+        _MB_CLIENT = MetabaseClient()
+    return _MB_CLIENT
 
 
 _MB_OK = None
@@ -432,6 +474,15 @@ def _tag_sentiment_inplace(items):
             it.setdefault("events", [])
 
 
+def _sb_or_empty(NP, n):
+    """即時流抓不到(主路徑缺套件或例外)時,query_news 只回 Metabase 的結果,並在 stderr 講清楚原因。"""
+    try:
+        return _fetch_sanbao_cached(NP, n)
+    except Exception as e:
+        print(f"  即時新聞流失敗,本次只有 Metabase 的結果:{e}", file=sys.stderr)
+        return []
+
+
 def query_news(codes=None, keyword=None, days=None, source=None,
                fetch_body=None, individual_only=None, tag_sentiment=None,
                names=None, match_all=None, intl=None):
@@ -485,13 +536,18 @@ def query_news(codes=None, keyword=None, days=None, source=None,
 
         def _merge(code, lst):
             code = str(code)
-            seen = {x["title"] for x in by_code.get(code, [])}
             tgt = by_code.setdefault(code, [])
+            pos = {x["title"]: i for i, x in enumerate(tgt)}
             for it in lst:
                 t = it.get("title")
-                if t and t not in seen:
+                if not t:
+                    continue
+                i = pos.get(t)
+                if i is None:
+                    pos[t] = len(tgt)
                     tgt.append(it)
-                    seen.add(t)
+                elif not tgt[i].get("body") and (it.get("body") or it.get("url")):
+                    tgt[i] = it          # Metabase 只有標題;同標題的全文版取代它
 
         rd = int(n.get("report_days", 10))      # 產業報告放寬窗;一般新聞用 days(預設 3)
         win = max(days, rd)                      # 拉取時先用較寬窗,最後再用 recent_ok 精準收口
@@ -522,7 +578,7 @@ def query_news(codes=None, keyword=None, days=None, source=None,
                 print(f"  per-stock fetch pool warn: {e!r}", file=sys.stderr)
         # 3) 綜合清單 + 比對(股名/代號/出版商代號/別名)補遺
         if source in ("sanbao", "both"):
-            sb_items = _fetch_sanbao_cached(NP, n)
+            sb_items = _sb_or_empty(NP, n)
             if fb:                                  # 比對前先抓『標題含產業熱詞』候選文內文(解雞生蛋)
                 NP.prefetch_candidate_bodies(sb_items, n.get("body_max_chars", 600),
                                              n.get("body_fetch_limit", 40))
@@ -555,28 +611,35 @@ def query_news(codes=None, keyword=None, days=None, source=None,
                     "body": it.get("body", "") or "",
                     "category": it.get("category", "") or ""}
 
-        if source in ("metabase", "both"):
-            try:
-                hits += search_metabase_keyword(kws, kw_days, mall)
-            except Exception as e:
-                print(f"  metabase kw warn: {e!r}", file=sys.stderr)
-        if source in ("sanbao", "both"):
-            if sb_items is None:
-                sb_items = _fetch_sanbao_cached(NP, n)
-            for it in sb_items:
-                blob = (it["title"] + " " + (it.get("summary") or "") + " "
-                        + (it.get("body") or ""))
-                if _kw_match(blob, kws, mall):
-                    hits.append(_kw_hit(it))
+        # 三條腿(Metabase、即時流、每個關鍵字一次 cnyes 全站搜尋)彼此獨立,並行跑;
+        # 結果依固定順序合併,去重結果與序列版一致。
+        def _sb_hits():
+            items = sb_items if sb_items is not None else _sb_or_empty(NP, n)
+            return [_kw_hit(it) for it in items
+                    if _kw_match(it["title"] + " " + (it.get("summary") or "") + " "
+                                 + (it.get("body") or ""), kws, mall)]
+
+        def _cnyes_hits(k):
             # cnyes 全站搜尋腿:即時流只有最新約 200 則,總經/國際題材常在更早或不在清單裡
+            return [_kw_hit(it) for it in NP.search_cnyes_news(k)
+                    if _kw_match(it["title"] + " " + it.get("body", ""), kws, mall)]
+
+        legs = []
+        if source in ("metabase", "both"):
+            legs.append(("metabase kw", lambda: search_metabase_keyword(kws, kw_days, mall)))
+        if source in ("sanbao", "both"):
+            legs.append(("sanbao kw", _sb_hits))
             if n.get("kw_search_cnyes", True):
-                for k in kws:
+                legs += [(f"cnyes-search {k}", lambda k=k: _cnyes_hits(k)) for k in kws]
+        if legs:
+            import concurrent.futures as _cf
+            with _cf.ThreadPoolExecutor(max_workers=len(legs)) as ex:
+                futs = [(name, ex.submit(fn)) for name, fn in legs]
+                for name, fut in futs:
                     try:
-                        for it in NP.search_cnyes_news(k):
-                            if _kw_match(it["title"] + " " + it.get("body", ""), kws, mall):
-                                hits.append(_kw_hit(it))
+                        hits += fut.result()
                     except Exception as e:
-                        print(f"  cnyes-search warn {k}: {e!r}", file=sys.stderr)
+                        print(f"  {name} warn: {e!r}", file=sys.stderr)
         if intl:                            # 只留國際/總經分類(metabase 無分類,一併排除)
             hits = [h for h in hits if h.get("category") in INTL_CATEGORIES]
 

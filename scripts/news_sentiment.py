@@ -218,8 +218,18 @@ NEGATION_IMMUNE: set = {
     "產能不足", "周轉不靈", "財報不如預期",
 }
 
+# 含否定字但本身不是否定的常見詞：否定窗口掃描前先遮蔽，
+# 避免「未來訂單能見度高」「不動產營收創新高」的「未」「不」被當否定而誤翻。
+NEGATION_FALSE_HITS: List[str] = [
+    "未來", "非農", "無人機", "不動產", "免稅",
+    "不但", "不僅", "不斷", "非常",
+]
+
 # 轉折詞：其後子句是新聞重點，命中詞落在轉折之後給予額外加權。
 PIVOT_WORDS: List[str] = ["但", "卻", "然而", "不過", "惟", "可惜", "只是", "唯"]
+
+# 含轉折字但本身不是轉折的常見詞：轉折掃描前先遮蔽（「不但」「卻步」「唯一」）。
+PIVOT_FALSE_HITS: List[str] = ["不但", "卻步", "唯一"]
 
 # 轉折後子句的命中詞，分數乘上此倍率（取整數加權）。
 PIVOT_BOOST = 2
@@ -287,14 +297,24 @@ def _scan_events(text: str) -> List[str]:
     return found
 
 
+def _mask_words(text: str, words: List[str]) -> str:
+    """把 words 裡的詞換成等長佔位符（索引不變），供否定/轉折掃描排除常見詞。"""
+    for w in words:
+        if w in text:
+            text = text.replace(w, "\x00" * len(w))
+    return text
+
+
 def _is_negated(text: str, pos: int, word: str) -> bool:
     """命中詞起點 pos 前方 NEGATION_WINDOW 字內是否有否定詞。
 
     若該命中詞本身屬於 NEGATION_IMMUNE（已內含否定/方向語意），不視為被否定，
     避免「不如預期」「未如預期」被二次否定翻成正向。
+    NEGATION_FALSE_HITS / PIVOT_FALSE_HITS 先遮蔽，不算否定也不算轉折。
     """
     if word in NEGATION_IMMUNE:
         return False
+    text = _mask_words(_mask_words(text, NEGATION_FALSE_HITS), PIVOT_FALSE_HITS)
     win_start = max(0, pos - NEGATION_WINDOW)
     window = text[win_start:pos]
     # 子句邊界：只看「最後一個標點 / 轉折詞之後」到命中詞之間的範圍，
@@ -312,6 +332,7 @@ def _is_negated(text: str, pos: int, word: str) -> bool:
 
 def _pivot_start(text: str) -> int:
     """回傳第一個轉折詞之後的索引；沒有轉折詞則回傳一個大數（代表無轉折）。"""
+    text = _mask_words(text, PIVOT_FALSE_HITS)
     best = len(text) + 1
     for p in PIVOT_WORDS:
         idx = text.find(p)
@@ -565,6 +586,17 @@ if __name__ == "__main__":
         ("中鋼報價走揚 開工率提升 鋼市轉強",                  "bullish"),
         ("台塑報價崩跌 認列庫存跌價損失",                      "bearish"),
         ("某產險防疫保單鉅額理賠 全年恐由盈轉虧",            "bearish"),
+        # --- 修復回歸：含否定字的常見詞（未來/非農/不動產…）不算否定 ---
+        ("未來訂單能見度高",                                    "bullish"),
+        ("非農就業數據優於預期",                                "bullish"),
+        ("不動產營收創新高",                                    "bullish"),
+        ("免稅店來客數成長",                                    "bullish"),
+        ("無人機訂單滿手 出貨暢旺",                            "bullish"),
+        ("不動產景氣下滑",                                      "bearish"),
+        ("不僅營收創新高 獲利大增",                            "bullish"),
+        ("非常看好 營收不斷攀升",                              "bullish"),
+        # --- 修復回歸：「卻步」不算轉折（不可把其後子句加權）---
+        ("外資賣超 減碼 投資人卻步 法人看好",                  "bearish"),
     ]
 
     print(f"字典規模：利多 {len(BULLISH_WORDS)} 詞 / 利空 {len(BEARISH_WORDS)} 詞 / "

@@ -75,8 +75,8 @@ SOURCES: dict[str, dict] = {
         "body_selectors": ["div.caas-body", "article", "main"],  # 高信心（Yahoo CaaS）
     },
 }
-# 註：原 ctee_google（Google News RSS 代理）已移除 — 主 ctee 源改走解碼管線
-# (news_providers.fetch_ctee → ctee.py)會把 Google redirect 還原成真實 /news/ URL
+# 註：原 ctee_google（Google News RSS 代理）已移除，主 ctee 源改走 ctee.py 的解碼管線，
+# 會把 Google redirect 還原成真實 /news/ URL
 # 並可抓全文；ctee_google 只停在 news.google.com 無法取內文，純重複，故刪。
 
 

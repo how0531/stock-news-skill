@@ -4,8 +4,11 @@ test_cli_smoke.py — scripts/news.py CLI 黑箱煙霧測試。
 
 subprocess 跑各組合,驗:
   1) exit code == 0
-  2) out/news_result.json 存在且為合法 JSON
+  2) stderr 的「[輸出] <路徑>」指向的檔存在且為合法 JSON
   3) JSON 含 generated_at / query / by_code / keyword_hits 四個頂層鍵
+
+每組指令都加 --out=auto(寫 out/news_<時間戳>_<pid>.json),讀完即刪;
+不碰 out/news_result.json(那是每天 07:40 自動盤前信的輸入)。
 
 跑 7 個組合:
   - --codes=2330 --days=3
@@ -28,7 +31,10 @@ import subprocess
 
 BASE = pathlib.Path(__file__).resolve().parent.parent
 NEWS_PY = BASE / "scripts" / "news.py"
-OUT_JSON = BASE / "out" / "news_result.json"
+OUT_DIR = BASE / "out"
+# 正式輸出檔:測試不可刪除、讀取或覆寫
+PROTECTED_JSON = OUT_DIR / "news_result.json"
+OUT_MARK = "[輸出] "
 
 REQUIRED_TOP_KEYS = {"generated_at", "query", "by_code", "keyword_hits"}
 
@@ -41,22 +47,44 @@ def record(case, ok, msg=""):
     results.append((case, ok, msg))
 
 
+def _output_path(stderr):
+    """從 news.py 的 stderr 找最後一行「[輸出] <路徑>」,回傳 Path;找不到回 None。"""
+    path = None
+    for line in (stderr or "").splitlines():
+        if line.startswith(OUT_MARK):
+            path = line[len(OUT_MARK):].strip()
+    return pathlib.Path(path) if path else None
+
+
+def _is_protected(path):
+    """是否為正式輸出檔 out/news_result.json(測試不可刪也不可讀)。"""
+    try:
+        return path.resolve() == PROTECTED_JSON.resolve()
+    except Exception:
+        return path.name == PROTECTED_JSON.name
+
+
+def _cleanup(path):
+    """刪除本次 --out=auto 產生的暫存輸出檔;正式輸出檔一律不動。"""
+    if path is None or _is_protected(path) or not path.name.startswith("news_"):
+        return
+    try:
+        if path.exists():
+            path.unlink()
+    except Exception as e:
+        print(f"  warn: 無法刪暫存輸出 {path}: {e!r}", file=sys.stderr)
+
+
 def run_one(case, args, timeout=180, stdout_check=None,
             expect_report_in_json=False):
-    """跑一個 CLI 組合。
+    """跑一個 CLI 組合(自動加 --out=auto,改讀 stderr「[輸出]」指向的暫存檔)。
 
     stdout_check: callable(stdout_str) -> (ok:bool, msg:str) or None。
                   None 表不驗 stdout。
-    expect_report_in_json: True 則驗 out/news_result.json 內含 reports 鍵。
+    expect_report_in_json: True 則驗輸出 JSON 內含 reports 鍵。
     """
+    args = list(args) + ["--out=auto"]
     print(f"\n--- case: {case} args={args} ---")
-    # 清舊輸出,避免 false positive
-    if OUT_JSON.exists():
-        try:
-            OUT_JSON.unlink()
-        except Exception as e:
-            print(f"  warn: 無法刪舊 out/news_result.json: {e!r}",
-                  file=sys.stderr)
 
     cmd = [sys.executable, "-X", "utf8", str(NEWS_PY)] + args
     env = dict(os.environ)
@@ -70,9 +98,11 @@ def run_one(case, args, timeout=180, stdout_check=None,
         record(f"{case}:exit", False, f"timeout > {timeout}s")
         return
     elapsed = time.time() - t0
+    out_path = _output_path(proc.stderr)
 
     if proc.returncode != 0:
-        # 印 stderr 末段方便 debug
+        # 印 stderr 末段方便 debug;若已寫出暫存檔也順手清掉
+        _cleanup(out_path)
         err_tail = "\n".join((proc.stderr or "").splitlines()[-8:])
         record(f"{case}:exit", False,
                f"returncode={proc.returncode} ({elapsed:.1f}s); "
@@ -80,14 +110,24 @@ def run_one(case, args, timeout=180, stdout_check=None,
         return
     record(f"{case}:exit", True, f"returncode=0 ({elapsed:.1f}s)")
 
-    if not OUT_JSON.exists():
-        record(f"{case}:output", False, "out/news_result.json 未產生")
+    if out_path is None:
+        record(f"{case}:output", False, f"stderr 未見「{OUT_MARK}<路徑>」")
+        return
+    if _is_protected(out_path):
+        # --out=auto 沒生效,寫到了正式檔:不讀也不刪,直接判失敗
+        record(f"{case}:output", False,
+               f"輸出指向正式檔 {out_path},--out=auto 未生效")
+        return
+    if not out_path.exists():
+        record(f"{case}:output", False, f"{out_path} 未產生")
         return
     try:
-        data = json.loads(OUT_JSON.read_text(encoding="utf-8"))
+        data = json.loads(out_path.read_text(encoding="utf-8"))
     except Exception as e:
         record(f"{case}:json", False, f"JSON parse 失敗: {e!r}")
         return
+    finally:
+        _cleanup(out_path)
 
     miss = REQUIRED_TOP_KEYS - set(data.keys())
     if miss:
@@ -108,7 +148,7 @@ def run_one(case, args, timeout=180, stdout_check=None,
     if expect_report_in_json:
         if "reports" not in data:
             record(f"{case}:reports-key", False,
-                   "out/news_result.json 缺 reports 鍵")
+                   f"{out_path.name} 缺 reports 鍵")
         elif not isinstance(data["reports"], list):
             record(f"{case}:reports-key", False,
                    f"reports 非 list: {type(data['reports']).__name__}")

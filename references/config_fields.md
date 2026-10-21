@@ -3,7 +3,6 @@
 何時讀：要調整 `config.json`，或確認某個設定的預設值與實際作用時。
 
 - 「預設」欄是 `config.example.json` 的值；鍵缺席時的程式內預設可能不同，表中有註明。
-- 即時新聞主路徑 `main.aggregate()` 的來源與抓取量寫死在程式（見 [sources.md](sources.md)「調整來源」）。標「僅備援路徑」的鍵平常不生效，改了只會讓現有快取失效一次。
 - CLI 用 `--individual-only`、`--no-sentiment` 控制，不讀 config 的 `individual_only`、`tag_sentiment`；這兩個鍵只在程式化呼叫沒傳參數時才讀。
 
 | 欄位 | 意義 | 預設 |
@@ -20,9 +19,3 @@
 | `news.body_fetch_limit` | 補內文的網路抓取上限，每一輪各算一次（codes 模式的預抓與補抓各 40）；對象是 body 為空、有連結、來源不是 metabase、cnyes、anue 的項目 | 40 |
 | `news.individual_only` | 程式化呼叫的 keyword 模式是否剔除泛大盤標題 | false |
 | `news.tag_sentiment` | 程式化呼叫是否補 sentiment、confidence、events | true |
-| `news.cnyes_categories` / `cnyes_pages` | cnyes 分類與頁數（僅備援路徑；鍵缺席時程式預設 tw_stock、headline 與 3 頁） | tw_stock、us_stock / 8 |
-| `news.udn_feeds` / `udn_limit` | udn RSS 清單與每條上限（僅備援路徑；鍵缺席時程式預設為空） | 5591、5590、12017、5588、5592、5595 六條 / 30 |
-| `news.ctee_pages` / `ctee_limit` | ctee 列表頁與上限（僅備援路徑；ctee 實際走 Google News 解碼，pages 已無作用） | livenews/feed / 60 |
-| `news.anue_categories` / `anue_pages` | anue 取 cnyes API 的子站與頁數（僅備援路徑） | wd_stock、forex / 2 |
-| `news.moneydj_pages` / `moneydj_limit` | MoneyDJ 列表頁與上限（僅備援路徑） | newsreallist a=mb010000 / 40 |
-| `news.yahoo_feeds` / `yahoo_limit` | Yahoo RSS 與上限（僅備援路徑；鍵缺席時程式預設只有 tw-market、上限 40） | tw-market、tw.news.yahoo.com industry、tw.stock.yahoo.com industry 三條 / 60 |
