@@ -42,7 +42,7 @@ def check(name, cond, msg=""):
 
 LEX = SM.build_lexicon(
     {"2408": "南亞科", "1303": "南亞", "2027": "大成鋼", "5347": "世界", "6643": "M31",
-     "2330": "台積電", "1459": "聯發", "2454": "聯發科"},
+     "2330": "台積電", "1459": "聯發", "2454": "聯發科", "5203": "訊連", "8069": "元太"},
     {"2330.TW": {"name_zh": "台積電", "aliases": ["台積電", "TSMC", "2330.TW", "2330"]},
      "2330.TWO": {"name_zh": "台積電", "aliases": ["台積", "護國神山"]},
      "2408.TW": {"name_zh": "南亞科", "aliases": ["DRAM"]},
@@ -61,7 +61,7 @@ def test_mentions_filters():
     check("常用詞股名不算", f("世界經濟展望", "", [], LEX) == {})
     check("常用詞股名靠代號仍命中", f("世界(5347)營收創高", "", [], LEX) == {"5347": "title"})
     check("代號後接年不算", f("2027年展望", "預估 2027 年", [], LEX) == {})
-    check("網址裡的數字不算", f("", "見 https://x.com/a?id=2027 說明", [], LEX) == {})
+    check("網址裡的括號代號不算", f("", "見 https://x.com/q?c=(2027) 說明", [], LEX) == {})
     check("英數邊界", f("M310 晶片", "", [], LEX) == {} and f("M31 營收", "", [], LEX) == {"6643": "title"})
     check(".TW 與 .TWO 的別名合併", f("台積拿下大單", "", [], LEX) == {"2330": "title"})
     check("英文別名", f("TSMC capex", "", [], LEX) == {"2330": "title"})
@@ -72,6 +72,40 @@ def test_mentions_filters():
          "2222.TW": {"name_zh": "乙公司", "aliases": ["共用名"]}})
     check("同一別名在兩檔以上全部丟", f("共用名大漲", "", [], shared) == {}
           and f("甲公司大漲", "", [], shared) == {"1111": "title"})
+
+
+def test_mentions_code_rule():
+    f = SM.find_mentions
+    # 裸數字不算代號(年度、數量、金額都會長得像)
+    check("明（2027）年度不算", f("證交所對明（2027）年度公告", "", [], LEX) == {})
+    check("括號代號後接月日也不算", f("（2027）月營收", "", [], LEX) == {} and f("(2027) 日", "", [], LEX) == {})
+    check("2027會計年度不算", f("2027會計年度", "", [], LEX) == {})
+    check("2027/28年度不算", f("2027/28年度預算", "", [], LEX) == {})
+    check("於2027下半年通過不算", f("", "計畫於2027下半年通過", [], LEX) == {})
+    check("7萬2027人不算", f("", "約7萬2027人受惠", [], LEX) == {})
+    check("數字加空白加元不算", f("", "價格 2027 元", [], LEX) == {})
+    check("2027戶不算", f("", "開戶 2027戶", [], LEX) == {})
+    # 括號或 -TW 類後綴才算代號
+    check("括號代號:半形", f("世界(5347)營收創高", "", [], LEX) == {"5347": "title"})
+    check("括號代號:全形", f("大成鋼（2027）", "", [], LEX) == {"2027": "title"})
+    check("括號代號:沒有股名也算", f("（2027）漲停", "", [], LEX) == {"2027": "title"})
+    check("括號代號:後綴 -TW / .TW / -TWO", f("(2027-TW)", "", [], LEX) == {"2027": "title"}
+          and f("(2027.TW)", "", [], LEX) == {"2027": "title"} and f("（2027-TWO）", "", [], LEX) == {"2027": "title"})
+    check("後綴代號:大小寫不拘", f("2027-TW 大漲", "", [], LEX) == {"2027": "title"}
+          and f("2027.tw 大漲", "", [], LEX) == {"2027": "title"} and f("2027-Two 大漲", "", [], LEX) == {"2027": "title"})
+    check("後綴後面不能再黏英數", f("2027-TWD 報價", "", [], LEX) == {})
+    check("括號內代號必須在字典裡", f("(9999)", "", [], LEX) == {})
+    check("內文括號代號算 body", f("盤勢", "世界(5347)走強", [], LEX) == {"5347": "body"})
+
+
+def test_mentions_block_terms():
+    f = SM.find_mentions
+    check("簡訊連結不算訊連", f("簡訊連結勿點", "", [], LEX) == {})
+    check("東南亞科技不算南亞科", f("東南亞科技業擴產", "", [], LEX) == {})
+    check("元太外匯不算元太", f("元太外匯保證金", "", [], LEX) == {})
+    check("訊連科技照常命中", f("訊連科技發表", "", [], LEX) == {"5203": "title"})
+    check("元太營收照常命中", f("元太營收創高", "", [], LEX) == {"8069": "title"})
+    check("阻擋詞不影響前後文的其他股名", f("簡訊連結 台積電法說", "", [], LEX) == {"2330": "title"})
 
 
 def test_mentions_publisher_codes():
@@ -96,6 +130,7 @@ def test_real_lexicon():
     check("真實字典:南亞科、台積、聯發", lex["terms"].get("南亞科") == "2408"
           and lex["terms"].get("台積") == "2330" and lex["terms"].get("聯發") == "1459")
     check("真實字典:常用詞與主題詞已剔除", "世界" not in lex["terms"] and "DRAM" not in lex["terms"])
+    check("真實字典:阻擋詞不對應任何股票", all(lex["terms"].get(t, 1) is None for t in SM.BLOCK_TERMS))
 
 
 def test_mentions_speed():
@@ -135,6 +170,14 @@ def test_body_cap():
     check("內文超過 3 檔不計票,標題級照算", [i["code"] for i in r["items"]] == ["2454"], str(r["items"]))
     capped = [e for c in r["candidates"] for e in c["evidence"] if c["code"] == "2408"]
     check("被擋的仍在 candidates 且 counted=False", capped and capped[0]["counted"] is False)
+
+
+def test_body_cap_boundary():
+    three = NB.score_news([N("盤勢觀察", body="南亞科、台積電、大成鋼同步走高")], LEX)
+    check("內文剛好 3 檔仍計票", sorted(i["code"] for i in three["items"]) == ["2027", "2330", "2408"],
+          str(three["items"]))
+    four = NB.score_news([N("盤勢觀察", body="南亞科、台積電、大成鋼、M31 同步走高")], LEX)
+    check("內文 4 檔不計票", four["items"] == [] and len(four["candidates"]) == 4, str(four["items"]))
 
 
 def test_mixed_excluded():
@@ -264,6 +307,8 @@ def test_cli_flag():
 def main():
     test_mentions_title_and_body()
     test_mentions_filters()
+    test_mentions_code_rule()
+    test_mentions_block_terms()
     test_mentions_publisher_codes()
     test_mentions_missing_fields()
     test_real_lexicon()
@@ -271,6 +316,7 @@ def main():
     test_vote()
     test_score_basic()
     test_body_cap()
+    test_body_cap_boundary()
     test_mixed_excluded()
     test_rank_title_first()
     test_rank_tie_latest()

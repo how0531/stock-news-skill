@@ -31,8 +31,17 @@ COMMON_WORD_NAMES = frozenset((
     "海光 花王 亞航 大塚 強生 恆大 新華 中航 中電 中天 中視 遠見 浪凡 台灣大 中石化 新零售 雲嘉南"
 ).split())
 
-# 代號: 4 到 6 碼數字,前後不能黏著英數或小數點等,也不能是「2027年」「5000點」這類數量
-_CODE_RE = re.compile(r"(?<![0-9A-Za-z./$])(\d{4,6})(?![0-9A-Za-z.%點元億萬張])(?!\s*[年月日])")
+# 子字串誤判的阻擋詞: 掃描時會吃掉這一段(最長匹配),但不對應任何股票。
+# 例如「簡訊連結」含訊連、「東南亞科技」含南亞科、「元太外匯」含元太
+BLOCK_TERMS = frozenset({"簡訊連", "東南亞", "台灣大學", "可成為", "和大家", "信義區", "元太外匯"})
+
+# 代號只認兩種寫法(內文裡的裸數字常是年度、人數、金額,不能當代號):
+#   1) 括號內(半形或全形),可帶 -TW / -TWO / .TW / .TWO,右括號後不能接年月日,例如「(2330)」「（2330-TWO）」
+#   2) 數字直接接 -TW / -TWO / .TW / .TWO(不分大小寫),例如「2330-TW」
+_CODE_RE = re.compile(
+    r"[(（](\d{4,6})(?:[-.]TWO?)?[)）](?!\s*[年月日])"
+    r"|(?<![0-9A-Za-z./$])(\d{4,6})(?=[-.]TWO?(?![0-9A-Za-z]))",
+    re.IGNORECASE)
 _URL_RE = re.compile(r"https?://\S+")
 
 _LEXICON = None
@@ -55,7 +64,7 @@ def build_lexicon(code_names, curated):
         # name_zh 也當別名(與正式簡稱相同的會在下面因已是詞而略過)
         bare_aliases.setdefault(code, []).extend([zh, *(info.get("aliases") or [])])
 
-    terms = {}
+    terms = {t: None for t in BLOCK_TERMS}  # 阻擋詞對應 None, 掃描時吃掉但不回報
     for code, name in names.items():       # 正式簡稱優先
         name = name.strip()
         if _term_ok(name):
@@ -106,7 +115,9 @@ def _scan(text, lex):
         for term in lex["first"].get(text[i], ()):
             j = i + len(term)
             if text.startswith(term, i) and _edge_ok(text, i, j, term):
-                found.add(lex["terms"][term])
+                code = lex["terms"][term]
+                if code:                   # 阻擋詞的代號是 None
+                    found.add(code)
                 i = j
                 break
         else:
@@ -117,7 +128,8 @@ def _scan(text, lex):
 def _hits(text, lex):
     text = _URL_RE.sub(" ", text or "")
     found = _scan(text, lex)
-    found.update(c for c in _CODE_RE.findall(text) if c in lex["names"])
+    found.update(c for c in (m.group(1) or m.group(2) for m in _CODE_RE.finditer(text))
+                 if c in lex["names"])
     return found
 
 
