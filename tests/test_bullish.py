@@ -51,11 +51,17 @@ def test_mentions_filters():
     check("常用詞股名不算", f("世界經濟展望", "", [], LEX) == {})
     check("常用詞股名靠代號仍命中", f("世界(5347)營收創高", "", [], LEX) == {"5347": "title"})
     check("代號後接年不算", f("2027年展望", "預估 2027 年", [], LEX) == {})
-    check("網址裡的數字不算", f("", "見 https://x.com/a/2027 說明", [], LEX) == {})
+    check("網址裡的數字不算", f("", "見 https://x.com/a?id=2027 說明", [], LEX) == {})
     check("英數邊界", f("M310 晶片", "", [], LEX) == {} and f("M31 營收", "", [], LEX) == {"6643": "title"})
     check(".TW 與 .TWO 的別名合併", f("台積拿下大單", "", [], LEX) == {"2330": "title"})
     check("英文別名", f("TSMC capex", "", [], LEX) == {"2330": "title"})
     check("別名是他檔簡稱就丟別名", f("聯發公告", "", [], LEX) == {"1459": "title"})
+    shared = SM.build_lexicon(
+        {"1111": "甲公司", "2222": "乙公司"},
+        {"1111.TW": {"name_zh": "甲公司", "aliases": ["共用名"]},
+         "2222.TW": {"name_zh": "乙公司", "aliases": ["共用名"]}})
+    check("同一別名在兩檔以上全部丟", f("共用名大漲", "", [], shared) == {}
+          and f("甲公司大漲", "", [], shared) == {"1111": "title"})
 
 
 def test_mentions_publisher_codes():
