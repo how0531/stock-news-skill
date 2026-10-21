@@ -5,6 +5,18 @@ config.json
 _pick.py
 out/
 
+# --- 採集層產物(抓下來的新聞全文與狀態) — 不上傳 ---
+data/raw/
+data/stream/
+data/state/
+data/processed/
+data/factors/
+
+# --- 07:40 自動盤前信:腳本內含公司收件者 email,repo 公開所以不上傳 ---
+scripts/premarket_digest.ps1
+scripts/send_digest.ps1
+scripts/digest_watchdog.ps1
+
 # --- Python 快取 ---
 __pycache__/
 *.pyc

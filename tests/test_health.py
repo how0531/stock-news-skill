@@ -70,12 +70,11 @@ def main():
          "https://money.udn.com/rssfeed/news/1001/5591?ch=money", False),
         ("udn RSS 12017",
          "https://money.udn.com/rssfeed/news/1001/12017?ch=money", False),
-        ("ctee livenews/stock",
-         "https://www.ctee.com.tw/livenews/stock", False),
-        ("ctee livenews/finance",
-         "https://www.ctee.com.tw/livenews/finance", False),
-        ("ctee livenews/tech",
-         "https://www.ctee.com.tw/livenews/tech", False),
+        # ctee 列表頁(livenews)2026-06 起 Cloudflare 403 且已不在任何路徑使用;
+        # 實際清單走 Google News RSS(ctee.py),故改探這個端點。
+        ("ctee 清單(Google News RSS)",
+         "https://news.google.com/rss/search?q=%E5%B7%A5%E5%95%86%E6%99%82%E5%A0%B1"
+         "+%E8%82%A1%E5%B8%82&hl=zh-TW&gl=TW&ceid=TW:zh-Hant", False),
     ]
 
     # Metabase 可選

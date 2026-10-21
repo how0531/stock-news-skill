@@ -1,0 +1,803 @@
+{
+  "7203.T": {
+    "ticker": "7203.T",
+    "name_zh": "豐田汽車",
+    "name_en": "Toyota Motor",
+    "market": "JP",
+    "sector": "汽車",
+    "aliases": [
+      "豐田汽車",
+      "Toyota Motor",
+      "7203.T",
+      "7203",
+      "豐田",
+      "Toyota",
+      "TM-US"
+    ]
+  },
+  "6758.T": {
+    "ticker": "6758.T",
+    "name_zh": "索尼",
+    "name_en": "Sony Group",
+    "market": "JP",
+    "sector": "電子",
+    "aliases": [
+      "索尼",
+      "Sony Group",
+      "6758.T",
+      "6758",
+      "Sony",
+      "SONY-US"
+    ]
+  },
+  "9984.T": {
+    "ticker": "9984.T",
+    "name_zh": "軟銀集團",
+    "name_en": "SoftBank Group",
+    "market": "JP",
+    "sector": "投資",
+    "aliases": [
+      "軟銀集團",
+      "SoftBank Group",
+      "9984.T",
+      "9984",
+      "SoftBank",
+      "孫正義",
+      "Masayoshi Son"
+    ]
+  },
+  "6861.T": {
+    "ticker": "6861.T",
+    "name_zh": "基恩斯",
+    "name_en": "Keyence",
+    "market": "JP",
+    "sector": "電子設備",
+    "aliases": [
+      "基恩斯",
+      "Keyence",
+      "6861.T",
+      "6861"
+    ]
+  },
+  "8035.T": {
+    "ticker": "8035.T",
+    "name_zh": "東京威力科創",
+    "name_en": "Tokyo Electron",
+    "market": "JP",
+    "sector": "半導體設備",
+    "aliases": [
+      "東京威力科創",
+      "Tokyo Electron",
+      "8035.T",
+      "8035",
+      "TEL"
+    ]
+  },
+  "8306.T": {
+    "ticker": "8306.T",
+    "name_zh": "三菱日聯",
+    "name_en": "Mitsubishi UFJ",
+    "market": "JP",
+    "sector": "金融",
+    "aliases": [
+      "三菱日聯",
+      "Mitsubishi UFJ",
+      "8306.T",
+      "8306",
+      "MUFG"
+    ]
+  },
+  "9432.T": {
+    "ticker": "9432.T",
+    "name_zh": "NTT",
+    "name_en": "Nippon Telegraph",
+    "market": "JP",
+    "sector": "電信",
+    "aliases": [
+      "NTT",
+      "Nippon Telegraph",
+      "9432.T",
+      "9432",
+      "日本電信電話"
+    ]
+  },
+  "9433.T": {
+    "ticker": "9433.T",
+    "name_zh": "KDDI",
+    "name_en": "KDDI",
+    "market": "JP",
+    "sector": "電信",
+    "aliases": [
+      "KDDI",
+      "9433.T",
+      "9433"
+    ]
+  },
+  "9434.T": {
+    "ticker": "9434.T",
+    "name_zh": "軟銀",
+    "name_en": "SoftBank Corp",
+    "market": "JP",
+    "sector": "電信",
+    "aliases": [
+      "軟銀",
+      "SoftBank Corp",
+      "9434.T",
+      "9434"
+    ]
+  },
+  "7974.T": {
+    "ticker": "7974.T",
+    "name_zh": "任天堂",
+    "name_en": "Nintendo",
+    "market": "JP",
+    "sector": "遊戲",
+    "aliases": [
+      "任天堂",
+      "Nintendo",
+      "7974.T",
+      "7974"
+    ]
+  },
+  "6098.T": {
+    "ticker": "6098.T",
+    "name_zh": "Recruit",
+    "name_en": "Recruit Holdings",
+    "market": "JP",
+    "sector": "服務",
+    "aliases": [
+      "Recruit",
+      "Recruit Holdings",
+      "6098.T",
+      "6098",
+      "瑞可利"
+    ]
+  },
+  "8316.T": {
+    "ticker": "8316.T",
+    "name_zh": "三井住友",
+    "name_en": "Sumitomo Mitsui",
+    "market": "JP",
+    "sector": "金融",
+    "aliases": [
+      "三井住友",
+      "Sumitomo Mitsui",
+      "8316.T",
+      "8316",
+      "SMFG"
+    ]
+  },
+  "8411.T": {
+    "ticker": "8411.T",
+    "name_zh": "瑞穗",
+    "name_en": "Mizuho Financial",
+    "market": "JP",
+    "sector": "金融",
+    "aliases": [
+      "瑞穗",
+      "Mizuho Financial",
+      "8411.T",
+      "8411",
+      "Mizuho"
+    ]
+  },
+  "4063.T": {
+    "ticker": "4063.T",
+    "name_zh": "信越化學",
+    "name_en": "Shin-Etsu Chemical",
+    "market": "JP",
+    "sector": "化工",
+    "aliases": [
+      "信越化學",
+      "Shin-Etsu Chemical",
+      "4063.T",
+      "4063",
+      "Shin-Etsu",
+      "矽晶圓"
+    ]
+  },
+  "6594.T": {
+    "ticker": "6594.T",
+    "name_zh": "日本電產",
+    "name_en": "Nidec",
+    "market": "JP",
+    "sector": "電機",
+    "aliases": [
+      "日本電產",
+      "Nidec",
+      "6594.T",
+      "6594"
+    ]
+  },
+  "6501.T": {
+    "ticker": "6501.T",
+    "name_zh": "日立",
+    "name_en": "Hitachi",
+    "market": "JP",
+    "sector": "電機",
+    "aliases": [
+      "日立",
+      "Hitachi",
+      "6501.T",
+      "6501"
+    ]
+  },
+  "6502.T": {
+    "ticker": "6502.T",
+    "name_zh": "東芝",
+    "name_en": "Toshiba",
+    "market": "JP",
+    "sector": "電機",
+    "aliases": [
+      "東芝",
+      "Toshiba",
+      "6502.T",
+      "6502"
+    ]
+  },
+  "6503.T": {
+    "ticker": "6503.T",
+    "name_zh": "三菱電機",
+    "name_en": "Mitsubishi Electric",
+    "market": "JP",
+    "sector": "電機",
+    "aliases": [
+      "三菱電機",
+      "Mitsubishi Electric",
+      "6503.T",
+      "6503"
+    ]
+  },
+  "6752.T": {
+    "ticker": "6752.T",
+    "name_zh": "松下",
+    "name_en": "Panasonic Holdings",
+    "market": "JP",
+    "sector": "電子",
+    "aliases": [
+      "松下",
+      "Panasonic Holdings",
+      "6752.T",
+      "6752",
+      "Panasonic",
+      "國際牌"
+    ]
+  },
+  "6701.T": {
+    "ticker": "6701.T",
+    "name_zh": "NEC",
+    "name_en": "NEC",
+    "market": "JP",
+    "sector": "電子",
+    "aliases": [
+      "NEC",
+      "6701.T",
+      "6701",
+      "日本電氣"
+    ]
+  },
+  "6702.T": {
+    "ticker": "6702.T",
+    "name_zh": "富士通",
+    "name_en": "Fujitsu",
+    "market": "JP",
+    "sector": "電子",
+    "aliases": [
+      "富士通",
+      "Fujitsu",
+      "6702.T",
+      "6702"
+    ]
+  },
+  "7267.T": {
+    "ticker": "7267.T",
+    "name_zh": "本田",
+    "name_en": "Honda Motor",
+    "market": "JP",
+    "sector": "汽車",
+    "aliases": [
+      "本田",
+      "Honda Motor",
+      "7267.T",
+      "7267",
+      "Honda",
+      "本田技研",
+      "HMC-US"
+    ]
+  },
+  "7201.T": {
+    "ticker": "7201.T",
+    "name_zh": "日產",
+    "name_en": "Nissan Motor",
+    "market": "JP",
+    "sector": "汽車",
+    "aliases": [
+      "日產",
+      "Nissan Motor",
+      "7201.T",
+      "7201",
+      "Nissan",
+      "NSANY-US"
+    ]
+  },
+  "7269.T": {
+    "ticker": "7269.T",
+    "name_zh": "鈴木",
+    "name_en": "Suzuki Motor",
+    "market": "JP",
+    "sector": "汽車",
+    "aliases": [
+      "鈴木",
+      "Suzuki Motor",
+      "7269.T",
+      "7269",
+      "Suzuki"
+    ]
+  },
+  "7270.T": {
+    "ticker": "7270.T",
+    "name_zh": "速霸陸",
+    "name_en": "Subaru",
+    "market": "JP",
+    "sector": "汽車",
+    "aliases": [
+      "速霸陸",
+      "Subaru",
+      "7270.T",
+      "7270"
+    ]
+  },
+  "7261.T": {
+    "ticker": "7261.T",
+    "name_zh": "馬自達",
+    "name_en": "Mazda Motor",
+    "market": "JP",
+    "sector": "汽車",
+    "aliases": [
+      "馬自達",
+      "Mazda Motor",
+      "7261.T",
+      "7261",
+      "Mazda"
+    ]
+  },
+  "4502.T": {
+    "ticker": "4502.T",
+    "name_zh": "武田",
+    "name_en": "Takeda Pharmaceutical",
+    "market": "JP",
+    "sector": "製藥",
+    "aliases": [
+      "武田",
+      "Takeda Pharmaceutical",
+      "4502.T",
+      "4502",
+      "Takeda",
+      "TAK-US"
+    ]
+  },
+  "4503.T": {
+    "ticker": "4503.T",
+    "name_zh": "安斯泰來",
+    "name_en": "Astellas Pharma",
+    "market": "JP",
+    "sector": "製藥",
+    "aliases": [
+      "安斯泰來",
+      "Astellas Pharma",
+      "4503.T",
+      "4503",
+      "Astellas"
+    ]
+  },
+  "4519.T": {
+    "ticker": "4519.T",
+    "name_zh": "中外製藥",
+    "name_en": "Chugai Pharmaceutical",
+    "market": "JP",
+    "sector": "製藥",
+    "aliases": [
+      "中外製藥",
+      "Chugai Pharmaceutical",
+      "4519.T",
+      "4519",
+      "Chugai"
+    ]
+  },
+  "8001.T": {
+    "ticker": "8001.T",
+    "name_zh": "伊藤忠商事",
+    "name_en": "Itochu",
+    "market": "JP",
+    "sector": "綜合商社",
+    "aliases": [
+      "伊藤忠商事",
+      "Itochu",
+      "8001.T",
+      "8001"
+    ]
+  },
+  "8031.T": {
+    "ticker": "8031.T",
+    "name_zh": "三井物產",
+    "name_en": "Mitsui & Co.",
+    "market": "JP",
+    "sector": "綜合商社",
+    "aliases": [
+      "三井物產",
+      "Mitsui & Co.",
+      "8031.T",
+      "8031",
+      "Mitsui"
+    ]
+  },
+  "8053.T": {
+    "ticker": "8053.T",
+    "name_zh": "住友商事",
+    "name_en": "Sumitomo Corp",
+    "market": "JP",
+    "sector": "綜合商社",
+    "aliases": [
+      "住友商事",
+      "Sumitomo Corp",
+      "8053.T",
+      "8053"
+    ]
+  },
+  "8058.T": {
+    "ticker": "8058.T",
+    "name_zh": "三菱商事",
+    "name_en": "Mitsubishi Corp",
+    "market": "JP",
+    "sector": "綜合商社",
+    "aliases": [
+      "三菱商事",
+      "Mitsubishi Corp",
+      "8058.T",
+      "8058",
+      "Mitsubishi"
+    ]
+  },
+  "8002.T": {
+    "ticker": "8002.T",
+    "name_zh": "丸紅",
+    "name_en": "Marubeni",
+    "market": "JP",
+    "sector": "綜合商社",
+    "aliases": [
+      "丸紅",
+      "Marubeni",
+      "8002.T",
+      "8002"
+    ]
+  },
+  "9983.T": {
+    "ticker": "9983.T",
+    "name_zh": "迅銷",
+    "name_en": "Fast Retailing",
+    "market": "JP",
+    "sector": "服飾",
+    "aliases": [
+      "迅銷",
+      "Fast Retailing",
+      "9983.T",
+      "9983",
+      "Uniqlo",
+      "優衣庫"
+    ]
+  },
+  "4901.T": {
+    "ticker": "4901.T",
+    "name_zh": "富士軟片",
+    "name_en": "Fujifilm Holdings",
+    "market": "JP",
+    "sector": "化工",
+    "aliases": [
+      "富士軟片",
+      "Fujifilm Holdings",
+      "4901.T",
+      "4901",
+      "Fujifilm"
+    ]
+  },
+  "7751.T": {
+    "ticker": "7751.T",
+    "name_zh": "佳能",
+    "name_en": "Canon",
+    "market": "JP",
+    "sector": "光學",
+    "aliases": [
+      "佳能",
+      "Canon",
+      "7751.T",
+      "7751"
+    ]
+  },
+  "4543.T": {
+    "ticker": "4543.T",
+    "name_zh": "泰爾茂",
+    "name_en": "Terumo",
+    "market": "JP",
+    "sector": "醫療",
+    "aliases": [
+      "泰爾茂",
+      "Terumo",
+      "4543.T",
+      "4543"
+    ]
+  },
+  "6981.T": {
+    "ticker": "6981.T",
+    "name_zh": "村田製作所",
+    "name_en": "Murata Manufacturing",
+    "market": "JP",
+    "sector": "電子零組件",
+    "aliases": [
+      "村田製作所",
+      "Murata Manufacturing",
+      "6981.T",
+      "6981",
+      "Murata",
+      "MLCC"
+    ]
+  },
+  "6954.T": {
+    "ticker": "6954.T",
+    "name_zh": "發那科",
+    "name_en": "Fanuc",
+    "market": "JP",
+    "sector": "機械",
+    "aliases": [
+      "發那科",
+      "Fanuc",
+      "6954.T",
+      "6954"
+    ]
+  },
+  "6367.T": {
+    "ticker": "6367.T",
+    "name_zh": "大金工業",
+    "name_en": "Daikin Industries",
+    "market": "JP",
+    "sector": "機械",
+    "aliases": [
+      "大金工業",
+      "Daikin Industries",
+      "6367.T",
+      "6367",
+      "Daikin",
+      "大金"
+    ]
+  },
+  "8766.T": {
+    "ticker": "8766.T",
+    "name_zh": "東京海上",
+    "name_en": "Tokio Marine",
+    "market": "JP",
+    "sector": "金融",
+    "aliases": [
+      "東京海上",
+      "Tokio Marine",
+      "8766.T",
+      "8766"
+    ]
+  },
+  "9020.T": {
+    "ticker": "9020.T",
+    "name_zh": "JR東日本",
+    "name_en": "East Japan Railway",
+    "market": "JP",
+    "sector": "運輸",
+    "aliases": [
+      "JR東日本",
+      "East Japan Railway",
+      "9020.T",
+      "9020",
+      "JR East"
+    ]
+  },
+  "9022.T": {
+    "ticker": "9022.T",
+    "name_zh": "JR東海",
+    "name_en": "Central Japan Railway",
+    "market": "JP",
+    "sector": "運輸",
+    "aliases": [
+      "JR東海",
+      "Central Japan Railway",
+      "9022.T",
+      "9022",
+      "JR Central"
+    ]
+  },
+  "3382.T": {
+    "ticker": "3382.T",
+    "name_zh": "7&i控股",
+    "name_en": "Seven & i Holdings",
+    "market": "JP",
+    "sector": "通路",
+    "aliases": [
+      "7&i控股",
+      "Seven & i Holdings",
+      "3382.T",
+      "3382",
+      "7-Eleven Japan"
+    ]
+  },
+  "4661.T": {
+    "ticker": "4661.T",
+    "name_zh": "東方樂園",
+    "name_en": "Oriental Land",
+    "market": "JP",
+    "sector": "娛樂",
+    "aliases": [
+      "東方樂園",
+      "Oriental Land",
+      "4661.T",
+      "4661",
+      "東京迪士尼"
+    ]
+  },
+  "4324.T": {
+    "ticker": "4324.T",
+    "name_zh": "電通",
+    "name_en": "Dentsu Group",
+    "market": "JP",
+    "sector": "廣告",
+    "aliases": [
+      "電通",
+      "Dentsu Group",
+      "4324.T",
+      "4324",
+      "Dentsu"
+    ]
+  },
+  "2914.T": {
+    "ticker": "2914.T",
+    "name_zh": "JT",
+    "name_en": "Japan Tobacco",
+    "market": "JP",
+    "sector": "菸草",
+    "aliases": [
+      "JT",
+      "Japan Tobacco",
+      "2914.T",
+      "2914",
+      "日本菸草"
+    ]
+  },
+  "4523.T": {
+    "ticker": "4523.T",
+    "name_zh": "衛采",
+    "name_en": "Eisai",
+    "market": "JP",
+    "sector": "製藥",
+    "aliases": [
+      "衛采",
+      "Eisai",
+      "4523.T",
+      "4523"
+    ]
+  },
+  "6273.T": {
+    "ticker": "6273.T",
+    "name_zh": "SMC",
+    "name_en": "SMC Corporation",
+    "market": "JP",
+    "sector": "機械",
+    "aliases": [
+      "SMC",
+      "SMC Corporation",
+      "6273.T",
+      "6273"
+    ]
+  },
+  "7741.T": {
+    "ticker": "7741.T",
+    "name_zh": "豪雅",
+    "name_en": "Hoya",
+    "market": "JP",
+    "sector": "光學",
+    "aliases": [
+      "豪雅",
+      "Hoya",
+      "7741.T",
+      "7741"
+    ]
+  },
+  "6920.T": {
+    "ticker": "6920.T",
+    "name_zh": "雷射科技",
+    "name_en": "Lasertec",
+    "market": "JP",
+    "sector": "半導體設備",
+    "aliases": [
+      "雷射科技",
+      "Lasertec",
+      "6920.T",
+      "6920"
+    ]
+  },
+  "6857.T": {
+    "ticker": "6857.T",
+    "name_zh": "愛德萬",
+    "name_en": "Advantest",
+    "market": "JP",
+    "sector": "半導體設備",
+    "aliases": [
+      "愛德萬",
+      "Advantest",
+      "6857.T",
+      "6857"
+    ]
+  },
+  "6146.T": {
+    "ticker": "6146.T",
+    "name_zh": "迪思科",
+    "name_en": "Disco Corporation",
+    "market": "JP",
+    "sector": "半導體設備",
+    "aliases": [
+      "迪思科",
+      "Disco Corporation",
+      "6146.T",
+      "6146",
+      "Disco"
+    ]
+  },
+  "4568.T": {
+    "ticker": "4568.T",
+    "name_zh": "第一三共",
+    "name_en": "Daiichi Sankyo",
+    "market": "JP",
+    "sector": "製藥",
+    "aliases": [
+      "第一三共",
+      "Daiichi Sankyo",
+      "4568.T",
+      "4568"
+    ]
+  },
+  "9101.T": {
+    "ticker": "9101.T",
+    "name_zh": "日本郵船",
+    "name_en": "Nippon Yusen",
+    "market": "JP",
+    "sector": "航運",
+    "aliases": [
+      "日本郵船",
+      "Nippon Yusen",
+      "9101.T",
+      "9101",
+      "NYK"
+    ]
+  },
+  "9104.T": {
+    "ticker": "9104.T",
+    "name_zh": "商船三井",
+    "name_en": "Mitsui O.S.K. Lines",
+    "market": "JP",
+    "sector": "航運",
+    "aliases": [
+      "商船三井",
+      "Mitsui O.S.K. Lines",
+      "9104.T",
+      "9104",
+      "MOL"
+    ]
+  },
+  "9107.T": {
+    "ticker": "9107.T",
+    "name_zh": "川崎汽船",
+    "name_en": "Kawasaki Kisen",
+    "market": "JP",
+    "sector": "航運",
+    "aliases": [
+      "川崎汽船",
+      "Kawasaki Kisen",
+      "9107.T",
+      "9107",
+      "K Line"
+    ]
+  }
+}

@@ -1,5 +1,7 @@
 # config.json 建議新增鍵 (Anue / MoneyDJ / Yahoo)
 
+> 本檔的鍵只影響備援路徑(主路徑 main.aggregate 失敗時才啟用的舊版並行爬蟲),平常的主路徑不讀;主路徑的來源與數量寫死在程式,見 references/sources.md。
+
 供使用者事後合併到 `config.json` 的 `news` 區塊。所有鍵都有 hard-coded
 預設值在 `news_providers.fetch_sanbao` 內,**不填也能跑**;以下僅供調整時參考。
 

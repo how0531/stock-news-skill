@@ -144,6 +144,11 @@ def render_console(res: dict, code_to_name: Dict[str, str] = None) -> str:
             evs = h.get("events") or []
             if evs:
                 out.append(f"     事件: {', '.join(evs)}")
+            sn = h.get("snippets") or []
+            if sn:                           # 命中片段:關鍵字在內文後段也看得到
+                for s in sn:
+                    out.append(f"     → {s}")
+                continue
             b = (h.get("body") or h.get("summary") or "").strip()
             if b:
                 out.append(f"     → {b[:260]}")
@@ -174,8 +179,12 @@ def render_markdown(res: dict, code_to_name: Dict[str, str] = None) -> str:
             if h.get("code") or h.get("name"):
                 tag = f" `{(h.get('code') or '').strip()} {(h.get('name') or '').strip()}`".rstrip()
             out.append(_md_news_line(h, extra_tag=tag))
+            sn = h.get("snippets") or []
             b = (h.get("body") or h.get("summary") or "").strip()
-            if b:
+            if sn:
+                for s in sn:
+                    out.append(f"  > {s}")
+            elif b:
                 out.append(f"  > {b[:300]}")
             out.append("")
     return "\n".join(out).rstrip() + "\n"
@@ -377,3 +386,78 @@ def render_report_json(reports: List[dict]) -> List[dict]:
             "timeline": rp["timeline"],
         })
     return out
+
+
+# --------------------------------------------------------------------------- #
+# 今日議題重點(digest):全市場新聞「原料」輸出
+#   負責把 fetch_market_news() 的整批新聞排版成「依來源分組」的清單,
+#   給人/模型當原料,再由模型依議題分組(見 SKILL.md「今日盤後議題重點」與 references/today_digest.md)。
+# --------------------------------------------------------------------------- #
+
+_DIGEST_SRC_ORDER = ["cnyes", "anue", "udn", "ctee", "yahoo", "moneydj"]
+
+
+def _digest_time(v) -> str:
+    """ISO 時間 → 'MM-DD HH:MM'。盤前窗跨日(連假可跨數日),只印時分會看不出是哪一天。"""
+    return str(v or "")[5:16].replace("T", " ")
+
+
+def _digest_group(items: List[dict]) -> List[tuple]:
+    """依固定來源順序分組,回 [(source, [news...]), ...](空組略過)。"""
+    from collections import defaultdict
+    bysrc = defaultdict(list)
+    for x in items:
+        bysrc[x.get("source") or "unknown"].append(x)
+    srcs = _DIGEST_SRC_ORDER + [s for s in bysrc if s not in _DIGEST_SRC_ORDER]
+    return [(s, bysrc[s]) for s in srcs if bysrc.get(s)]
+
+
+def _digest_head(items: List[dict], date_str: str) -> List[str]:
+    """digest 表頭:總數 + 來源分布 + 情緒分布。"""
+    groups = _digest_group(items)
+    sc = _sent_count(items)
+    src_line = " / ".join(f"{s} {len(lst)}" for s, lst in groups)
+    return [
+        f"今日新聞彙整 {date_str}（共 {len(items)} 則）",
+        f"來源分布: {src_line}",
+        f"情緒分布: 利多 {sc['bullish']} / 中性 {sc['neutral']} / 利空 {sc['bearish']}",
+    ]
+
+
+def render_digest_md(items: List[dict], date_str: str) -> str:
+    """今日全市場新聞 → 依來源分組 Markdown(含連結 / sentiment / events)。
+       這是『完整清單檔』(out/today_news_YYYYMMDD.md)的內容。"""
+    head = _digest_head(items, date_str)
+    out = [f"# {head[0]}\n", head[1], head[2] + "\n"]
+    for s, lst in _digest_group(items):
+        out.append(f"\n## {s}（{len(lst)} 則）\n")
+        for x in lst:
+            t = _digest_time(x.get("time"))
+            zh = _SENT_ZH.get(x.get("sentiment"), "")
+            tag = ""
+            if zh:
+                evs = ",".join(x.get("events") or [])
+                tag = f"`{zh}{x.get('confidence', 0):.2f}`" + (f" `{evs}`" if evs else "")
+            title = (x.get("title") or "").replace("[", "［").replace("]", "］")
+            url = (x.get("url") or "").replace("(", "%28").replace(")", "%29")
+            link = f"[{title}]({url})" if url else title
+            prefix = f"- {t}" + (f" {tag}" if tag else "")
+            out.append(f"{prefix} {link}")
+    return "\n".join(out).rstrip() + "\n"
+
+
+def render_digest_console(items: List[dict], date_str: str = "") -> str:
+    """今日全市場新聞 → 依來源分組純文字(緊湊,給模型當四象限整理原料)。"""
+    out = list(_digest_head(items, date_str or ""))
+    for s, lst in _digest_group(items):
+        out.append(f"\n== {s}（{len(lst)} 則）==")
+        for x in lst:
+            t = _digest_time(x.get("time"))
+            zh = _SENT_ZH.get(x.get("sentiment"), "")
+            tag = ""
+            if zh:
+                evs = ",".join(x.get("events") or [])
+                tag = f"[{zh}{x.get('confidence', 0):.2f}{('|' + evs) if evs else ''}]"
+            prefix = f"  {t}" + (f" {tag}" if tag else "")
+            out.append(f"{prefix} {x.get('title', '')}")
+    return "\n".join(out)

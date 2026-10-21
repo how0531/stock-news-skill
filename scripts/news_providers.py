@@ -15,12 +15,22 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 _CTEE_DATE = re.compile(r"/news/(\d{8})")
 
-UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
+UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"}
 TIMEOUT = 12
 _UNVERIFIED = ssl._create_unverified_context()
 
 
 def _get(url, as_json=False):
+    if "ctee.com.tw" in url:
+        try:
+            import requests
+            import urllib3
+            urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+            r = requests.get(url, headers=UA, timeout=TIMEOUT, verify=False)
+            return r.json() if as_json else r.text
+        except Exception as e:
+            print(f"  requests fallback ctee fail: {e!r}", file=sys.stderr)
+
     req = urllib.request.Request(url, headers=UA)
     try:
         r = urllib.request.urlopen(req, timeout=TIMEOUT)
@@ -72,6 +82,44 @@ def fetch_body(url, source, max_chars=600):
             if len(t) > 60:                     # 過濾抓到空殼/導覽
                 return t[:max_chars] if max_chars else t
     return ""
+
+
+# 產業熱詞:標題含這些 → 很可能是個股漲因深度文,比對前先補內文(解雞生蛋)
+HOT_TERMS = ["目標價", "EPS", "稼動率", "缺貨", "漲價", "報價", "調升", "評等",
+             "外資", "投信", "法說", "營收", "載板", "封裝", "封測", "矽光子",
+             "記憶體", "受惠", "供應鏈", "訂單", "毛利"]
+
+# 註:描述性稱謂(IC載板大廠=南電…)不另建表——只要「比對前先抓內文(prefetch)」+
+#     P1-1 別名比對,內文一出現股名/別名就會配到,稱謂表反而易在內文沒點名時誤配整族群,故不做。
+
+
+def prefetch_candidate_bodies(items, max_chars=600, limit=40):
+    """比對前先補內文:對『標題含產業熱詞、body 仍空、需上網抓』的候選文抓內文,
+    讓 match_news_to_codes 的 blob 在比對當下就有內文(否則標題無股名者永遠命不中)。
+    有總量上限(盤中時間敏感)。"""
+    fetched, cache = 0, {}
+    for it in items:
+        if fetched >= limit:
+            break
+        if it.get("body"):
+            continue
+        title = it.get("title", "") or ""
+        if not any(h in title for h in HOT_TERMS):
+            continue
+        url, src = it.get("url", ""), it.get("source", "")
+        if not url or src in ("metabase", "cnyes", "anue", "cnyes-search"):
+            continue
+        if url in cache:
+            it["body"] = cache[url]
+            continue
+        try:
+            body = fetch_body(url, src, max_chars)
+        except Exception:
+            body = ""
+        cache[url] = body
+        it["body"] = body
+        fetched += 1
+    return fetched
 
 
 def attach_bodies(by_code, max_chars=600, limit=40):
@@ -156,44 +204,34 @@ def fetch_udn(feeds, limit=30):
 
 
 def fetch_ctee(pages, limit=60):
-    from bs4 import BeautifulSoup
+    """工商時報清單。2026-06 起 ctee 全域 Cloudflare 403(livenews/列表頁/sitemap
+    皆擋),改委派 ctee.py:走 Google News RSS + 解碼 API 還原真實 /news/ URL
+    (無瀏覽器、不中 CAPTCHA,~7s/20 篇)。pages 參數已無作用,保留相容簽名。
+    body 留空,命中個股後由 attach_bodies 抓(article 選擇器對 /news/ 新格式有效)。"""
+    try:
+        from . import ctee as _ctee
+    except ImportError:
+        import ctee as _ctee
+    try:
+        items = _ctee.fetch(categories=None, limit_per_cat=limit, fetch_content=False)
+    except Exception as e:
+        print(f"  ctee fetch fail: {e!r}", file=sys.stderr)
+        return []
     out, seen = [], set()
-    for page in pages:
-        try:
-            html = _get(page)
-            soup = BeautifulSoup(html, "html.parser")
-        except Exception as e:
-            print(f"  ctee warn {page}: {e!r}", file=sys.stderr)
+    for it in items:
+        url = it.get("url", "")
+        if not url or url in seen:
             continue
-        anchors = (soup.select("h3.post-title a")
-                   or soup.select("article.post h3 a")
-                   or soup.select("h3 a[href*='/news/']")
-                   or soup.select("h3 a"))
-        for a in anchors[:limit]:
-            href = a.get("href", "")
-            title = a.get_text(strip=True)
-            if not title or not href or "/news/" not in href or href in seen:
-                continue
-            seen.add(href)
-            # ctee URL 含 /news/YYYYMMDD... → 可還原日期(無時分,取當日 08:00)
-            pub = ""
-            m = _CTEE_DATE.search(href)
-            if m:
-                try:
-                    d = datetime.datetime.strptime(m.group(1), "%Y%m%d")
-                    pub = d.replace(hour=8).astimezone().isoformat()
-                except Exception:
-                    pass
-            out.append({
-                "source": "ctee",
-                "title": title,
-                "summary": "",
-                "body": "",                      # 命中個股後才 attach_bodies
-                "url": href if href.startswith("http")
-                       else "https://www.ctee.com.tw" + href,
-                "published_at": pub,
-                "keywords": [],
-            })
+        seen.add(url)
+        out.append({
+            "source": "ctee",
+            "title": it.get("title", ""),
+            "summary": "",                  # Google RSS summary 只是標題回聲,留空
+            "body": "",                      # 命中個股後才 attach_bodies
+            "url": url,
+            "published_at": it.get("published_at", ""),
+            "keywords": [],
+        })
     return out
 
 
@@ -327,13 +365,36 @@ def fetch_yahoo_stock(feeds, limit=40):
 
 
 def fetch_sanbao(news_cfg):
-    """抓多家、依 url/title 去重。
-    歷史命名為 'sanbao'(三大報),已擴充至 cnyes/udn/ctee/anue/moneydj/yahoo。
-
-    六家以 ThreadPoolExecutor 並行抓取(urllib 為 I/O bound,threading 有效益)。
-    每家獨立 try/except —— 0940 時間敏感,一家掛掉/逾時只 warn,不拖垮其他家。
-    各 fetch 回傳自己的 list(thread-safe,不共用可變狀態),主執行緒依固定來源
-    順序合併後再去重 —— 順序穩定 → 去重結果與原序列版完全一致。"""
+    """優先採用新版股市新聞彙整器 (main.aggregate)，整合 11 大資料源，失敗時降級回舊版並行爬蟲。"""
+    try:
+        import sys
+        import pathlib
+        scripts_path = str(pathlib.Path(__file__).resolve().parent)
+        if scripts_path not in sys.path:
+            sys.path.insert(0, scripts_path)
+        
+        import main as M
+        fb = news_cfg.get("fetch_body", True)
+        
+        print(f"  [Provider] Fetching news via new modular aggregator (fetch_content={fb})...", file=sys.stderr)
+        raw_items = M.aggregate(fetch_content=fb)
+        
+        mapped_items = []
+        for it in raw_items:
+            mapped_items.append({
+                "source": it.get("source", "unknown"),
+                "title": it.get("title", ""),
+                "summary": it.get("summary", "") or it.get("content", "")[:150],
+                "body": it.get("content", "") or it.get("summary", ""),
+                "url": it.get("url", ""),
+                "published_at": it.get("published_at", ""),
+                "keywords": [],
+                "stock_codes": it.get("stock_codes", []),   # 出版商標的代號(cnyes/anue)
+                "category": it.get("category", "") or "",   # 來源分類(國際焦點/外匯…),--intl 用
+            })
+        return mapped_items
+    except Exception as e:
+        print(f"  [Provider] New modular aggregator failed: {e!r}. Falling back to legacy concurrent providers.", file=sys.stderr)
 
     # 各家獨立 worker:自帶 try/except,失敗只 warn 回 []。
     # source 標籤用於合併時排序,確保去重保留順序與序列版一致。
@@ -352,7 +413,7 @@ def fetch_sanbao(news_cfg):
          news_cfg.get("udn_feeds", []),
          news_cfg.get("udn_limit", 30)),
         ("ctee", _safe, "ctee", fetch_ctee,
-         news_cfg.get("ctee_pages", ["https://www.ctee.com.tw/livenews"]),
+         news_cfg.get("ctee_pages", ["https://www.ctee.com.tw/livenews/feed"]),
          news_cfg.get("ctee_limit", 60)),
         # anue 預設取 cnyes 主流程沒覆蓋的子站(美股雷達/外匯),避免與
         # fetch_cnyes 完全重複(tw_stock_news 是 tw_stock 子集 → 100% 被去重)。
@@ -398,6 +459,186 @@ def fetch_sanbao(news_cfg):
     return uniq
 
 
+# 產業/法人報告型新聞:時效較長(目標價、EPS、評等、法說…),放寬到 report_days 天;
+# 一般即時新聞用 news_days 天。
+REPORT_TERMS = ["目標價", "EPS", "評等", "調升", "升評", "降評", "Factset", "法說",
+                "分析師", "研報", "上看", "重申", "買進", "加碼", "減碼", "中立",
+                "財測", "展望", "外資看", "外資調", "券商", "預估"]
+
+
+def is_report(title):
+    t = title or ""
+    return any(k in t for k in REPORT_TERMS)
+
+
+def recent_ok(pub, title, news_days=3, report_days=10):
+    """新鮮度:報告型(is_report)放寬到 report_days,其餘 news_days。
+    無日期/無法解析 → 保留(與現行『無時間視為當日』一致)。"""
+    if not pub:
+        return True
+    try:
+        d = datetime.datetime.fromisoformat(str(pub).strip())
+    except Exception:
+        return True
+    if d.tzinfo is None:
+        d = d.astimezone()
+    lim = report_days if is_report(title) else news_days
+    return d >= datetime.datetime.now().astimezone() - datetime.timedelta(days=lim)
+
+
+_ALIAS_MAP = None
+_NAME_MAP = {}
+
+
+def _alias_map():
+    """{裸代號: [別名…]} 取自 data/stocks/tw_stocks.json(已過 build_stock_dict 黑名單)。
+    別名長度 >=2;讓 match_news_to_codes 除了單一簡稱外,也認『南亞電路板/ABF載板』等。
+    同時記下 name_zh 給 local_stock_name(沒有 Metabase 時的離線股名)。"""
+    global _ALIAS_MAP
+    if _ALIAS_MAP is None:
+        _ALIAS_MAP = {}
+        try:
+            import pathlib
+            p = (pathlib.Path(__file__).resolve().parent.parent
+                 / "data" / "stocks" / "tw_stocks.json")
+            for tk, info in json.loads(p.read_text(encoding="utf-8")).items():
+                bare = str(tk).split(".")[0]
+                if info.get("name_zh"):
+                    _NAME_MAP[bare] = info["name_zh"]
+                al = [a for a in (info.get("aliases") or []) if a and len(a) >= 2]
+                if al:
+                    _ALIAS_MAP[bare] = al
+        except Exception as e:
+            print(f"  alias map load warn: {e!r}", file=sys.stderr)
+            _ALIAS_MAP = {}
+    return _ALIAS_MAP
+
+
+_FULL_NAMES = None
+
+
+def local_stock_name(code):
+    """離線股名:先查官方全市場 tw_names.json(build_stock_dict.py --names 產生,上市加上櫃,
+    改名時較新),再查策展字典 tw_stocks.json 的 name_zh(補 ETF 等);都沒有回 ""(只能靠代號比對)。"""
+    global _FULL_NAMES
+    _alias_map()
+    code = str(code)
+    if _FULL_NAMES is None:
+        try:
+            import pathlib
+            p = (pathlib.Path(__file__).resolve().parent.parent
+                 / "data" / "stocks" / "tw_names.json")
+            _FULL_NAMES = json.loads(p.read_text(encoding="utf-8"))
+        except Exception:                  # 檔案不在就只用策展字典
+            _FULL_NAMES = {}
+    return _FULL_NAMES.get(code) or _NAME_MAP.get(code, "")
+
+
+def _alias_hit(aliases, blob):
+    for a in aliases:
+        if re.search(r"[A-Za-z0-9]", a):           # 英數別名加邊界防誤命中
+            if re.search(r"(?<![A-Za-z0-9])" + re.escape(a) + r"(?![A-Za-z0-9])", blob):
+                return True
+        elif a in blob:                            # 中文別名直接比對
+            return True
+    return False
+
+
+def _http_json(url, params=None, timeout=12):
+    import urllib.request, urllib.parse
+    if params:
+        url = url + "?" + urllib.parse.urlencode(params)
+    req = urllib.request.Request(url, headers={
+        "User-Agent": "Mozilla/5.0", "Origin": "https://news.cnyes.com",
+        "Referer": "https://news.cnyes.com/"})
+    with urllib.request.urlopen(req, timeout=timeout) as r:
+        return json.loads(r.read().decode("utf-8", "replace"))
+
+
+def search_cnyes_news(keyword, limit=30):
+    """cnyes 全站搜尋(關鍵字模式補腿,約 0.1 到 1 秒/詞)。回 provider 共通格式 + category。
+    注意:API 的 content 是命中處附近的短片段(非全文),直接當 body 用,不另抓內頁。
+    速報(自動價格快報)略過;任何失敗回 []。"""
+    try:
+        from common import html_to_text, to_taipei_iso
+    except ImportError:
+        from .common import html_to_text, to_taipei_iso
+    try:
+        j = _http_json("https://api.cnyes.com/media/api/v1/search/news",
+                       {"q": keyword, "limit": limit})
+    except Exception as e:
+        print(f"  cnyes-search warn {keyword}: {e!r}", file=sys.stderr)
+        return []
+    out = []
+    for it in ((j.get("items") or {}).get("data")) or []:
+        title = re.sub(r"</?mark>", "", it.get("title") or "")
+        if not title or "速報" in title:
+            continue
+        cats = it.get("category") or []
+        out.append({
+            "source": "cnyes-search", "title": title, "summary": "",
+            "body": html_to_text(re.sub(r"</?mark>", "", it.get("content") or "")),
+            "url": (f"https://news.cnyes.com/news/id/{it.get('newsId')}"
+                    if it.get("newsId") else ""),
+            "published_at": to_taipei_iso(it.get("publishAt")),
+            "category": ((cats[0] or {}).get("name", "") if cats else "") or "",
+            "keywords": [],
+        })
+    return out
+
+
+def fetch_stock_news(code, name, limit=30, body_cap=600):
+    """per-代號『直取』個股新聞(補綜合清單抓不到的個股深度報導)。
+    主力:cnyes search API(依股名全文搜 cnyes 全站)。搜尋結果含雜訊,
+    只留標題/內文真的提到該股名或代號者,再標 stock_codes=[code](來源即該股)。
+    任何失敗回 [](非致命)。Yahoo 個股頁為 best-effort 補充。"""
+    try:
+        from common import html_to_text, to_taipei_iso
+    except ImportError:
+        from .common import html_to_text, to_taipei_iso
+    code = str(code)
+    out = []
+    # ── cnyes search(主力)──
+    try:
+        j = _http_json("https://api.cnyes.com/media/api/v1/search/news",
+                       {"q": name, "limit": limit})
+        data = ((j.get("items") or {}).get("data")) or []
+        for it in data:
+            title = re.sub(r"</?mark>", "", it.get("title") or "")
+            if "速報" in title:                  # 盤中/盤後速報=自動價格快報,非漲因,跳過
+                continue
+            body = html_to_text(it.get("content") or "")
+            blob = title + " " + body
+            if (name and name != code and name in blob) or re.search(   # 用代號當股名時只走邊界比對
+                    r"(?<!\d)" + re.escape(code) + r"(?![\d億萬點元張])", blob):
+                out.append({
+                    "time": to_taipei_iso(it.get("publishAt")) or _now_iso(),
+                    "title": title, "source": "cnyes-search",
+                    "url": f"https://news.cnyes.com/news/id/{it.get('newsId')}",
+                    "summary": "", "body": body[:body_cap], "stock_codes": [code]})
+    except Exception as e:
+        print(f"  fetch_stock_news cnyes-search warn {code}: {e!r}", file=sys.stderr)
+    # ── Yahoo 個股頁(best-effort 補充)──
+    try:
+        import urllib.request
+        req = urllib.request.Request(
+            f"https://tw.stock.yahoo.com/quote/{code}.TW/news",
+            headers={"User-Agent": "Mozilla/5.0"})
+        html = urllib.request.urlopen(req, timeout=12).read().decode("utf-8", "replace")
+        seen = {o["url"] for o in out}
+        for m in re.finditer(r'"title":"([^"]{6,})","[^"]*?url":"(https://[^"]*?news[^"]*?)"', html):
+            t = m.group(1).encode().decode("unicode_escape", "replace")
+            u = m.group(2)
+            if u in seen or (name not in t):
+                continue
+            seen.add(u)
+            out.append({"time": _now_iso(), "title": t, "source": "yahoo-quote",
+                        "url": u, "summary": "", "body": "", "stock_codes": [code]})
+    except Exception as e:
+        print(f"  fetch_stock_news yahoo warn {code}: {e!r}", file=sys.stderr)
+    return out
+
+
 def match_news_to_codes(items, code_to_name, lookback_days=3):
     """新聞流比對個股:標題/摘要/關鍵字含股名或代號 → 掛到該代號。
     cnyes/udn 有時間 → 過濾近 N 日;ctee 無時間 → 視為當日納入。"""
@@ -415,12 +656,18 @@ def match_news_to_codes(items, code_to_name, lookback_days=3):
         blob = (it["title"] + " " + it.get("summary", "") + " "
                 + it.get("body", "") + " "        # cnyes body 已在,提高命中率
                 + " ".join(it.get("keywords", [])))
+        pub_codes = {str(x) for x in (it.get("stock_codes") or [])}   # 出版商標的代號
+        amap = _alias_map()
         for code, name in code_to_name.items():
-            if not name:
-                continue
-            # 代號加數字/金額單位邊界,避免「逾2330億」「12330張」誤命中
-            if name in blob or re.search(
-                    r"(?<!\d)" + re.escape(str(code)) + r"(?![\d億萬點元張])", blob):
+            # 優先:出版商已標代號 → 直接命中(零誤判,連標題用描述性指稱的也中);
+            #       次:股名/代號字串(代號加數字/金額單位邊界防誤命中);
+            #       再次:別名字典(南亞電路板/ABF載板…)。
+            # 代號字串比對不依賴股名:沒有 Metabase 時股名可能是空字串,仍要認得「(2408)」
+            hit = (str(code) in pub_codes) or bool(name and name in blob) \
+                or bool(re.search(
+                    r"(?<!\d)" + re.escape(str(code)) + r"(?![\d億萬點元張])", blob)) \
+                or _alias_hit(amap.get(str(code), []), blob)
+            if hit:
                 by_code.setdefault(code, []).append({
                     "time": pub or _now_iso(),
                     "title": it["title"],

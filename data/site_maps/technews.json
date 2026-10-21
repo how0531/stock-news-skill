@@ -1,0 +1,72 @@
+{
+  "source_id": "technews",
+  "label": "科技新報",
+  "agent": "科技新報agent",
+  "home": "https://technews.tw",
+  "access": {
+    "method": "rss",
+    "endpoints": ["https://technews.tw/feed/"],
+    "implemented_in": "scripts/rss_sources.py",
+    "history_backfill": false,
+    "note": "全站 feed 混入科普/評測/娛樂科技；建議改用財經分類 feed。WordPress 站台，分類 feed 形式為 https://technews.tw/category/{slug}/feed/，財經內容另有獨立子網域 finance.technews.tw（feed: https://finance.technews.tw/feed/）"
+  },
+  "columns": [
+    {
+      "name": "財經（子網域）",
+      "url": "https://finance.technews.tw/feed/",
+      "stock_relevant": true,
+      "note": "首選替代來源。財經文章實際發佈於 finance.technews.tw 子網域（文章 URL 即 finance.technews.tw/{date}/...），涵蓋台股、個股、外資動向、半導體供應鏈、財報，雜訊最低"
+    },
+    {
+      "name": "財經",
+      "url": "https://technews.tw/category/finance/feed/",
+      "stock_relevant": true,
+      "note": "主站財經分類，與 finance 子網域內容對應；台股/外資/總經/個股新聞"
+    },
+    {
+      "name": "財報快訊",
+      "url": "https://technews.tw/category/finance/finance-report/feed/",
+      "stock_relevant": true,
+      "note": "財經底下子分類，公司財報/法說/營收快訊，股市關聯度最高；亦可由 https://technews.tw/category/finance-report/feed/ 存取"
+    },
+    {
+      "name": "技術分析",
+      "url": "https://technews.tw/category/member-news/technical-analysis/feed/",
+      "stock_relevant": true,
+      "note": "會員新聞下的個股技術分析；偏投顧型內容，可能需訂閱或量少，需本機驗證"
+    },
+    {
+      "name": "半導體",
+      "url": "https://technews.tw/category/semiconductor/feed/",
+      "stock_relevant": true,
+      "note": "台積電、記憶體、HBM、晶圓代工等產業新聞，與台股權值股高度相關；部分為純技術科普需關鍵字過濾"
+    },
+    {
+      "name": "AI 人工智慧",
+      "url": "https://technews.tw/category/ai/feed/",
+      "stock_relevant": true,
+      "note": "AI 伺服器/算力需求等，常牽動相關概念股；但混入大量純技術科普，建議搭配關鍵字過濾"
+    },
+    {
+      "name": "5G",
+      "url": "https://technews.tw/category/5g/feed/",
+      "stock_relevant": false,
+      "note": "5G 技術/網路產業，偶涉電信股，財經關聯偏低"
+    },
+    {
+      "name": "物聯網",
+      "url": "https://technews.tw/category/internet-of-things-internet/feed/",
+      "stock_relevant": false,
+      "note": "IoT 技術科普為主，股市關聯低"
+    }
+  ],
+  "stock_relevant_columns": ["財經（子網域）", "財經", "財報快訊", "技術分析", "半導體", "AI 人工智慧"],
+  "noise_notes": "科技媒體全站 feed 含科普/評測/娛樂科技，需用分類過濾或關鍵字過濾。財經內容集中於 finance.technews.tw 子網域，建議直接以該子網域 feed 取代全站 feed；半導體/AI 分類雖股市關聯高，仍混入純技術科普，宜再以關鍵字（台股、股價、營收、法說、外資、概念股等）過濾",
+  "cleaning": {
+    "publish_ts": "RSS -> 台北時間",
+    "dedup": "norm_title 跨源去重"
+  },
+  "researched_via": "websearch",
+  "researched_at": "2026-06-13",
+  "verified_live": false
+}

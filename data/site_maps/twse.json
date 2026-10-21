@@ -1,0 +1,82 @@
+{
+  "source_id": "twse",
+  "label": "TWSE/TPEx 官方",
+  "agent": "證交所agent",
+  "home": "https://openapi.twse.com.tw",
+  "access": {
+    "method": "openapi",
+    "endpoints": [
+      "https://openapi.twse.com.tw/v1/opendata/t187ap04_L",
+      "https://openapi.twse.com.tw/v1/announcement/notice",
+      "https://openapi.twse.com.tw/v1/announcement/punish",
+      "https://openapi.twse.com.tw/v1/announcement/notetrans",
+      "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap04_O",
+      "https://www.tpex.org.tw/openapi/v1/tpex_disposal_information",
+      "https://www.tpex.org.tw/openapi/v1/tpex_attention_information"
+    ],
+    "implemented_in": "scripts/twse_announce.py",
+    "history_backfill": false,
+    "note": "ROC 民國年日期需轉西元（yyymmdd，如 1150612 -> 2026-06-12）；官方第一手公告。OpenAPI 為當日/前一日彙總快照，僅含前一天至前一月資料，更新頻率非逐秒；秒級即時須改接 MOPS t05sr01_1（反爬蟲較強，未實作）。TWSE 文件 https://openapi.twse.com.tw/v1/swagger.json，TPEx 文件 https://www.tpex.org.tw/openapi/。"
+  },
+  "columns": [
+    {
+      "name": "上市重大訊息",
+      "url": "https://openapi.twse.com.tw/v1/opendata/t187ap04_L",
+      "stock_relevant": true,
+      "note": "t187ap04_L。上市公司每日重大訊息（公司代號/名稱/發言日期/發言時間/主旨/說明），第一手法定公告，已實作於 twse_announce.py。個股事件核心欄目。"
+    },
+    {
+      "name": "上市公布注意股票",
+      "url": "https://openapi.twse.com.tw/v1/announcement/notice",
+      "stock_relevant": true,
+      "note": "對應 www.twse.com.tw/announcement/notice.html。當日公布注意有價證券，股價/週轉率異常警示，與當沖、籌碼面高度相關。"
+    },
+    {
+      "name": "上市公布處置股票",
+      "url": "https://openapi.twse.com.tw/v1/announcement/punish",
+      "stock_relevant": true,
+      "note": "對應 www.twse.com.tw/announcement/punish.html（處置有價證券資訊 / Announcement of Disposition Securities）。分盤撮合、預收款券等，交易方式改變直接影響操作，重要風險訊號。"
+    },
+    {
+      "name": "上市累計注意次數",
+      "url": "https://openapi.twse.com.tw/v1/announcement/notetrans",
+      "stock_relevant": true,
+      "note": "對應 www.twse.com.tw/announcement/notetrans.html。累計注意次數統計，接近處置門檻的個股可作為風險預判，個股導向但偏統計。"
+    },
+    {
+      "name": "上櫃重大訊息",
+      "url": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap04_O",
+      "stock_relevant": true,
+      "note": "mopsfin_t187ap04_O。上櫃（OTC）公司每日重大訊息，欄位結構與上市 t187ap04_L 對應，已實作於 twse_announce.py。上櫃個股事件核心欄目。"
+    },
+    {
+      "name": "上櫃處置有價證券",
+      "url": "https://www.tpex.org.tw/openapi/v1/tpex_disposal_information",
+      "stock_relevant": true,
+      "note": "上櫃處置股票資訊（處置原因、處置起迄、分盤秒數、預收款券）。與上市 punish 對應，上櫃個股風險警示。端點名稱依 TPEx swagger，使用前建議以實測校正。"
+    },
+    {
+      "name": "上櫃注意有價證券",
+      "url": "https://www.tpex.org.tw/openapi/v1/tpex_attention_information",
+      "stock_relevant": true,
+      "note": "上櫃公布注意有價證券。與上市 notice 對應，上櫃個股異常警示。端點名稱依 TPEx swagger，使用前建議以實測校正。"
+    }
+  ],
+  "stock_relevant_columns": [
+    "上市重大訊息",
+    "上市公布注意股票",
+    "上市公布處置股票",
+    "上市累計注意次數",
+    "上櫃重大訊息",
+    "上櫃處置有價證券",
+    "上櫃注意有價證券"
+  ],
+  "noise_notes": "官方法定資料，無記者改寫雜訊；但部分端點為統計彙總（如累計注意次數 notetrans）而非單一個股事件，須留意分類。注意/處置端點為每日全市場清單，需依 co_id 對應個股。OpenAPI 僅前一天至前一月，無歷史回溯；秒級即時須另接 MOPS t05sr01_1。TPEx 處置/注意端點名稱以 swagger 為準，verified_live=false，正式串接前應實測確認路徑與欄位。",
+  "cleaning": {
+    "publish_ts": "ROC 民國年（yyymmdd，如 1150612）+ 發言時間 -> 西元 -> Asia/Taipei (UTC+8) ISO；解析見 twse_announce._roc_to_iso",
+    "dedup": "norm_title 跨源去重；個股以 co_id/公司代號 +.TW/.TWO 對應 ticker"
+  },
+  "researched_via": "websearch",
+  "researched_at": "2026-06-13",
+  "verified_live": false
+}

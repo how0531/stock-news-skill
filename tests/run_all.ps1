@@ -12,11 +12,14 @@ $Python = "python"
 
 $Tests = @(
     @{ Name = "test_health";                File = "test_health.py" },
+    # 主路徑每個來源實抓 3 則(任一來源 0 則即 FAIL),補 test_health 只測端點可達的盲點
+    @{ Name = "healthcheck";                File = "..\scripts\healthcheck.py" },
     @{ Name = "test_query_news_api";        File = "test_query_news_api.py" },
     @{ Name = "test_cli_smoke";             File = "test_cli_smoke.py" },
     @{ Name = "test_sentiment";             File = "test_sentiment.py" },
     @{ Name = "test_formatters";            File = "test_formatters.py" },
-    @{ Name = "test_query_news_internals";  File = "test_query_news_internals.py" }
+    @{ Name = "test_query_news_internals";  File = "test_query_news_internals.py" },
+    @{ Name = "test_digest_render";         File = "test_digest_render.py" }
 )
 
 $Results = @()

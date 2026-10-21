@@ -310,6 +310,57 @@ def test_render_report_json():
         check("render_report_json:可json序列化", False, f"{e!r}")
 
 
+def test_render_digest():
+    """digest(--today)原料排版:依來源分組、表頭含總數/來源/情緒分布、不崩。"""
+    items = make_items()  # 含 cnyes/udn/ctee/...,sentiment 齊全度不一
+    date_str = "2026-06-02"
+
+    md = F.render_digest_md(items, date_str)
+    check("render_digest_md:是str", isinstance(md, str) and len(md) > 0)
+    check("render_digest_md:含日期表頭", date_str in md and "今日新聞彙整" in md, md[:40])
+    check("render_digest_md:含總數", f"共 {len(items)} 則" in md)
+    check("render_digest_md:含來源分布行", "來源分布:" in md and "情緒分布:" in md)
+    # 每則標題都應出現(去標點化後比對關鍵字串)
+    miss = [it["title"] for it in items
+            if it.get("title", "").replace("[", "［").replace("]", "］") not in md]
+    check("render_digest_md:每則標題都在", not miss, f"缺 {miss}")
+
+    con = F.render_digest_console(items, date_str)
+    check("render_digest_console:是str", isinstance(con, str) and len(con) > 0)
+    check("render_digest_console:含分組標頭", "==" in con and "則）" in con)
+
+    # 空輸入不崩
+    empty_md = F.render_digest_md([], date_str)
+    check("render_digest_md:空輸入不崩", isinstance(empty_md, str) and "共 0 則" in empty_md)
+    empty_con = F.render_digest_console([])
+    check("render_digest_console:空輸入不崩", isinstance(empty_con, str))
+
+    # 跨日窗:時間要帶日期(MM-DD HH:MM),不然看不出 18:21 是哪一天
+    check("render_digest_md:時間含日期", "- 05-10 09:00" in md, md[:300])
+    check("render_digest_console:時間含日期", "  05-10 09:00" in con, con[:300])
+
+
+def test_render_snippets():
+    """keyword 命中有 snippets 時印片段,取代只印內文開頭;沒有時維持舊行為。"""
+    res = {"by_code": {}, "keyword_hits": [
+        {"time": "2026-10-08T18:21:00+08:00", "title": "有片段", "source": "cnyes",
+         "url": "http://x/s", "summary": "", "body": "開頭" * 200,
+         "code": "", "name": "", "snippets": ["…前文 關鍵字A 後文…", "…另一段 關鍵字A…"]},
+        {"time": "2026-10-08T18:00:00+08:00", "title": "無片段", "source": "udn",
+         "url": "http://x/n", "summary": "", "body": "舊行為內文開頭",
+         "code": "", "name": ""},
+    ]}
+    con = F.render_console(res)
+    check("render_console:印 snippets",
+          "→ …前文 關鍵字A 後文…" in con and "→ …另一段 關鍵字A…" in con, con)
+    check("render_console:有 snippets 就不印內文開頭", "開頭開頭開頭" not in con, con)
+    check("render_console:無 snippets 維持印內文開頭", "→ 舊行為內文開頭" in con, con)
+    md = F.render_markdown(res)
+    check("render_markdown:印 snippets",
+          "> …前文 關鍵字A 後文…" in md and "> …另一段 關鍵字A…" in md, md)
+    check("render_markdown:無 snippets 維持印內文開頭", "> 舊行為內文開頭" in md, md)
+
+
 def main():
     print("\n=== news_formatters 純函式測試 ===")
     print("\n--- helper: _sent_count / _event_count / _source_count ---")
@@ -328,6 +379,10 @@ def main():
     test_render_report_console()
     test_render_report_md()
     test_render_report_json()
+    print("\n--- render: digest(--today 今日四象限原料) ---")
+    test_render_digest()
+    print("\n--- render: keyword snippets ---")
+    test_render_snippets()
 
     ok = sum(1 for _, p, _ in results if p)
     fail = sum(1 for _, p, _ in results if not p)

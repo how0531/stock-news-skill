@@ -1,0 +1,74 @@
+{
+  "source_id": "yahoo_stock",
+  "label": "Yahoo奇摩股市",
+  "agent": "Yahoo股市agent",
+  "home": "https://tw.stock.yahoo.com",
+  "access": {
+    "method": "rss",
+    "endpoints": [
+      "https://tw.stock.yahoo.com/rss?category=tw-market",
+      "https://tw.stock.yahoo.com/rss?category=intl-markets"
+    ],
+    "implemented_in": "scripts/rss_sources.py",
+    "history_backfill": false
+  },
+  "columns": [
+    {
+      "name": "台股",
+      "url": "https://tw.stock.yahoo.com/rss?category=tw-market",
+      "stock_relevant": true,
+      "note": "台股市場新聞（對應網站 tw.stock.yahoo.com 台股 / 大盤 / 類股）。已確認的 RSS category 值，已註冊於 rss_sources.py。核心台股來源。"
+    },
+    {
+      "name": "國際股市",
+      "url": "https://tw.stock.yahoo.com/rss?category=intl-markets",
+      "stock_relevant": true,
+      "note": "國際股市 / 國際財經新聞（對應網站 /markets、tw.finance.yahoo.com/intl-markets，含美股 / 港股 / 滬深 / 國際指數）。已確認的 RSS category 值，已註冊於 rss_sources.py。國際股市核心來源。"
+    },
+    {
+      "name": "研究報告",
+      "url": "https://tw.stock.yahoo.com/rss?category=research",
+      "stock_relevant": true,
+      "note": "研究報告（對應網站 /research）。券商 / 投顧個股研究與評等，與台股高度相關，可作為補充來源。RSS category 值已由 rss-help / rss-index 說明頁確認。"
+    },
+    {
+      "name": "基金新聞",
+      "url": "https://tw.stock.yahoo.com/rss?category=funds-news",
+      "stock_relevant": false,
+      "note": "基金新聞（對應網站 /fund）。以共同基金 / 境內外基金為主，與個股 / 大盤關聯較弱，屬邊界類；目前不納入，必要時可作輔助。RSS category 值由 rss-help 說明頁確認。"
+    },
+    {
+      "name": "專家專欄",
+      "url": "https://tw.stock.yahoo.com/rss?category=column",
+      "stock_relevant": false,
+      "note": "專家 / 名家專欄。多為評論與觀點文，主觀性高、時效性弱，與即時股市新聞性質不同；目前不納入。RSS category 值由 rss-help 說明頁確認。"
+    },
+    {
+      "name": "台股ETF",
+      "url": "https://tw.stock.yahoo.com/rss?category=tw-etf",
+      "stock_relevant": true,
+      "note": "推測值（unverified）。對應網站 /tw-etf、/etf 的 ETF 新聞分類；URL 由網站 slug 推得，尚未確認該 category 在 RSS 端存在，本機驗證時需實測。若可用屬 stock_relevant。"
+    },
+    {
+      "name": "外匯",
+      "url": "https://tw.stock.yahoo.com/rss?category=forex",
+      "stock_relevant": false,
+      "note": "推測值（unverified）。對應網站 /markets 下外匯區；URL 由 slug 推得，未確認 RSS 端存在。匯市與股市相關但非核心，屬邊界類。本機驗證時需實測。"
+    },
+    {
+      "name": "期貨",
+      "url": "https://tw.stock.yahoo.com/rss?category=futures",
+      "stock_relevant": false,
+      "note": "推測值（unverified）。對應台指期 / 指數選擇權；URL 由 slug 推得，未確認 RSS 端存在。衍生性商品，與台股大盤相關但非核心，屬邊界類。本機驗證時需實測。"
+    }
+  ],
+  "stock_relevant_columns": ["台股", "國際股市", "研究報告", "台股ETF"],
+  "noise_notes": "Yahoo奇摩股市為入口型財經站，RSS 以 category 參數切分（已確認: tw-market、intl-markets、research、funds-news、column；推測待驗: tw-etf、forex、futures）。基金（funds-news）、專欄（column）為邊界 / 排除類；外匯（forex）、期貨（futures）若存在亦屬邊界。核心納入 tw-market、intl-markets，research 可作補充。Yahoo 大量轉載中央社 / 經濟日報 / 工商時報等他媒體內容，與其他來源高度重疊，跨源去重尤其重要。無歷史回溯，RSS 僅含近期條目。",
+  "cleaning": {
+    "publish_ts": "RSS published/updated -> 台北時間",
+    "dedup": "norm_title 跨源去重；Yahoo 常轉載他媒體（中央社 / 經濟日報 / 工商時報等），跨源去重尤其重要"
+  },
+  "researched_via": "websearch",
+  "researched_at": "2026-06-13",
+  "verified_live": false
+}

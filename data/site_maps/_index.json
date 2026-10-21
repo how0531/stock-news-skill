@@ -1,0 +1,198 @@
+{
+  "phase": "2_structure_map",
+  "n_sources": 11,
+  "n_verified_live": 0,
+  "sources": [
+    {
+      "source_id": "chinatimes",
+      "label": "中時新聞網",
+      "agent": "中時新聞網agent",
+      "method": "rss",
+      "implemented_in": "scripts/rss_sources.py",
+      "history_backfill": false,
+      "n_columns": 11,
+      "stock_relevant_columns": [
+        "財經即時",
+        "財經(money 頻道)",
+        "證券",
+        "產業"
+      ],
+      "verified_live": false
+    },
+    {
+      "source_id": "cna",
+      "label": "中央社",
+      "agent": "中央社agent",
+      "method": "rss",
+      "implemented_in": "scripts/rss_sources.py",
+      "history_backfill": false,
+      "n_columns": 11,
+      "stock_relevant_columns": [
+        "財經"
+      ],
+      "verified_live": false
+    },
+    {
+      "source_id": "cnyes",
+      "label": "鉅亨網",
+      "agent": "鉅亨網agent",
+      "method": "json_api",
+      "implemented_in": "scripts/cnyes.py",
+      "history_backfill": true,
+      "n_columns": 14,
+      "stock_relevant_columns": [
+        "頭條",
+        "台股",
+        "台股新聞",
+        "美股/國際股",
+        "美股預估",
+        "國際政經"
+      ],
+      "verified_live": false
+    },
+    {
+      "source_id": "ctee",
+      "label": "工商時報",
+      "agent": "工商時報agent",
+      "method": "html",
+      "implemented_in": "scripts/ctee.py",
+      "history_backfill": true,
+      "n_columns": 10,
+      "stock_relevant_columns": [
+        "證券（總覽）",
+        "上市櫃",
+        "期貨",
+        "金融",
+        "產業",
+        "國際財經",
+        "言論／名家評論",
+        "即時新聞（總覽）"
+      ],
+      "verified_live": false
+    },
+    {
+      "source_id": "ettoday",
+      "label": "ETtoday財經",
+      "agent": "ETtoday財經agent",
+      "method": "rss",
+      "implemented_in": "scripts/rss_sources.py",
+      "history_backfill": false,
+      "n_columns": 7,
+      "stock_relevant_columns": [
+        "股市",
+        "ETF",
+        "國際財經",
+        "產業"
+      ],
+      "verified_live": false
+    },
+    {
+      "source_id": "ltn",
+      "label": "自由財經",
+      "agent": "自由財經agent",
+      "method": "rss",
+      "implemented_in": "scripts/rss_sources.py",
+      "history_backfill": false,
+      "n_columns": 6,
+      "stock_relevant_columns": [
+        "財經即時",
+        "證券產業",
+        "國際財經",
+        "財經政策"
+      ],
+      "verified_live": false
+    },
+    {
+      "source_id": "moneydj",
+      "label": "MoneyDJ理財網",
+      "agent": "MoneyDJagent",
+      "method": "rss",
+      "implemented_in": "scripts/rss_sources.py",
+      "history_backfill": false,
+      "n_columns": 9,
+      "stock_relevant_columns": [
+        "頭條新聞",
+        "總體經濟/國際財經",
+        "台股",
+        "個股情報",
+        "產業分析",
+        "ETF",
+        "美股/國際股市"
+      ],
+      "verified_live": false
+    },
+    {
+      "source_id": "technews",
+      "label": "科技新報",
+      "agent": "科技新報agent",
+      "method": "rss",
+      "implemented_in": "scripts/rss_sources.py",
+      "history_backfill": false,
+      "n_columns": 8,
+      "stock_relevant_columns": [
+        "財經（子網域）",
+        "財經",
+        "財報快訊",
+        "技術分析",
+        "半導體",
+        "AI 人工智慧"
+      ],
+      "verified_live": false
+    },
+    {
+      "source_id": "twse",
+      "label": "TWSE/TPEx 官方",
+      "agent": "證交所agent",
+      "method": "openapi",
+      "implemented_in": "scripts/twse_announce.py",
+      "history_backfill": false,
+      "n_columns": 7,
+      "stock_relevant_columns": [
+        "上市重大訊息",
+        "上市公布注意股票",
+        "上市公布處置股票",
+        "上市累計注意次數",
+        "上櫃重大訊息",
+        "上櫃處置有價證券",
+        "上櫃注意有價證券"
+      ],
+      "verified_live": false
+    },
+    {
+      "source_id": "udn",
+      "label": "經濟日報",
+      "agent": "經濟日報agent",
+      "method": "sitemap",
+      "implemented_in": "scripts/udn.py",
+      "history_backfill": true,
+      "n_columns": 12,
+      "stock_relevant_columns": [
+        "要聞",
+        "產業",
+        "證券",
+        "行情",
+        "國際",
+        "金融",
+        "期貨",
+        "專欄"
+      ],
+      "verified_live": false
+    },
+    {
+      "source_id": "yahoo_stock",
+      "label": "Yahoo奇摩股市",
+      "agent": "Yahoo股市agent",
+      "method": "rss",
+      "implemented_in": "scripts/rss_sources.py",
+      "history_backfill": false,
+      "n_columns": 8,
+      "stock_relevant_columns": [
+        "台股",
+        "國際股市",
+        "研究報告",
+        "台股ETF"
+      ],
+      "verified_live": false
+    }
+  ]
+}

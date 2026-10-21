@@ -5,9 +5,10 @@
   "news": {
     "source": "both",
     "lookback_days": 3,
-    "cache_ttl_sec": 120,
+    "report_days": 10,
+    "cache_ttl_sec": 900,
     "cnyes_categories": ["tw_stock", "us_stock"],
-    "cnyes_pages": 3,
+    "cnyes_pages": 8,
     "udn_feeds": [
       "https://money.udn.com/rssfeed/news/1001/5591?ch=money",
       "https://money.udn.com/rssfeed/news/1001/5590?ch=money",
@@ -18,9 +19,7 @@
     ],
     "udn_limit": 30,
     "ctee_pages": [
-      "https://www.ctee.com.tw/livenews/stock",
-      "https://www.ctee.com.tw/livenews/finance",
-      "https://www.ctee.com.tw/livenews/tech"
+      "https://www.ctee.com.tw/livenews/feed"
     ],
     "ctee_limit": 60,
     "anue_categories": ["wd_stock", "forex"],
@@ -30,9 +29,11 @@
     ],
     "moneydj_limit": 40,
     "yahoo_feeds": [
-      "https://tw.stock.yahoo.com/rss?category=tw-market"
+      "https://tw.stock.yahoo.com/rss?category=tw-market",
+      "https://tw.news.yahoo.com/rss/industry",
+      "https://tw.stock.yahoo.com/rss?category=industry"
     ],
-    "yahoo_limit": 40,
+    "yahoo_limit": 60,
     "fetch_body": true,
     "body_max_chars": 600,
     "body_fetch_limit": 40,

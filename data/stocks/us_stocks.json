@@ -1,0 +1,1933 @@
+{
+  "NVDA": {
+    "ticker": "NVDA",
+    "name_zh": "輝達",
+    "name_en": "NVIDIA",
+    "market": "US",
+    "sector": "半導體",
+    "aliases": [
+      "輝達",
+      "NVIDIA",
+      "NVDA",
+      "NVDA-US",
+      "黃仁勳",
+      "Jensen Huang",
+      "NVIDIA Corp"
+    ]
+  },
+  "AAPL": {
+    "ticker": "AAPL",
+    "name_zh": "蘋果",
+    "name_en": "Apple",
+    "market": "US",
+    "sector": "科技",
+    "aliases": [
+      "蘋果",
+      "Apple",
+      "AAPL",
+      "AAPL-US",
+      "Apple Inc",
+      "庫克",
+      "Tim Cook"
+    ]
+  },
+  "MSFT": {
+    "ticker": "MSFT",
+    "name_zh": "微軟",
+    "name_en": "Microsoft",
+    "market": "US",
+    "sector": "軟體",
+    "aliases": [
+      "微軟",
+      "Microsoft",
+      "MSFT",
+      "MSFT-US",
+      "Microsoft Corp",
+      "納德拉"
+    ]
+  },
+  "GOOGL": {
+    "ticker": "GOOGL",
+    "name_zh": "谷歌",
+    "name_en": "Alphabet Class A",
+    "market": "US",
+    "sector": "網路",
+    "aliases": [
+      "谷歌",
+      "Alphabet Class A",
+      "GOOGL",
+      "GOOGL-US",
+      "Google",
+      "Alphabet",
+      "GOOG"
+    ]
+  },
+  "GOOG": {
+    "ticker": "GOOG",
+    "name_zh": "谷歌",
+    "name_en": "Alphabet Class C",
+    "market": "US",
+    "sector": "網路",
+    "aliases": [
+      "谷歌",
+      "Alphabet Class C",
+      "GOOG",
+      "GOOG-US",
+      "Google",
+      "Alphabet"
+    ]
+  },
+  "AMZN": {
+    "ticker": "AMZN",
+    "name_zh": "亞馬遜",
+    "name_en": "Amazon",
+    "market": "US",
+    "sector": "電商",
+    "aliases": [
+      "亞馬遜",
+      "Amazon",
+      "AMZN",
+      "AMZN-US",
+      "Amazon.com",
+      "貝佐斯"
+    ]
+  },
+  "META": {
+    "ticker": "META",
+    "name_zh": "Meta",
+    "name_en": "Meta Platforms",
+    "market": "US",
+    "sector": "網路",
+    "aliases": [
+      "Meta",
+      "Meta Platforms",
+      "META",
+      "META-US",
+      "臉書",
+      "Facebook",
+      "祖克柏",
+      "Mark Zuckerberg"
+    ]
+  },
+  "TSLA": {
+    "ticker": "TSLA",
+    "name_zh": "特斯拉",
+    "name_en": "Tesla",
+    "market": "US",
+    "sector": "汽車",
+    "aliases": [
+      "特斯拉",
+      "Tesla",
+      "TSLA",
+      "TSLA-US",
+      "馬斯克",
+      "Elon Musk",
+      "電動車"
+    ]
+  },
+  "AVGO": {
+    "ticker": "AVGO",
+    "name_zh": "博通",
+    "name_en": "Broadcom",
+    "market": "US",
+    "sector": "半導體",
+    "aliases": [
+      "博通",
+      "Broadcom",
+      "AVGO",
+      "AVGO-US",
+      "Broadcom Inc"
+    ]
+  },
+  "AMD": {
+    "ticker": "AMD",
+    "name_zh": "超微",
+    "name_en": "AMD",
+    "market": "US",
+    "sector": "半導體",
+    "aliases": [
+      "超微",
+      "AMD",
+      "AMD-US",
+      "Advanced Micro Devices",
+      "蘇姿丰",
+      "Lisa Su"
+    ]
+  },
+  "INTC": {
+    "ticker": "INTC",
+    "name_zh": "英特爾",
+    "name_en": "Intel",
+    "market": "US",
+    "sector": "半導體",
+    "aliases": [
+      "英特爾",
+      "Intel",
+      "INTC",
+      "INTC-US",
+      "Intel Corp"
+    ]
+  },
+  "QCOM": {
+    "ticker": "QCOM",
+    "name_zh": "高通",
+    "name_en": "Qualcomm",
+    "market": "US",
+    "sector": "半導體",
+    "aliases": [
+      "高通",
+      "Qualcomm",
+      "QCOM",
+      "QCOM-US",
+      "Qualcomm Inc"
+    ]
+  },
+  "TXN": {
+    "ticker": "TXN",
+    "name_zh": "德州儀器",
+    "name_en": "Texas Instruments",
+    "market": "US",
+    "sector": "半導體",
+    "aliases": [
+      "德州儀器",
+      "Texas Instruments",
+      "TXN",
+      "TXN-US",
+      "TI"
+    ]
+  },
+  "MU": {
+    "ticker": "MU",
+    "name_zh": "美光",
+    "name_en": "Micron Technology",
+    "market": "US",
+    "sector": "半導體",
+    "aliases": [
+      "美光",
+      "Micron Technology",
+      "MU",
+      "MU-US",
+      "Micron",
+      "DRAM"
+    ]
+  },
+  "ASML": {
+    "ticker": "ASML",
+    "name_zh": "艾司摩爾",
+    "name_en": "ASML Holding",
+    "market": "US",
+    "sector": "半導體設備",
+    "aliases": [
+      "艾司摩爾",
+      "ASML Holding",
+      "ASML",
+      "ASML-US",
+      "曝光機",
+      "EUV"
+    ]
+  },
+  "AMAT": {
+    "ticker": "AMAT",
+    "name_zh": "應用材料",
+    "name_en": "Applied Materials",
+    "market": "US",
+    "sector": "半導體設備",
+    "aliases": [
+      "應用材料",
+      "Applied Materials",
+      "AMAT",
+      "AMAT-US",
+      "Applied"
+    ]
+  },
+  "LRCX": {
+    "ticker": "LRCX",
+    "name_zh": "科林研發",
+    "name_en": "Lam Research",
+    "market": "US",
+    "sector": "半導體設備",
+    "aliases": [
+      "科林研發",
+      "Lam Research",
+      "LRCX",
+      "LRCX-US",
+      "Lam"
+    ]
+  },
+  "KLAC": {
+    "ticker": "KLAC",
+    "name_zh": "科磊",
+    "name_en": "KLA Corporation",
+    "market": "US",
+    "sector": "半導體設備",
+    "aliases": [
+      "科磊",
+      "KLA Corporation",
+      "KLAC",
+      "KLAC-US",
+      "KLA"
+    ]
+  },
+  "MRVL": {
+    "ticker": "MRVL",
+    "name_zh": "邁威爾",
+    "name_en": "Marvell Technology",
+    "market": "US",
+    "sector": "半導體",
+    "aliases": [
+      "邁威爾",
+      "Marvell Technology",
+      "MRVL",
+      "MRVL-US",
+      "Marvell"
+    ]
+  },
+  "ARM": {
+    "ticker": "ARM",
+    "name_zh": "安謀",
+    "name_en": "Arm Holdings",
+    "market": "US",
+    "sector": "半導體",
+    "aliases": [
+      "安謀",
+      "Arm Holdings",
+      "ARM",
+      "ARM-US",
+      "Arm"
+    ]
+  },
+  "NFLX": {
+    "ticker": "NFLX",
+    "name_zh": "網飛",
+    "name_en": "Netflix",
+    "market": "US",
+    "sector": "媒體",
+    "aliases": [
+      "網飛",
+      "Netflix",
+      "NFLX",
+      "NFLX-US",
+      "Netflix Inc"
+    ]
+  },
+  "DIS": {
+    "ticker": "DIS",
+    "name_zh": "迪士尼",
+    "name_en": "Walt Disney",
+    "market": "US",
+    "sector": "媒體",
+    "aliases": [
+      "迪士尼",
+      "Walt Disney",
+      "DIS",
+      "DIS-US",
+      "Disney"
+    ]
+  },
+  "CRM": {
+    "ticker": "CRM",
+    "name_zh": "賽富時",
+    "name_en": "Salesforce",
+    "market": "US",
+    "sector": "軟體",
+    "aliases": [
+      "賽富時",
+      "Salesforce",
+      "CRM",
+      "CRM-US",
+      "Salesforce.com"
+    ]
+  },
+  "ORCL": {
+    "ticker": "ORCL",
+    "name_zh": "甲骨文",
+    "name_en": "Oracle",
+    "market": "US",
+    "sector": "軟體",
+    "aliases": [
+      "甲骨文",
+      "Oracle",
+      "ORCL",
+      "ORCL-US",
+      "Oracle Corp"
+    ]
+  },
+  "ADBE": {
+    "ticker": "ADBE",
+    "name_zh": "奧多比",
+    "name_en": "Adobe",
+    "market": "US",
+    "sector": "軟體",
+    "aliases": [
+      "奧多比",
+      "Adobe",
+      "ADBE",
+      "ADBE-US",
+      "Adobe Inc"
+    ]
+  },
+  "NOW": {
+    "ticker": "NOW",
+    "name_zh": "ServiceNow",
+    "name_en": "ServiceNow",
+    "market": "US",
+    "sector": "軟體",
+    "aliases": [
+      "ServiceNow",
+      "NOW",
+      "NOW-US"
+    ]
+  },
+  "INTU": {
+    "ticker": "INTU",
+    "name_zh": "Intuit",
+    "name_en": "Intuit",
+    "market": "US",
+    "sector": "軟體",
+    "aliases": [
+      "Intuit",
+      "INTU",
+      "INTU-US"
+    ]
+  },
+  "PLTR": {
+    "ticker": "PLTR",
+    "name_zh": "Palantir",
+    "name_en": "Palantir Technologies",
+    "market": "US",
+    "sector": "軟體",
+    "aliases": [
+      "Palantir",
+      "Palantir Technologies",
+      "PLTR",
+      "PLTR-US"
+    ]
+  },
+  "SNOW": {
+    "ticker": "SNOW",
+    "name_zh": "雪花",
+    "name_en": "Snowflake",
+    "market": "US",
+    "sector": "軟體",
+    "aliases": [
+      "雪花",
+      "Snowflake",
+      "SNOW",
+      "SNOW-US",
+      "Snowflake Inc"
+    ]
+  },
+  "UBER": {
+    "ticker": "UBER",
+    "name_zh": "優步",
+    "name_en": "Uber Technologies",
+    "market": "US",
+    "sector": "網路",
+    "aliases": [
+      "優步",
+      "Uber Technologies",
+      "UBER",
+      "UBER-US",
+      "Uber"
+    ]
+  },
+  "ABNB": {
+    "ticker": "ABNB",
+    "name_zh": "Airbnb",
+    "name_en": "Airbnb",
+    "market": "US",
+    "sector": "網路",
+    "aliases": [
+      "Airbnb",
+      "ABNB",
+      "ABNB-US"
+    ]
+  },
+  "SHOP": {
+    "ticker": "SHOP",
+    "name_zh": "Shopify",
+    "name_en": "Shopify",
+    "market": "US",
+    "sector": "網路",
+    "aliases": [
+      "Shopify",
+      "SHOP",
+      "SHOP-US"
+    ]
+  },
+  "PYPL": {
+    "ticker": "PYPL",
+    "name_zh": "PayPal",
+    "name_en": "PayPal",
+    "market": "US",
+    "sector": "金融科技",
+    "aliases": [
+      "PayPal",
+      "PYPL",
+      "PYPL-US"
+    ]
+  },
+  "SQ": {
+    "ticker": "SQ",
+    "name_zh": "Block",
+    "name_en": "Block",
+    "market": "US",
+    "sector": "金融科技",
+    "aliases": [
+      "Block",
+      "SQ",
+      "SQ-US",
+      "Square"
+    ]
+  },
+  "COIN": {
+    "ticker": "COIN",
+    "name_zh": "Coinbase",
+    "name_en": "Coinbase Global",
+    "market": "US",
+    "sector": "金融科技",
+    "aliases": [
+      "Coinbase",
+      "Coinbase Global",
+      "COIN",
+      "COIN-US",
+      "加密貨幣"
+    ]
+  },
+  "V": {
+    "ticker": "V",
+    "name_zh": "Visa",
+    "name_en": "Visa",
+    "market": "US",
+    "sector": "金融",
+    "aliases": [
+      "Visa",
+      "V-US"
+    ]
+  },
+  "MA": {
+    "ticker": "MA",
+    "name_zh": "萬事達",
+    "name_en": "Mastercard",
+    "market": "US",
+    "sector": "金融",
+    "aliases": [
+      "萬事達",
+      "Mastercard",
+      "MA",
+      "MA-US"
+    ]
+  },
+  "JPM": {
+    "ticker": "JPM",
+    "name_zh": "摩根大通",
+    "name_en": "JPMorgan Chase",
+    "market": "US",
+    "sector": "金融",
+    "aliases": [
+      "摩根大通",
+      "JPMorgan Chase",
+      "JPM",
+      "JPM-US",
+      "JPMorgan",
+      "小摩"
+    ]
+  },
+  "BAC": {
+    "ticker": "BAC",
+    "name_zh": "美國銀行",
+    "name_en": "Bank of America",
+    "market": "US",
+    "sector": "金融",
+    "aliases": [
+      "美國銀行",
+      "Bank of America",
+      "BAC",
+      "BAC-US",
+      "BofA"
+    ]
+  },
+  "WFC": {
+    "ticker": "WFC",
+    "name_zh": "富國銀行",
+    "name_en": "Wells Fargo",
+    "market": "US",
+    "sector": "金融",
+    "aliases": [
+      "富國銀行",
+      "Wells Fargo",
+      "WFC",
+      "WFC-US"
+    ]
+  },
+  "GS": {
+    "ticker": "GS",
+    "name_zh": "高盛",
+    "name_en": "Goldman Sachs",
+    "market": "US",
+    "sector": "金融",
+    "aliases": [
+      "高盛",
+      "Goldman Sachs",
+      "GS",
+      "GS-US",
+      "Goldman"
+    ]
+  },
+  "MS": {
+    "ticker": "MS",
+    "name_zh": "摩根士丹利",
+    "name_en": "Morgan Stanley",
+    "market": "US",
+    "sector": "金融",
+    "aliases": [
+      "摩根士丹利",
+      "Morgan Stanley",
+      "MS",
+      "MS-US",
+      "大摩"
+    ]
+  },
+  "C": {
+    "ticker": "C",
+    "name_zh": "花旗",
+    "name_en": "Citigroup",
+    "market": "US",
+    "sector": "金融",
+    "aliases": [
+      "花旗",
+      "Citigroup",
+      "C-US",
+      "Citi"
+    ]
+  },
+  "BRK.B": {
+    "ticker": "BRK.B",
+    "name_zh": "波克夏",
+    "name_en": "Berkshire Hathaway B",
+    "market": "US",
+    "sector": "金融",
+    "aliases": [
+      "波克夏",
+      "Berkshire Hathaway B",
+      "BRK.B",
+      "BRK",
+      "BRK.B-US",
+      "Berkshire",
+      "巴菲特",
+      "Buffett"
+    ]
+  },
+  "BLK": {
+    "ticker": "BLK",
+    "name_zh": "貝萊德",
+    "name_en": "BlackRock",
+    "market": "US",
+    "sector": "金融",
+    "aliases": [
+      "貝萊德",
+      "BlackRock",
+      "BLK",
+      "BLK-US"
+    ]
+  },
+  "BX": {
+    "ticker": "BX",
+    "name_zh": "黑石",
+    "name_en": "Blackstone",
+    "market": "US",
+    "sector": "金融",
+    "aliases": [
+      "黑石",
+      "Blackstone",
+      "BX",
+      "BX-US"
+    ]
+  },
+  "WMT": {
+    "ticker": "WMT",
+    "name_zh": "沃爾瑪",
+    "name_en": "Walmart",
+    "market": "US",
+    "sector": "通路",
+    "aliases": [
+      "沃爾瑪",
+      "Walmart",
+      "WMT",
+      "WMT-US"
+    ]
+  },
+  "COST": {
+    "ticker": "COST",
+    "name_zh": "好市多",
+    "name_en": "Costco",
+    "market": "US",
+    "sector": "通路",
+    "aliases": [
+      "好市多",
+      "Costco",
+      "COST",
+      "COST-US",
+      "Costco Wholesale"
+    ]
+  },
+  "HD": {
+    "ticker": "HD",
+    "name_zh": "家得寶",
+    "name_en": "Home Depot",
+    "market": "US",
+    "sector": "通路",
+    "aliases": [
+      "家得寶",
+      "Home Depot",
+      "HD",
+      "HD-US"
+    ]
+  },
+  "LOW": {
+    "ticker": "LOW",
+    "name_zh": "勞氏",
+    "name_en": "Lowe's",
+    "market": "US",
+    "sector": "通路",
+    "aliases": [
+      "勞氏",
+      "Lowe's",
+      "LOW",
+      "LOW-US"
+    ]
+  },
+  "TGT": {
+    "ticker": "TGT",
+    "name_zh": "塔吉特",
+    "name_en": "Target",
+    "market": "US",
+    "sector": "通路",
+    "aliases": [
+      "塔吉特",
+      "Target",
+      "TGT",
+      "TGT-US"
+    ]
+  },
+  "NKE": {
+    "ticker": "NKE",
+    "name_zh": "耐吉",
+    "name_en": "Nike",
+    "market": "US",
+    "sector": "服飾",
+    "aliases": [
+      "耐吉",
+      "Nike",
+      "NKE",
+      "NKE-US",
+      "耐克"
+    ]
+  },
+  "LULU": {
+    "ticker": "LULU",
+    "name_zh": "Lululemon",
+    "name_en": "Lululemon Athletica",
+    "market": "US",
+    "sector": "服飾",
+    "aliases": [
+      "Lululemon",
+      "Lululemon Athletica",
+      "LULU",
+      "LULU-US"
+    ]
+  },
+  "SBUX": {
+    "ticker": "SBUX",
+    "name_zh": "星巴克",
+    "name_en": "Starbucks",
+    "market": "US",
+    "sector": "餐飲",
+    "aliases": [
+      "星巴克",
+      "Starbucks",
+      "SBUX",
+      "SBUX-US"
+    ]
+  },
+  "MCD": {
+    "ticker": "MCD",
+    "name_zh": "麥當勞",
+    "name_en": "McDonald's",
+    "market": "US",
+    "sector": "餐飲",
+    "aliases": [
+      "麥當勞",
+      "McDonald's",
+      "MCD",
+      "MCD-US"
+    ]
+  },
+  "KO": {
+    "ticker": "KO",
+    "name_zh": "可口可樂",
+    "name_en": "Coca-Cola",
+    "market": "US",
+    "sector": "食品",
+    "aliases": [
+      "可口可樂",
+      "Coca-Cola",
+      "KO",
+      "KO-US"
+    ]
+  },
+  "PEP": {
+    "ticker": "PEP",
+    "name_zh": "百事",
+    "name_en": "PepsiCo",
+    "market": "US",
+    "sector": "食品",
+    "aliases": [
+      "百事",
+      "PepsiCo",
+      "PEP",
+      "PEP-US",
+      "Pepsi"
+    ]
+  },
+  "PG": {
+    "ticker": "PG",
+    "name_zh": "寶僑",
+    "name_en": "Procter & Gamble",
+    "market": "US",
+    "sector": "消費品",
+    "aliases": [
+      "寶僑",
+      "Procter & Gamble",
+      "PG",
+      "PG-US",
+      "P&G"
+    ]
+  },
+  "UNH": {
+    "ticker": "UNH",
+    "name_zh": "聯合健康",
+    "name_en": "UnitedHealth Group",
+    "market": "US",
+    "sector": "醫療",
+    "aliases": [
+      "聯合健康",
+      "UnitedHealth Group",
+      "UNH",
+      "UNH-US",
+      "UnitedHealth"
+    ]
+  },
+  "JNJ": {
+    "ticker": "JNJ",
+    "name_zh": "嬌生",
+    "name_en": "Johnson & Johnson",
+    "market": "US",
+    "sector": "醫療",
+    "aliases": [
+      "嬌生",
+      "Johnson & Johnson",
+      "JNJ",
+      "JNJ-US",
+      "J&J"
+    ]
+  },
+  "LLY": {
+    "ticker": "LLY",
+    "name_zh": "禮來",
+    "name_en": "Eli Lilly",
+    "market": "US",
+    "sector": "製藥",
+    "aliases": [
+      "禮來",
+      "Eli Lilly",
+      "LLY",
+      "LLY-US",
+      "Lilly"
+    ]
+  },
+  "PFE": {
+    "ticker": "PFE",
+    "name_zh": "輝瑞",
+    "name_en": "Pfizer",
+    "market": "US",
+    "sector": "製藥",
+    "aliases": [
+      "輝瑞",
+      "Pfizer",
+      "PFE",
+      "PFE-US"
+    ]
+  },
+  "MRK": {
+    "ticker": "MRK",
+    "name_zh": "默克",
+    "name_en": "Merck",
+    "market": "US",
+    "sector": "製藥",
+    "aliases": [
+      "默克",
+      "Merck",
+      "MRK",
+      "MRK-US"
+    ]
+  },
+  "ABBV": {
+    "ticker": "ABBV",
+    "name_zh": "艾伯維",
+    "name_en": "AbbVie",
+    "market": "US",
+    "sector": "製藥",
+    "aliases": [
+      "艾伯維",
+      "AbbVie",
+      "ABBV",
+      "ABBV-US"
+    ]
+  },
+  "NVO": {
+    "ticker": "NVO",
+    "name_zh": "諾和諾德",
+    "name_en": "Novo Nordisk",
+    "market": "US",
+    "sector": "製藥",
+    "aliases": [
+      "諾和諾德",
+      "Novo Nordisk",
+      "NVO",
+      "NVO-US",
+      "減肥藥"
+    ]
+  },
+  "TMO": {
+    "ticker": "TMO",
+    "name_zh": "賽默飛",
+    "name_en": "Thermo Fisher Scientific",
+    "market": "US",
+    "sector": "醫療",
+    "aliases": [
+      "賽默飛",
+      "Thermo Fisher Scientific",
+      "TMO",
+      "TMO-US"
+    ]
+  },
+  "ABT": {
+    "ticker": "ABT",
+    "name_zh": "亞培",
+    "name_en": "Abbott Laboratories",
+    "market": "US",
+    "sector": "醫療",
+    "aliases": [
+      "亞培",
+      "Abbott Laboratories",
+      "ABT",
+      "ABT-US"
+    ]
+  },
+  "XOM": {
+    "ticker": "XOM",
+    "name_zh": "埃克森美孚",
+    "name_en": "Exxon Mobil",
+    "market": "US",
+    "sector": "能源",
+    "aliases": [
+      "埃克森美孚",
+      "Exxon Mobil",
+      "XOM",
+      "XOM-US",
+      "ExxonMobil"
+    ]
+  },
+  "CVX": {
+    "ticker": "CVX",
+    "name_zh": "雪佛龍",
+    "name_en": "Chevron",
+    "market": "US",
+    "sector": "能源",
+    "aliases": [
+      "雪佛龍",
+      "Chevron",
+      "CVX",
+      "CVX-US"
+    ]
+  },
+  "BA": {
+    "ticker": "BA",
+    "name_zh": "波音",
+    "name_en": "Boeing",
+    "market": "US",
+    "sector": "航太",
+    "aliases": [
+      "波音",
+      "Boeing",
+      "BA",
+      "BA-US"
+    ]
+  },
+  "CAT": {
+    "ticker": "CAT",
+    "name_zh": "開拓重工",
+    "name_en": "Caterpillar",
+    "market": "US",
+    "sector": "機械",
+    "aliases": [
+      "開拓重工",
+      "Caterpillar",
+      "CAT",
+      "CAT-US"
+    ]
+  },
+  "GE": {
+    "ticker": "GE",
+    "name_zh": "奇異",
+    "name_en": "GE Aerospace",
+    "market": "US",
+    "sector": "工業",
+    "aliases": [
+      "奇異",
+      "GE Aerospace",
+      "GE",
+      "GE-US",
+      "通用電氣"
+    ]
+  },
+  "HON": {
+    "ticker": "HON",
+    "name_zh": "霍尼威爾",
+    "name_en": "Honeywell",
+    "market": "US",
+    "sector": "工業",
+    "aliases": [
+      "霍尼威爾",
+      "Honeywell",
+      "HON",
+      "HON-US"
+    ]
+  },
+  "DE": {
+    "ticker": "DE",
+    "name_zh": "迪爾",
+    "name_en": "Deere",
+    "market": "US",
+    "sector": "機械",
+    "aliases": [
+      "迪爾",
+      "Deere",
+      "DE",
+      "DE-US",
+      "John Deere"
+    ]
+  },
+  "F": {
+    "ticker": "F",
+    "name_zh": "福特",
+    "name_en": "Ford Motor",
+    "market": "US",
+    "sector": "汽車",
+    "aliases": [
+      "福特",
+      "Ford Motor",
+      "F-US",
+      "Ford"
+    ]
+  },
+  "GM": {
+    "ticker": "GM",
+    "name_zh": "通用汽車",
+    "name_en": "General Motors",
+    "market": "US",
+    "sector": "汽車",
+    "aliases": [
+      "通用汽車",
+      "General Motors",
+      "GM",
+      "GM-US"
+    ]
+  },
+  "RIVN": {
+    "ticker": "RIVN",
+    "name_zh": "Rivian",
+    "name_en": "Rivian Automotive",
+    "market": "US",
+    "sector": "汽車",
+    "aliases": [
+      "Rivian",
+      "Rivian Automotive",
+      "RIVN",
+      "RIVN-US",
+      "電動車"
+    ]
+  },
+  "LCID": {
+    "ticker": "LCID",
+    "name_zh": "Lucid",
+    "name_en": "Lucid Group",
+    "market": "US",
+    "sector": "汽車",
+    "aliases": [
+      "Lucid",
+      "Lucid Group",
+      "LCID",
+      "LCID-US",
+      "電動車"
+    ]
+  },
+  "T": {
+    "ticker": "T",
+    "name_zh": "AT&T",
+    "name_en": "AT&T",
+    "market": "US",
+    "sector": "電信",
+    "aliases": [
+      "AT&T",
+      "T-US"
+    ]
+  },
+  "VZ": {
+    "ticker": "VZ",
+    "name_zh": "威訊",
+    "name_en": "Verizon",
+    "market": "US",
+    "sector": "電信",
+    "aliases": [
+      "威訊",
+      "Verizon",
+      "VZ",
+      "VZ-US"
+    ]
+  },
+  "TMUS": {
+    "ticker": "TMUS",
+    "name_zh": "T-Mobile",
+    "name_en": "T-Mobile US",
+    "market": "US",
+    "sector": "電信",
+    "aliases": [
+      "T-Mobile",
+      "T-Mobile US",
+      "TMUS",
+      "TMUS-US"
+    ]
+  },
+  "CSCO": {
+    "ticker": "CSCO",
+    "name_zh": "思科",
+    "name_en": "Cisco Systems",
+    "market": "US",
+    "sector": "網通",
+    "aliases": [
+      "思科",
+      "Cisco Systems",
+      "CSCO",
+      "CSCO-US",
+      "Cisco"
+    ]
+  },
+  "IBM": {
+    "ticker": "IBM",
+    "name_zh": "IBM",
+    "name_en": "IBM",
+    "market": "US",
+    "sector": "科技",
+    "aliases": [
+      "IBM",
+      "IBM-US",
+      "國際商業機器"
+    ]
+  },
+  "HPQ": {
+    "ticker": "HPQ",
+    "name_zh": "惠普",
+    "name_en": "HP Inc",
+    "market": "US",
+    "sector": "科技",
+    "aliases": [
+      "惠普",
+      "HP Inc",
+      "HPQ",
+      "HPQ-US",
+      "HP"
+    ]
+  },
+  "DELL": {
+    "ticker": "DELL",
+    "name_zh": "戴爾",
+    "name_en": "Dell Technologies",
+    "market": "US",
+    "sector": "科技",
+    "aliases": [
+      "戴爾",
+      "Dell Technologies",
+      "DELL",
+      "DELL-US",
+      "Dell"
+    ]
+  },
+  "HPE": {
+    "ticker": "HPE",
+    "name_zh": "慧與",
+    "name_en": "Hewlett Packard Enterprise",
+    "market": "US",
+    "sector": "科技",
+    "aliases": [
+      "慧與",
+      "Hewlett Packard Enterprise",
+      "HPE",
+      "HPE-US"
+    ]
+  },
+  "SMCI": {
+    "ticker": "SMCI",
+    "name_zh": "美超微",
+    "name_en": "Super Micro Computer",
+    "market": "US",
+    "sector": "電子組裝",
+    "aliases": [
+      "美超微",
+      "Super Micro Computer",
+      "SMCI",
+      "SMCI-US",
+      "Supermicro",
+      "AI伺服器"
+    ]
+  },
+  "ANET": {
+    "ticker": "ANET",
+    "name_zh": "Arista",
+    "name_en": "Arista Networks",
+    "market": "US",
+    "sector": "網通",
+    "aliases": [
+      "Arista",
+      "Arista Networks",
+      "ANET",
+      "ANET-US"
+    ]
+  },
+  "PANW": {
+    "ticker": "PANW",
+    "name_zh": "Palo Alto",
+    "name_en": "Palo Alto Networks",
+    "market": "US",
+    "sector": "資安",
+    "aliases": [
+      "Palo Alto",
+      "Palo Alto Networks",
+      "PANW",
+      "PANW-US"
+    ]
+  },
+  "CRWD": {
+    "ticker": "CRWD",
+    "name_zh": "CrowdStrike",
+    "name_en": "CrowdStrike",
+    "market": "US",
+    "sector": "資安",
+    "aliases": [
+      "CrowdStrike",
+      "CRWD",
+      "CRWD-US"
+    ]
+  },
+  "ZS": {
+    "ticker": "ZS",
+    "name_zh": "Zscaler",
+    "name_en": "Zscaler",
+    "market": "US",
+    "sector": "資安",
+    "aliases": [
+      "Zscaler",
+      "ZS",
+      "ZS-US"
+    ]
+  },
+  "NET": {
+    "ticker": "NET",
+    "name_zh": "Cloudflare",
+    "name_en": "Cloudflare",
+    "market": "US",
+    "sector": "軟體",
+    "aliases": [
+      "Cloudflare",
+      "NET",
+      "NET-US"
+    ]
+  },
+  "DDOG": {
+    "ticker": "DDOG",
+    "name_zh": "Datadog",
+    "name_en": "Datadog",
+    "market": "US",
+    "sector": "軟體",
+    "aliases": [
+      "Datadog",
+      "DDOG",
+      "DDOG-US"
+    ]
+  },
+  "MDB": {
+    "ticker": "MDB",
+    "name_zh": "MongoDB",
+    "name_en": "MongoDB",
+    "market": "US",
+    "sector": "軟體",
+    "aliases": [
+      "MongoDB",
+      "MDB",
+      "MDB-US"
+    ]
+  },
+  "ROKU": {
+    "ticker": "ROKU",
+    "name_zh": "Roku",
+    "name_en": "Roku",
+    "market": "US",
+    "sector": "媒體",
+    "aliases": [
+      "Roku",
+      "ROKU",
+      "ROKU-US"
+    ]
+  },
+  "SPOT": {
+    "ticker": "SPOT",
+    "name_zh": "Spotify",
+    "name_en": "Spotify",
+    "market": "US",
+    "sector": "媒體",
+    "aliases": [
+      "Spotify",
+      "SPOT",
+      "SPOT-US"
+    ]
+  },
+  "PINS": {
+    "ticker": "PINS",
+    "name_zh": "Pinterest",
+    "name_en": "Pinterest",
+    "market": "US",
+    "sector": "網路",
+    "aliases": [
+      "Pinterest",
+      "PINS",
+      "PINS-US"
+    ]
+  },
+  "SNAP": {
+    "ticker": "SNAP",
+    "name_zh": "Snap",
+    "name_en": "Snap",
+    "market": "US",
+    "sector": "網路",
+    "aliases": [
+      "Snap",
+      "SNAP",
+      "SNAP-US",
+      "Snapchat"
+    ]
+  },
+  "X": {
+    "ticker": "X",
+    "name_zh": "X",
+    "name_en": "X (Twitter)",
+    "market": "US",
+    "sector": "網路",
+    "aliases": [
+      "X (Twitter)",
+      "X-US",
+      "Twitter"
+    ]
+  },
+  "BABA": {
+    "ticker": "BABA",
+    "name_zh": "阿里巴巴",
+    "name_en": "Alibaba",
+    "market": "US",
+    "sector": "電商",
+    "aliases": [
+      "阿里巴巴",
+      "Alibaba",
+      "BABA",
+      "BABA-US",
+      "Alibaba Group"
+    ]
+  },
+  "JD": {
+    "ticker": "JD",
+    "name_zh": "京東",
+    "name_en": "JD.com",
+    "market": "US",
+    "sector": "電商",
+    "aliases": [
+      "京東",
+      "JD.com",
+      "JD",
+      "JD-US"
+    ]
+  },
+  "PDD": {
+    "ticker": "PDD",
+    "name_zh": "拼多多",
+    "name_en": "PDD Holdings",
+    "market": "US",
+    "sector": "電商",
+    "aliases": [
+      "拼多多",
+      "PDD Holdings",
+      "PDD",
+      "PDD-US",
+      "Temu"
+    ]
+  },
+  "BIDU": {
+    "ticker": "BIDU",
+    "name_zh": "百度",
+    "name_en": "Baidu",
+    "market": "US",
+    "sector": "網路",
+    "aliases": [
+      "百度",
+      "Baidu",
+      "BIDU",
+      "BIDU-US"
+    ]
+  },
+  "NIO": {
+    "ticker": "NIO",
+    "name_zh": "蔚來",
+    "name_en": "NIO",
+    "market": "US",
+    "sector": "汽車",
+    "aliases": [
+      "蔚來",
+      "NIO",
+      "NIO-US",
+      "蔚來汽車"
+    ]
+  },
+  "XPEV": {
+    "ticker": "XPEV",
+    "name_zh": "小鵬",
+    "name_en": "XPeng",
+    "market": "US",
+    "sector": "汽車",
+    "aliases": [
+      "小鵬",
+      "XPeng",
+      "XPEV",
+      "XPEV-US",
+      "小鵬汽車"
+    ]
+  },
+  "LI": {
+    "ticker": "LI",
+    "name_zh": "理想",
+    "name_en": "Li Auto",
+    "market": "US",
+    "sector": "汽車",
+    "aliases": [
+      "理想",
+      "Li Auto",
+      "LI",
+      "LI-US",
+      "理想汽車"
+    ]
+  },
+  "TSM": {
+    "ticker": "TSM",
+    "name_zh": "台積電ADR",
+    "name_en": "TSMC ADR",
+    "market": "US",
+    "sector": "半導體",
+    "aliases": [
+      "台積電ADR",
+      "TSMC ADR",
+      "TSM",
+      "TSM-US",
+      "台積電",
+      "TSMC"
+    ]
+  },
+  "UMC": {
+    "ticker": "UMC",
+    "name_zh": "聯電ADR",
+    "name_en": "UMC ADR",
+    "market": "US",
+    "sector": "半導體",
+    "aliases": [
+      "聯電ADR",
+      "UMC ADR",
+      "UMC",
+      "UMC-US",
+      "聯電"
+    ]
+  },
+  "ASX": {
+    "ticker": "ASX",
+    "name_zh": "日月光ADR",
+    "name_en": "ASE ADR",
+    "market": "US",
+    "sector": "半導體封測",
+    "aliases": [
+      "日月光ADR",
+      "ASE ADR",
+      "ASX",
+      "ASX-US",
+      "日月光"
+    ]
+  },
+  "HIMX": {
+    "ticker": "HIMX",
+    "name_zh": "奇景光電",
+    "name_en": "Himax Technologies",
+    "market": "US",
+    "sector": "半導體",
+    "aliases": [
+      "奇景光電",
+      "Himax Technologies",
+      "HIMX",
+      "HIMX-US"
+    ]
+  },
+  "OXY": {
+    "ticker": "OXY",
+    "name_zh": "西方石油",
+    "name_en": "Occidental Petroleum",
+    "market": "US",
+    "sector": "能源",
+    "aliases": [
+      "西方石油",
+      "Occidental Petroleum",
+      "OXY",
+      "OXY-US"
+    ]
+  },
+  "SLB": {
+    "ticker": "SLB",
+    "name_zh": "斯倫貝謝",
+    "name_en": "SLB",
+    "market": "US",
+    "sector": "能源",
+    "aliases": [
+      "斯倫貝謝",
+      "SLB",
+      "SLB-US",
+      "Schlumberger"
+    ]
+  },
+  "FCX": {
+    "ticker": "FCX",
+    "name_zh": "自由港",
+    "name_en": "Freeport-McMoRan",
+    "market": "US",
+    "sector": "礦業",
+    "aliases": [
+      "自由港",
+      "Freeport-McMoRan",
+      "FCX",
+      "FCX-US"
+    ]
+  },
+  "NEM": {
+    "ticker": "NEM",
+    "name_zh": "紐蒙特",
+    "name_en": "Newmont",
+    "market": "US",
+    "sector": "礦業",
+    "aliases": [
+      "紐蒙特",
+      "Newmont",
+      "NEM",
+      "NEM-US"
+    ]
+  },
+  "GLD": {
+    "ticker": "GLD",
+    "name_zh": "黃金ETF",
+    "name_en": "SPDR Gold Shares",
+    "market": "US",
+    "sector": "ETF",
+    "aliases": [
+      "黃金ETF",
+      "SPDR Gold Shares",
+      "GLD",
+      "GLD-US"
+    ]
+  },
+  "SPY": {
+    "ticker": "SPY",
+    "name_zh": "標普500 ETF",
+    "name_en": "SPDR S&P 500 ETF",
+    "market": "US",
+    "sector": "ETF",
+    "aliases": [
+      "標普500 ETF",
+      "SPDR S&P 500 ETF",
+      "SPY",
+      "SPY-US",
+      "S&P 500"
+    ]
+  },
+  "QQQ": {
+    "ticker": "QQQ",
+    "name_zh": "納指ETF",
+    "name_en": "Invesco QQQ Trust",
+    "market": "US",
+    "sector": "ETF",
+    "aliases": [
+      "納指ETF",
+      "Invesco QQQ Trust",
+      "QQQ",
+      "QQQ-US",
+      "Nasdaq 100"
+    ]
+  },
+  "DIA": {
+    "ticker": "DIA",
+    "name_zh": "道指ETF",
+    "name_en": "SPDR Dow Jones ETF",
+    "market": "US",
+    "sector": "ETF",
+    "aliases": [
+      "道指ETF",
+      "SPDR Dow Jones ETF",
+      "DIA",
+      "DIA-US"
+    ]
+  },
+  "VTI": {
+    "ticker": "VTI",
+    "name_zh": "全市場ETF",
+    "name_en": "Vanguard Total Stock",
+    "market": "US",
+    "sector": "ETF",
+    "aliases": [
+      "全市場ETF",
+      "Vanguard Total Stock",
+      "VTI",
+      "VTI-US"
+    ]
+  },
+  "ARKK": {
+    "ticker": "ARKK",
+    "name_zh": "ARK創新ETF",
+    "name_en": "ARK Innovation ETF",
+    "market": "US",
+    "sector": "ETF",
+    "aliases": [
+      "ARK創新ETF",
+      "ARK Innovation ETF",
+      "ARKK",
+      "ARKK-US",
+      "木頭姐"
+    ]
+  },
+  "SMH": {
+    "ticker": "SMH",
+    "name_zh": "半導體ETF",
+    "name_en": "VanEck Semiconductor ETF",
+    "market": "US",
+    "sector": "ETF",
+    "aliases": [
+      "半導體ETF",
+      "VanEck Semiconductor ETF",
+      "SMH",
+      "SMH-US"
+    ]
+  },
+  "SOXX": {
+    "ticker": "SOXX",
+    "name_zh": "iShares半導體",
+    "name_en": "iShares Semiconductor",
+    "market": "US",
+    "sector": "ETF",
+    "aliases": [
+      "iShares半導體",
+      "iShares Semiconductor",
+      "SOXX",
+      "SOXX-US"
+    ]
+  },
+  "TQQQ": {
+    "ticker": "TQQQ",
+    "name_zh": "3倍那指ETF",
+    "name_en": "ProShares UltraPro QQQ",
+    "market": "US",
+    "sector": "ETF",
+    "aliases": [
+      "3倍那指ETF",
+      "ProShares UltraPro QQQ",
+      "TQQQ",
+      "TQQQ-US"
+    ]
+  },
+  "ENPH": {
+    "ticker": "ENPH",
+    "name_zh": "Enphase",
+    "name_en": "Enphase Energy",
+    "market": "US",
+    "sector": "綠能",
+    "aliases": [
+      "Enphase",
+      "Enphase Energy",
+      "ENPH",
+      "ENPH-US"
+    ]
+  },
+  "FSLR": {
+    "ticker": "FSLR",
+    "name_zh": "First Solar",
+    "name_en": "First Solar",
+    "market": "US",
+    "sector": "綠能",
+    "aliases": [
+      "First Solar",
+      "FSLR",
+      "FSLR-US"
+    ]
+  },
+  "PLUG": {
+    "ticker": "PLUG",
+    "name_zh": "Plug Power",
+    "name_en": "Plug Power",
+    "market": "US",
+    "sector": "綠能",
+    "aliases": [
+      "Plug Power",
+      "PLUG",
+      "PLUG-US",
+      "氫能"
+    ]
+  },
+  "RIOT": {
+    "ticker": "RIOT",
+    "name_zh": "Riot",
+    "name_en": "Riot Platforms",
+    "market": "US",
+    "sector": "加密貨幣",
+    "aliases": [
+      "Riot",
+      "Riot Platforms",
+      "RIOT",
+      "RIOT-US"
+    ]
+  },
+  "MARA": {
+    "ticker": "MARA",
+    "name_zh": "Marathon",
+    "name_en": "Marathon Digital",
+    "market": "US",
+    "sector": "加密貨幣",
+    "aliases": [
+      "Marathon",
+      "Marathon Digital",
+      "MARA",
+      "MARA-US"
+    ]
+  },
+  "MSTR": {
+    "ticker": "MSTR",
+    "name_zh": "MicroStrategy",
+    "name_en": "MicroStrategy",
+    "market": "US",
+    "sector": "軟體",
+    "aliases": [
+      "MicroStrategy",
+      "MSTR",
+      "MSTR-US",
+      "比特幣"
+    ]
+  },
+  "GME": {
+    "ticker": "GME",
+    "name_zh": "GameStop",
+    "name_en": "GameStop",
+    "market": "US",
+    "sector": "通路",
+    "aliases": [
+      "GameStop",
+      "GME",
+      "GME-US",
+      "迷因股"
+    ]
+  },
+  "AMC": {
+    "ticker": "AMC",
+    "name_zh": "AMC",
+    "name_en": "AMC Entertainment",
+    "market": "US",
+    "sector": "媒體",
+    "aliases": [
+      "AMC",
+      "AMC Entertainment",
+      "AMC-US",
+      "迷因股"
+    ]
+  },
+  "BB": {
+    "ticker": "BB",
+    "name_zh": "黑莓",
+    "name_en": "BlackBerry",
+    "market": "US",
+    "sector": "軟體",
+    "aliases": [
+      "黑莓",
+      "BlackBerry",
+      "BB",
+      "BB-US"
+    ]
+  },
+  "U": {
+    "ticker": "U",
+    "name_zh": "Unity",
+    "name_en": "Unity Software",
+    "market": "US",
+    "sector": "軟體",
+    "aliases": [
+      "Unity",
+      "Unity Software",
+      "U-US"
+    ]
+  },
+  "ZM": {
+    "ticker": "ZM",
+    "name_zh": "Zoom",
+    "name_en": "Zoom Video",
+    "market": "US",
+    "sector": "軟體",
+    "aliases": [
+      "Zoom",
+      "Zoom Video",
+      "ZM",
+      "ZM-US"
+    ]
+  },
+  "DOCU": {
+    "ticker": "DOCU",
+    "name_zh": "DocuSign",
+    "name_en": "DocuSign",
+    "market": "US",
+    "sector": "軟體",
+    "aliases": [
+      "DocuSign",
+      "DOCU",
+      "DOCU-US"
+    ]
+  },
+  "OKTA": {
+    "ticker": "OKTA",
+    "name_zh": "Okta",
+    "name_en": "Okta",
+    "market": "US",
+    "sector": "資安",
+    "aliases": [
+      "Okta",
+      "OKTA",
+      "OKTA-US"
+    ]
+  },
+  "FTNT": {
+    "ticker": "FTNT",
+    "name_zh": "Fortinet",
+    "name_en": "Fortinet",
+    "market": "US",
+    "sector": "資安",
+    "aliases": [
+      "Fortinet",
+      "FTNT",
+      "FTNT-US"
+    ]
+  },
+  "ON": {
+    "ticker": "ON",
+    "name_zh": "安森美",
+    "name_en": "ON Semiconductor",
+    "market": "US",
+    "sector": "半導體",
+    "aliases": [
+      "安森美",
+      "ON Semiconductor",
+      "ON",
+      "ON-US"
+    ]
+  },
+  "MCHP": {
+    "ticker": "MCHP",
+    "name_zh": "微芯",
+    "name_en": "Microchip Technology",
+    "market": "US",
+    "sector": "半導體",
+    "aliases": [
+      "微芯",
+      "Microchip Technology",
+      "MCHP",
+      "MCHP-US"
+    ]
+  },
+  "ADI": {
+    "ticker": "ADI",
+    "name_zh": "亞德諾",
+    "name_en": "Analog Devices",
+    "market": "US",
+    "sector": "半導體",
+    "aliases": [
+      "亞德諾",
+      "Analog Devices",
+      "ADI",
+      "ADI-US"
+    ]
+  },
+  "SWKS": {
+    "ticker": "SWKS",
+    "name_zh": "Skyworks",
+    "name_en": "Skyworks Solutions",
+    "market": "US",
+    "sector": "半導體",
+    "aliases": [
+      "Skyworks",
+      "Skyworks Solutions",
+      "SWKS",
+      "SWKS-US"
+    ]
+  },
+  "MPWR": {
+    "ticker": "MPWR",
+    "name_zh": "Monolithic",
+    "name_en": "Monolithic Power",
+    "market": "US",
+    "sector": "半導體",
+    "aliases": [
+      "Monolithic",
+      "Monolithic Power",
+      "MPWR",
+      "MPWR-US"
+    ]
+  },
+  "WDC": {
+    "ticker": "WDC",
+    "name_zh": "威騰",
+    "name_en": "Western Digital",
+    "market": "US",
+    "sector": "半導體",
+    "aliases": [
+      "威騰",
+      "Western Digital",
+      "WDC",
+      "WDC-US"
+    ]
+  },
+  "STX": {
+    "ticker": "STX",
+    "name_zh": "希捷",
+    "name_en": "Seagate Technology",
+    "market": "US",
+    "sector": "半導體",
+    "aliases": [
+      "希捷",
+      "Seagate Technology",
+      "STX",
+      "STX-US"
+    ]
+  }
+}

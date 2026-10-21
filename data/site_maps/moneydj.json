@@ -1,0 +1,87 @@
+{
+  "source_id": "moneydj",
+  "label": "MoneyDJ理財網",
+  "agent": "MoneyDJagent",
+  "home": "https://www.moneydj.com",
+  "access": {
+    "method": "rss",
+    "endpoints": [
+      "https://www.moneydj.com/KMDJ/RssCenter.aspx?svc=NR&fno=1&arg=X0"
+    ],
+    "implemented_in": "scripts/rss_sources.py",
+    "history_backfill": false
+  },
+  "columns": [
+    {
+      "name": "頭條新聞",
+      "url": "https://www.moneydj.com/KMDJ/RssCenter.aspx?svc=NR&fno=1&arg=X0",
+      "stock_relevant": true,
+      "note": "已註冊 feed。svc=NR=新聞RSS服務；fno=1 為頭條/即時新聞；arg=X0 為分類代碼根。對應站內 NewsRealList.aspx?a=MB010000 與 m.moneydj.com/newsList.aspx?a=mb010000"
+    },
+    {
+      "name": "總體經濟/國際財經",
+      "url": "https://www.moneydj.com/KMDJ/RssCenter.aspx?svc=NR&fno=2&arg=X0",
+      "stock_relevant": true,
+      "note": "對應站內 newsList.aspx?a=MB020000（總體經濟）。國際金融、美歐市場、人民幣，影響台股大盤情緒。fno/arg 需本機驗證實際對應"
+    },
+    {
+      "name": "台股",
+      "url": "https://www.moneydj.com/KMDJ/RssCenter.aspx?svc=NR&fno=3&arg=X0100001",
+      "stock_relevant": true,
+      "note": "對應 ListNewArticles.aspx?svc=NW&a=X0100001（台股）與 newsList.aspx?a=mb030000。台股核心欄目"
+    },
+    {
+      "name": "個股情報",
+      "url": "https://www.moneydj.com/KMDJ/RssCenter.aspx?svc=NR&fno=3&arg=X0200000",
+      "stock_relevant": true,
+      "note": "對應 ListNewArticles.aspx?svc=NW&a=X0200000。個股新聞，高度 stock_relevant"
+    },
+    {
+      "name": "產業分析",
+      "url": "https://www.moneydj.com/KMDJ/RssCenter.aspx?svc=NR&fno=4&arg=X0300000",
+      "stock_relevant": true,
+      "note": "對應 ListNewArticles.aspx?svc=NW&a=X0300000（亦有 svc=RP 研究報告版本）。產業趨勢與供應鏈"
+    },
+    {
+      "name": "基金",
+      "url": "https://www.moneydj.com/KMDJ/RssCenter.aspx?svc=NR&fno=5&arg=X0",
+      "stock_relevant": false,
+      "note": "對應 newsList.aspx?a=mb040000（基金）。FundDJ 基智網基金/淨值相關新聞，間接 stock_relevant 〔依使用者檢核排除〕"
+    },
+    {
+      "name": "ETF",
+      "url": "https://www.moneydj.com/KMDJ/RssCenter.aspx?svc=NR&fno=6&arg=X0",
+      "stock_relevant": true,
+      "note": "ETF 新聞（站內 /etf/ 區）。台股 ETF 與市場資金流相關，stock_relevant"
+    },
+    {
+      "name": "美股/國際股市",
+      "url": "https://www.moneydj.com/KMDJ/RssCenter.aspx?svc=NR&fno=7&arg=X0",
+      "stock_relevant": true,
+      "note": "美股投資區 /us/。影響台股連動，stock_relevant"
+    },
+    {
+      "name": "個人理財",
+      "url": "https://www.moneydj.com/KMDJ/RssCenter.aspx?svc=NR&fno=8&arg=X0800000",
+      "stock_relevant": false,
+      "note": "對應 ListNewArticles.aspx?svc=NW&a=X0800000。保險、稅務、信用卡等理財生活內容，非個股導向，列為唯一輕度雜訊欄目"
+    }
+  ],
+  "stock_relevant_columns": [
+    "頭條新聞",
+    "總體經濟/國際財經",
+    "台股",
+    "個股情報",
+    "產業分析",
+    "ETF",
+    "美股/國際股市"
+  ],
+  "noise_notes": "純財經媒體，雜訊少。每日發 400-600 則財經新聞，絕大多數欄目皆 stock_relevant。唯一輕度雜訊為「個人理財」(X0800000，保險/稅務/信用卡)。RSS 內容多為標題+摘要，正文需另抓 NewsViewer。fno/arg 對應僅 fno=1&arg=X0(頭條) 已註冊驗證，其餘變體之 fno/arg 精確值（如基金/ETF/美股是否走 RssCenter 或另有 /etf/、/funddj/ 專屬 feed）待本機連線實測確認。",
+  "cleaning": {
+    "publish_ts": "RSS pubDate -> 台北時間 (UTC+8)，來源時間已為台北時區，common.to_taipei_iso 正規化",
+    "dedup": "norm_title 跨源去重（與 cnyes/udn/ctee 等對齊，注意 MoneyDJ 常與鉅亨/中時轉載同稿）"
+  },
+  "researched_via": "websearch",
+  "researched_at": "2026-06-13",
+  "verified_live": false
+}

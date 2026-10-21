@@ -1,4 +1,11 @@
 # stock-news-skill 第三方相依(stdlib 以外)
-# Metabase 腿另需隔壁 sinopac-metabase skill 的 metabase_client(見 SKILL.md 前置需求)
+# Metabase 腿另需隔壁 sinopac-metabase skill 的 metabase_client(見 SKILL.md 前置需求);沒有 Metabase 也能跑即時新聞流
+# 缺 requests / python-dateutil / pandas 任一個時,主路徑 import 失敗會悄悄退到備援路徑(stderr: New modular aggregator failed)
 beautifulsoup4
 feedparser
+requests
+python-dateutil
+lxml
+pandas
+tzdata
+# 選用:pyarrow(process_day.py 寫 parquet)、duckdb(storage 查詢)、pytest(scripts/test_collect.py)

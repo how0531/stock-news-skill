@@ -1,0 +1,59 @@
+{
+  "source_id": "ltn",
+  "label": "自由財經",
+  "agent": "自由財經agent",
+  "home": "https://ec.ltn.com.tw",
+  "access": {
+    "method": "rss",
+    "endpoints": ["https://news.ltn.com.tw/rss/business.xml"],
+    "implemented_in": "scripts/rss_sources.py",
+    "history_backfill": false
+  },
+  "columns": [
+    {
+      "name": "財經即時",
+      "url": "https://ec.ltn.com.tw/list/breakingnews",
+      "stock_relevant": true,
+      "note": "財經即時新聞流，含台股盤勢、個股、政策、國際財經，是 business.xml RSS 的主要內容來源"
+    },
+    {
+      "name": "證券產業",
+      "url": "https://ec.ltn.com.tw/list/securities",
+      "stock_relevant": true,
+      "note": "台股、上市櫃個股、產業動態，股市相關性最高"
+    },
+    {
+      "name": "國際財經",
+      "url": "https://ec.ltn.com.tw/list/international",
+      "stock_relevant": true,
+      "note": "美股、國際股市與總經，影響台股 ADR 與盤勢；含部分非股市總經內容"
+    },
+    {
+      "name": "財經政策",
+      "url": "https://ec.ltn.com.tw/list/strategy",
+      "stock_relevant": true,
+      "note": "央行、金管會、財政部等政策，間接影響股匯市；部分為純政策無個股關聯"
+    },
+    {
+      "name": "房產資訊",
+      "url": "https://ec.ltn.com.tw/list/estate",
+      "stock_relevant": false,
+      "note": "房市、不動產交易與建案，與台股關聯弱，僅營建/資產股偶有交集，視為雜訊"
+    },
+    {
+      "name": "財經週報",
+      "url": "https://ec.ltn.com.tw/list/weeklybiz",
+      "stock_relevant": false,
+      "note": "週報深度報導與人物專訪，時效性低、敘事性強，非即時盤面資訊，多為雜訊"
+    }
+  ],
+  "stock_relevant_columns": ["財經即時", "證券產業", "國際財經", "財經政策"],
+  "noise_notes": "RSS 僅提供單一 business.xml 綜合財經 feed（ec.ltn.com.tw 各專欄為 HTML list 頁，service.ltn.com.tw/RSS 未拆分出證券/國際等獨立財經 feed），無法按專欄取用，須在內容層過濾。雜訊主要為：房地產/建案、理財生活與致富勵志故事、人物專訪與週報長文、純政策無個股關聯之報導。標題殺人式聳動標（如『他33歲辭職』）常見，宜以個股/盤勢關鍵字篩選。",
+  "cleaning": {
+    "publish_ts": "RSS pubDate -> 台北時間 (UTC+8)，經 to_taipei_iso 正規化",
+    "dedup": "norm_title 跨源去重；自由與其他媒體常轉述同則外電/盤後，需注意重複"
+  },
+  "researched_via": "websearch",
+  "researched_at": "2026-06-13",
+  "verified_live": false
+}

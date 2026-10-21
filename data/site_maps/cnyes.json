@@ -1,0 +1,117 @@
+{
+  "source_id": "cnyes",
+  "label": "鉅亨網",
+  "agent": "鉅亨網agent",
+  "home": "https://news.cnyes.com",
+  "access": {
+    "method": "json_api",
+    "endpoints": [
+      "https://api.cnyes.com/media/api/v1/newslist/category/{category}?limit={n}&page={p}",
+      "https://news.cnyes.com/news/cat/{category}"
+    ],
+    "implemented_in": "scripts/cnyes.py",
+    "history_backfill": true
+  },
+  "columns": [
+    {
+      "name": "頭條",
+      "url": "https://news.cnyes.com/news/cat/headline",
+      "stock_relevant": true,
+      "note": "category=headline。全站重點新聞，含大量市場與個股題材，含少量非投資綜合內容。"
+    },
+    {
+      "name": "台股",
+      "url": "https://news.cnyes.com/news/cat/tw_stock",
+      "stock_relevant": true,
+      "note": "category=tw_stock。台灣股市總覽，盤勢、類股、籌碼，核心股市欄目。"
+    },
+    {
+      "name": "台股新聞",
+      "url": "https://news.cnyes.com/news/cat/tw_stock_news",
+      "stock_relevant": true,
+      "note": "category=tw_stock_news。個股與上市櫃公司新聞，財報法說題材密集，高度相關。"
+    },
+    {
+      "name": "美股/國際股",
+      "url": "https://news.cnyes.com/news/cat/wd_stock",
+      "stock_relevant": true,
+      "note": "category=wd_stock。美股與全球股市新聞，對應 scripts/cnyes.py 的 wd_stock=國際股市。"
+    },
+    {
+      "name": "港股",
+      "url": "https://news.cnyes.com/news/cat/hk_stock",
+      "stock_relevant": false,
+      "note": "category=hk_stock。香港與中國股市新聞，亞股投資相關。 〔依使用者檢核排除〕"
+    },
+    {
+      "name": "美股預估",
+      "url": "https://news.cnyes.com/news/cat/us_forecast",
+      "stock_relevant": true,
+      "note": "category=us_forecast。美股財報行事曆與預估，個股事件導向，相關。"
+    },
+    {
+      "name": "外匯",
+      "url": "https://news.cnyes.com/news/cat/forex",
+      "stock_relevant": false,
+      "note": "category=forex。匯市新聞，匯率與資金面影響股市，間接相關。 〔依使用者檢核排除〕"
+    },
+    {
+      "name": "期貨",
+      "url": "https://news.cnyes.com/news/cat/future",
+      "stock_relevant": false,
+      "note": "category=future。期貨與商品行情，含台指期、原油等，與股市連動。 〔依使用者檢核排除〕"
+    },
+    {
+      "name": "國際政經",
+      "url": "https://news.cnyes.com/news/cat/wd_macro",
+      "stock_relevant": true,
+      "note": "category=wd_macro。總經、央行、貿易政策，宏觀面影響股市，相關。"
+    },
+    {
+      "name": "理財",
+      "url": "https://news.cnyes.com/news/cat/tw_money",
+      "stock_relevant": false,
+      "note": "category=tw_money。個人理財、保險、稅務、退休，偏生活理財非直接股市選股。"
+    },
+    {
+      "name": "基金",
+      "url": "https://fund.cnyes.com/",
+      "stock_relevant": false,
+      "note": "獨立子站 fund.cnyes.com。基金排行與比較，與選股關聯弱，列為非核心。"
+    },
+    {
+      "name": "區塊鏈",
+      "url": "https://news.cnyes.com/news/cat/bc",
+      "stock_relevant": false,
+      "note": "category=bc，含 bc_live 快訊、幣圈、鏈文、新手村。加密貨幣為主，與台美股選股關聯低。"
+    },
+    {
+      "name": "房產",
+      "url": "https://news.cnyes.com/news/cat/cnyeshouse",
+      "stock_relevant": false,
+      "note": "category=cnyeshouse（另有 tw_housenews 台灣房市）。房地產市場，與股市投資弱相關。"
+    },
+    {
+      "name": "ESG",
+      "url": "https://campaign.cnyes.com/topics/ESG/index.html",
+      "stock_relevant": false,
+      "note": "以 topics/活動專題形式呈現，非標準 news/cat 欄目；個別 ESG 新聞多歸入台股新聞。整體列為非核心。"
+    }
+  ],
+  "stock_relevant_columns": [
+    "頭條",
+    "台股",
+    "台股新聞",
+    "美股/國際股",
+    "美股預估",
+    "國際政經"
+  ],
+  "noise_notes": "理財(tw_money)偏個人理財生活內容；區塊鏈(bc)為加密貨幣與其快訊洗版；房產(cnyeshouse)為房市；基金(fund 子站)與選股弱相關；ESG 多為活動專題與業配。一手情報(advertorial)為業配廣編稿，應整段過濾。headline 含少量綜合非投資新聞需以關鍵字再篩。",
+  "cleaning": {
+    "publish_ts": "API 欄位 publishAt 為 Unix 秒級時間戳，經 scripts/common.to_taipei_iso 轉為 Asia/Taipei (UTC+8) ISO 字串",
+    "dedup": "norm_title 跨源去重"
+  },
+  "researched_via": "websearch",
+  "researched_at": "2026-06-13",
+  "verified_live": false
+}

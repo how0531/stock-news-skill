@@ -1,0 +1,89 @@
+{
+  "source_id": "cna",
+  "label": "中央社",
+  "agent": "中央社agent",
+  "home": "https://www.cna.com.tw",
+  "access": {
+    "method": "rss",
+    "endpoints": ["https://feeds.feedburner.com/rsscna/finance"],
+    "implemented_in": "scripts/rss_sources.py",
+    "history_backfill": false
+  },
+  "columns": [
+    {
+      "name": "財經",
+      "url": "https://feeds.feedburner.com/rsscna/finance",
+      "stock_relevant": true,
+      "note": "對應網站「產經」分類 (www.cna.com.tw/list/aie.aspx)，即產經證券，含股市/金融/產業/總經。中央社未再切出獨立的證券或股市 feed，finance 已是最細的財經 feed。已註冊於 rss_sources.py。"
+    },
+    {
+      "name": "科技",
+      "url": "https://feeds.feedburner.com/rsscna/technology",
+      "stock_relevant": false,
+      "note": "科技新聞。多為科普/產品/政策，但偶有半導體/電子業等與台股相關題材，邊界類；目前不納入，必要時可作為輔助來源。"
+    },
+    {
+      "name": "政治",
+      "url": "https://feeds.feedburner.com/rsscna/politics",
+      "stock_relevant": false,
+      "note": "國內政治，非財經。"
+    },
+    {
+      "name": "國際",
+      "url": "https://feeds.feedburner.com/rsscna/intworld",
+      "stock_relevant": false,
+      "note": "國際焦點，非財經（國際財經未獨立成 feed）。"
+    },
+    {
+      "name": "兩岸",
+      "url": "https://feeds.feedburner.com/rsscna/mainland",
+      "stock_relevant": false,
+      "note": "兩岸透視，非財經。"
+    },
+    {
+      "name": "生活",
+      "url": "https://feeds.feedburner.com/rsscna/lifehealth",
+      "stock_relevant": false,
+      "note": "生活/健康，非財經。"
+    },
+    {
+      "name": "社會",
+      "url": "https://feeds.feedburner.com/rsscna/social",
+      "stock_relevant": false,
+      "note": "社會新聞，非財經。"
+    },
+    {
+      "name": "地方",
+      "url": "https://feeds.feedburner.com/rsscna/local",
+      "stock_relevant": false,
+      "note": "地方新聞，非財經。"
+    },
+    {
+      "name": "文化",
+      "url": "https://feeds.feedburner.com/rsscna/culture",
+      "stock_relevant": false,
+      "note": "文化新聞，非財經。"
+    },
+    {
+      "name": "運動",
+      "url": "https://feeds.feedburner.com/rsscna/sport",
+      "stock_relevant": false,
+      "note": "運動新聞，非財經。"
+    },
+    {
+      "name": "娛樂",
+      "url": "https://feeds.feedburner.com/rsscna/stars",
+      "stock_relevant": false,
+      "note": "娛樂新聞，非財經。"
+    }
+  ],
+  "stock_relevant_columns": ["財經"],
+  "noise_notes": "綜合通訊社，政治/社會/國際/兩岸/生活/地方/文化/運動/娛樂等非財經分類需排除。財經僅有單一 finance feed（=網站「產經」），無更細的證券/股市 feed。科技為邊界類，含部分電子半導體題材，目前不納入。",
+  "cleaning": {
+    "publish_ts": "RSS published/updated -> 台北時間",
+    "dedup": "norm_title 跨源去重"
+  },
+  "researched_via": "websearch",
+  "researched_at": "2026-06-13",
+  "verified_live": false
+}

@@ -1,0 +1,89 @@
+{
+  "source_id": "chinatimes",
+  "label": "中時新聞網",
+  "agent": "中時新聞網agent",
+  "home": "https://www.chinatimes.com",
+  "access": {
+    "method": "rss",
+    "endpoints": ["https://www.chinatimes.com/rss/realtimenews-finance.xml"],
+    "implemented_in": "scripts/rss_sources.py",
+    "history_backfill": false
+  },
+  "columns": [
+    {
+      "name": "財經即時",
+      "url": "https://www.chinatimes.com/rss/realtimenews-finance.xml",
+      "stock_relevant": true,
+      "note": "已註冊。即時新聞的財經分類 feed，涵蓋證券/產業/總經，是站上最廣的財經即時來源，股市相關度高"
+    },
+    {
+      "name": "財經(money 頻道)",
+      "url": "https://www.chinatimes.com/money/",
+      "stock_relevant": true,
+      "note": "財經頻道首頁(網頁,非RSS)。RSS 入口統一走 realtimenews-finance.xml"
+    },
+    {
+      "name": "證券",
+      "url": "https://www.chinatimes.com/money/securities",
+      "stock_relevant": true,
+      "note": "money 子分類,純股市/個股/盤勢。網頁分類;內容已含於 realtimenews-finance.xml"
+    },
+    {
+      "name": "產業",
+      "url": "https://www.chinatimes.com/money/industry",
+      "stock_relevant": true,
+      "note": "money 子分類,產業/上市櫃公司動態,與股市高度相關。內容已含於 realtimenews-finance.xml"
+    },
+    {
+      "name": "政治即時",
+      "url": "https://www.chinatimes.com/rss/realtimenews-politic.xml",
+      "stock_relevant": false,
+      "note": "非財經,排除"
+    },
+    {
+      "name": "社會即時",
+      "url": "https://www.chinatimes.com/rss/realtimenews-society.xml",
+      "stock_relevant": false,
+      "note": "非財經,排除"
+    },
+    {
+      "name": "國際",
+      "url": "https://www.chinatimes.com/world/",
+      "stock_relevant": false,
+      "note": "非財經,排除(少數國際財經事件可能與股市相關,但整體噪音高)"
+    },
+    {
+      "name": "兩岸",
+      "url": "https://www.chinatimes.com/chinese/",
+      "stock_relevant": false,
+      "note": "非財經,排除"
+    },
+    {
+      "name": "娛樂",
+      "url": "https://www.chinatimes.com/star/",
+      "stock_relevant": false,
+      "note": "非財經,排除"
+    },
+    {
+      "name": "生活",
+      "url": "https://www.chinatimes.com/life/",
+      "stock_relevant": false,
+      "note": "非財經,排除"
+    },
+    {
+      "name": "運動",
+      "url": "https://www.chinatimes.com/sports/",
+      "stock_relevant": false,
+      "note": "非財經,排除"
+    }
+  ],
+  "stock_relevant_columns": ["財經即時", "財經(money 頻道)", "證券", "產業"],
+  "noise_notes": "綜合媒體,政治/社會/國際/兩岸/娛樂/生活/運動等非財經分類需排除。已註冊的 realtimenews-finance.xml 為財經即時匯總 feed,已涵蓋證券與產業子分類,單一 feed 即可覆蓋股市需求;站上 RSS 採 realtimenews-{slug}.xml 命名(politic/society 等為非財經分類)",
+  "cleaning": {
+    "publish_ts": "RSS -> 台北時間",
+    "dedup": "norm_title 跨源去重"
+  },
+  "researched_via": "websearch",
+  "researched_at": "2026-06-13",
+  "verified_live": false
+}

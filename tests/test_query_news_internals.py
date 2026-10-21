@@ -122,27 +122,35 @@ def make_fake_items(kw):
 # 測試案例 — 每個用不同 keyword(規避 TTL 快取)
 # --------------------------------------------------------------------------- #
 
-def run_with_patch(kw, **query_kwargs):
-    """patch fetch_sanbao(回 make_fake_items)+ attach_bodies(no-op),
+def run_with_patch(kw, items=None, search_items=None, **query_kwargs):
+    """patch fetch_sanbao(回 make_fake_items 或指定 items)+ attach_bodies(no-op)
+    + search_cnyes_news(關鍵字模式的 cnyes 搜尋腿,預設回 []),
     跑 query_news(source='sanbao'),回 keyword_hits。finally 還原。"""
     _try_clear_cache()
     orig_fetch = NP.fetch_sanbao
     orig_attach = NP.attach_bodies
+    orig_search = getattr(NP, "search_cnyes_news", None)
 
     def fake_fetch_sanbao(news_cfg):
-        return make_fake_items(kw)
+        return items if items is not None else make_fake_items(kw)
 
     def fake_attach_bodies(by_code, *a, **k):
         return 0  # no-op,絕不上網
 
+    def fake_search(keyword, *a, **k):
+        return list(search_items or [])  # 絕不上網
+
     NP.fetch_sanbao = fake_fetch_sanbao
     NP.attach_bodies = fake_attach_bodies
+    NP.search_cnyes_news = fake_search
     try:
         res = NC.query_news(keyword=kw, source="sanbao",
                             tag_sentiment=False, **query_kwargs)
     finally:
         NP.fetch_sanbao = orig_fetch
         NP.attach_bodies = orig_attach
+        if orig_search is not None:
+            NP.search_cnyes_news = orig_search
     return res
 
 
@@ -254,6 +262,233 @@ def test_patch_restored():
     check("restore:attach_bodies 已還原",
           NP.attach_bodies.__name__ == "attach_bodies",
           f"got {NP.attach_bodies.__name__}")
+    check("restore:search_cnyes_news 已還原",
+          NP.search_cnyes_news.__name__ == "search_cnyes_news",
+          f"got {NP.search_cnyes_news.__name__}")
+
+
+# --------------------------------------------------------------------------- #
+# 2026-10-09 新增:快取時間戳/磁碟快取、AND、snippets、--intl、cnyes 搜尋腿、時間正確性
+# --------------------------------------------------------------------------- #
+
+def _item(title, body="", category="", days_ago=1, source="cnyes", url=None):
+    return {"source": source, "title": title, "summary": "", "body": body,
+            "url": url or f"http://fake/{abs(hash(title))}",
+            "published_at": _iso(days_ago), "keywords": [], "category": category}
+
+
+def test_match_all_and_snippets():
+    kw1, kw2 = "庚積電", "產能極限"
+    long_body = ("前言" * 300) + f"{kw1}執行長示警{kw2}恐延續到明年" + ("結語" * 50)
+    items = [
+        _item(f"{kw1}談{kw2}", body=long_body),          # 兩個都有
+        _item(f"{kw1}月營收創高", body="與產能無關"),      # 只有 kw1
+    ]
+    res_or = run_with_patch(f"{kw1},{kw2}", items=items, days=3, fetch_body=False)
+    res_and = run_with_patch(f"{kw1},{kw2}", items=items, days=3, fetch_body=False,
+                             match_all=True)
+    check("match_all:OR 預設兩則都命中", len(res_or["keyword_hits"]) == 2,
+          f"got {len(res_or['keyword_hits'])}")
+    titles_and = [h["title"] for h in res_and["keyword_hits"]]
+    check("match_all:AND 只留兩詞都出現者", titles_and == [f"{kw1}談{kw2}"],
+          f"got {titles_and}")
+    hit = res_and["keyword_hits"][0] if res_and["keyword_hits"] else {}
+    sn = hit.get("snippets") or []
+    check("snippets:內文第 600 字後的命中也抓得到",
+          bool(sn) and any(kw2 in s for s in sn) and len(sn) <= 3,
+          f"snippets={sn}")
+    check("snippets:片段長度受控(前後 60 字)",
+          all(len(s) <= 60 * 2 + len(kw1) + len(kw2) + 20 for s in sn),
+          f"lens={[len(s) for s in sn]}")
+    check("契約:新增欄位不影響原 6 鍵 + code/name",
+          {"time", "title", "source", "url", "summary", "body", "code", "name"}
+          <= set(hit.keys()), f"keys={sorted(hit.keys())}")
+
+
+def test_intl_and_cnyes_search_leg():
+    kw = "辛非農"
+    items = [
+        _item(f"{kw}就業數據優於預期", category="國際焦點"),
+        _item(f"{kw}概念股走強", category="台股"),
+    ]
+    search = [{"source": "cnyes-search", "title": f"聯準會會議紀要提到{kw}",
+               "summary": "", "body": f"…{kw}就業…", "url": "http://fake/cs1",
+               "published_at": _iso(1), "category": "美股雷達", "keywords": []},
+              {"source": "cnyes-search", "title": "完全無關的標題",
+               "summary": "", "body": "沒有關鍵字", "url": "http://fake/cs2",
+               "published_at": _iso(1), "category": "美股雷達", "keywords": []}]
+    res = run_with_patch(kw, items=items, search_items=search, days=3, fetch_body=False)
+    srcs = sorted(h["source"] for h in res["keyword_hits"])
+    check("cnyes 搜尋腿:命中者併入、未含關鍵字者濾掉",
+          srcs.count("cnyes-search") == 1 and len(srcs) == 3, f"srcs={srcs}")
+    res_i = run_with_patch(kw, items=items, search_items=search, days=3,
+                           fetch_body=False, intl=True)
+    cats = sorted(h.get("category") for h in res_i["keyword_hits"])
+    check("intl:只留國際/總經分類", cats == ["國際焦點", "美股雷達"], f"cats={cats}")
+
+
+def test_mb_time():
+    check("_mb_time:假 Z 改 +08:00",
+          NC._mb_time("2026-10-09T18:21:19Z") == "2026-10-09T18:21:19+08:00",
+          NC._mb_time("2026-10-09T18:21:19Z"))
+    check("_mb_time:已帶時區不動",
+          NC._mb_time("2026-10-09T18:21:19+08:00") == "2026-10-09T18:21:19+08:00")
+    d = datetime.datetime.fromisoformat(NC._mb_time("2026-10-09T18:21:19Z"))
+    check("_mb_time:解析後是台北 18:21 而非隔天 02:21",
+          d.astimezone(NC.TAIPEI).strftime("%m-%d %H:%M") == "10-09 18:21",
+          d.isoformat())
+
+
+def test_prev_business_day_holiday():
+    D = datetime.date
+    check("前一交易日:10/12(一)跳過 10/09 補假與週末 → 10/08",
+          NC._prev_business_day(D(2026, 10, 12)) == D(2026, 10, 8),
+          str(NC._prev_business_day(D(2026, 10, 12))))
+    check("前一交易日:10/13(二) → 10/12",
+          NC._prev_business_day(D(2026, 10, 13)) == D(2026, 10, 12))
+    now = datetime.datetime(2026, 10, 12, 7, 40, tzinfo=NC.TAIPEI)
+    cutoff, prev = NC.market_session_cutoff(now)
+    check("盤前窗下界:10/12 07:40 → 10/08 14:00 台北",
+          cutoff.isoformat() == "2026-10-08T14:00:00+08:00" and prev == D(2026, 10, 8),
+          cutoff.isoformat())
+
+
+def test_sanbao_cache_timestamp_and_disk():
+    """回歸:時間戳要記在抓完之後(抓取 > TTL 時舊版快取一出生就過期);
+    磁碟快取跨進程共用;被 monkeypatch 的假抓取不碰磁碟。"""
+    import types
+    import tempfile
+    import time as _time
+    tmpdir = pathlib.Path(tempfile.mkdtemp())
+    orig_disk, orig_ttl = NC._SB_DISK, NC._cache_ttl
+    calls = {"n": 0}
+
+    def slow_fetch(n):
+        calls["n"] += 1
+        _time.sleep(1.5)
+        return [{"source": "cnyes", "title": "快取測試", "url": "http://fake/c"}]
+    slow_fetch.__module__ = "fake_np"
+    fake_np = types.SimpleNamespace(__name__="fake_np", fetch_sanbao=slow_fetch)
+    n = NC.news_cfg()
+    try:
+        NC._SB_DISK = tmpdir / ".sanbao_cache.json"
+        NC._cache_ttl = lambda: 1                      # TTL 1 秒 < 抓取 1.5 秒
+        with NC._SB_LOCK:
+            NC._SB_CACHE.clear()
+        NC._fetch_sanbao_cached(fake_np, n)
+        NC._fetch_sanbao_cached(fake_np, n)            # 抓完立刻再查,應命中記憶體
+        check("cache:抓取比 TTL 久時,抓完立即再查仍命中(時間戳記在抓完後)",
+              calls["n"] == 1, f"fetch 次數={calls['n']}")
+        check("cache:磁碟快取檔已寫出", NC._SB_DISK.exists())
+        with NC._SB_LOCK:
+            NC._SB_CACHE.clear()                       # 模擬另一個進程(記憶體空)
+        got = NC._fetch_sanbao_cached(fake_np, n)
+        check("cache:記憶體空時讀磁碟快取,不重抓",
+              calls["n"] == 1 and got and got[0]["title"] == "快取測試",
+              f"fetch 次數={calls['n']}")
+        _time.sleep(1.1)                               # 過期
+        with NC._SB_LOCK:
+            NC._SB_CACHE.clear()
+        NC._fetch_sanbao_cached(fake_np, n)
+        check("cache:過期後重抓", calls["n"] == 2, f"fetch 次數={calls['n']}")
+        NC.clear_news_cache()
+        check("cache:clear_news_cache() 預設不刪磁碟(單元測試不清正式快取)",
+              NC._SB_DISK.exists())
+        NC.clear_news_cache(disk=True)
+        check("cache:clear_news_cache(disk=True) 連磁碟一起清", not NC._SB_DISK.exists())
+        # 被 patch 的假抓取(__module__ 不同)不讀不寫磁碟
+
+        def patched(n):
+            return [{"source": "x", "title": "假資料", "url": "http://fake/p"}]
+        fake_np2 = types.SimpleNamespace(__name__="fake_np", fetch_sanbao=patched)
+        with NC._SB_LOCK:
+            NC._SB_CACHE.clear()
+        NC._fetch_sanbao_cached(fake_np2, n)
+        check("cache:monkeypatch 的假抓取不寫磁碟", not NC._SB_DISK.exists())
+        # 抓取整批失敗回空清單時不落磁碟(避免 15 分鐘內別的進程都拿到 0 則)
+
+        def empty_fetch(n):
+            return []
+        empty_fetch.__module__ = "fake_np"
+        fake_np3 = types.SimpleNamespace(__name__="fake_np", fetch_sanbao=empty_fetch)
+        with NC._SB_LOCK:
+            NC._SB_CACHE.clear()
+        NC._fetch_sanbao_cached(fake_np3, n)
+        check("cache:空結果不寫磁碟", not NC._SB_DISK.exists())
+    finally:
+        NC._SB_DISK, NC._cache_ttl = orig_disk, orig_ttl
+        with NC._SB_LOCK:
+            NC._SB_CACHE.clear()
+
+
+def test_codes_without_metabase():
+    """沒有 Metabase 的使用者:source=both 自動退成即時流,代號查詢不靠 Metabase 也比對得到
+    (離線字典股名、代號字串、出版商標的代號),沒有股名的代號改用代號直取。"""
+    _try_clear_cache()
+    items = [
+        _item("台積電法說會釋利多", body="先進製程需求強"),
+        _item("某公司(9999)接獲大單", body="訂單能見度到明年"),
+        {**_item("出版商標代號的新聞", body="內文沒寫代號"), "stock_codes": ["9998"]},
+        _item("完全無關的新聞", body="沒有代號"),
+    ]
+    calls = {"metabase": 0, "direct": []}
+
+    def no_metabase(*a, **k):
+        calls["metabase"] += 1
+        raise RuntimeError("不該呼叫 Metabase")
+
+    def fake_direct(code, name, **k):
+        calls["direct"].append((str(code), name))
+        return []
+
+    orig = (NP.fetch_sanbao, NP.attach_bodies, NP.prefetch_candidate_bodies,
+            NP.fetch_stock_news, NC.get_stock_names, NC.get_news_metabase, NC._MB_OK)
+    NP.fetch_sanbao = lambda n: items
+    NP.attach_bodies = lambda *a, **k: 0
+    NP.prefetch_candidate_bodies = lambda *a, **k: 0
+    NP.fetch_stock_news = fake_direct
+    NC.get_stock_names = no_metabase
+    NC.get_news_metabase = no_metabase
+    NC._MB_OK = False                      # 模擬沒有權限或連不上
+    try:
+        res = NC.query_news(codes=["2330", "9999", "9998"], source="both", days=3,
+                            fetch_body=False, tag_sentiment=False)
+    finally:
+        (NP.fetch_sanbao, NP.attach_bodies, NP.prefetch_candidate_bodies,
+         NP.fetch_stock_news, NC.get_stock_names, NC.get_news_metabase, NC._MB_OK) = orig
+    bc = res["by_code"]
+
+    def titles(code):
+        return [h["title"] for h in bc.get(code, [])]
+    check("無 Metabase:source=both 自動退成即時流,沒有呼叫 Metabase",
+          calls["metabase"] == 0, f"Metabase 呼叫 {calls['metabase']} 次")
+    check("無 Metabase:離線字典股名命中(2330 台積電)",
+          titles("2330") == ["台積電法說會釋利多"], f"got {titles('2330')}")
+    check("無 Metabase:只有代號字串也命中(9999)",
+          titles("9999") == ["某公司(9999)接獲大單"], f"got {titles('9999')}")
+    check("無 Metabase:出版商標的代號命中(9998)",
+          titles("9998") == ["出版商標代號的新聞"], f"got {titles('9998')}")
+    check("無 Metabase:有股名用股名直取,沒有股名改用代號直取",
+          ("2330", "台積電") in calls["direct"] and ("9999", "9999") in calls["direct"],
+          f"direct={calls['direct']}")
+
+
+def test_local_stock_name_fallback():
+    """離線股名:官方全市場 tw_names.json 優先,其次策展字典,都沒有回空字串。"""
+    NP.local_stock_name("2330")                     # 先觸發載入,再換成假清單
+    orig = NP._FULL_NAMES
+    NP._FULL_NAMES = {"5555": "測試股", "2330": "官方新名"}
+    try:
+        check("離線股名:全市場清單優先", NP.local_stock_name("2330") == "官方新名",
+              NP.local_stock_name("2330"))
+        check("離線股名:全市場沒有時查策展字典", NP.local_stock_name("0050") == "元大台灣50",
+              NP.local_stock_name("0050"))
+        check("離線股名:全市場清單命中", NP.local_stock_name("5555") == "測試股",
+              NP.local_stock_name("5555"))
+        check("離線股名:都沒有回空字串", NP.local_stock_name("0000") == "",
+              repr(NP.local_stock_name("0000")))
+    finally:
+        NP._FULL_NAMES = orig
 
 
 def main():
@@ -274,7 +509,19 @@ def main():
     test_individual_only()
     print("\n--- 5) 來源隔離(不碰 metabase / 結構契約) ---")
     test_no_network_isolation()
-    print("\n--- 6) monkeypatch 還原 ---")
+    print("\n--- 6) AND / snippets ---")
+    test_match_all_and_snippets()
+    print("\n--- 7) --intl / cnyes 搜尋腿 ---")
+    test_intl_and_cnyes_search_leg()
+    print("\n--- 8) 時間正確性(Metabase 假 Z / 連假前一交易日) ---")
+    test_mb_time()
+    test_prev_business_day_holiday()
+    print("\n--- 9) 快取時間戳 + 磁碟快取 ---")
+    test_sanbao_cache_timestamp_and_disk()
+    print("\n--- 10) 沒有 Metabase 的代號查詢 ---")
+    test_codes_without_metabase()
+    test_local_stock_name_fallback()
+    print("\n--- 11) monkeypatch 還原 ---")
     test_patch_restored()
 
     ok = sum(1 for _, p, _ in results if p)

@@ -1,0 +1,103 @@
+{
+  "source_id": "ctee",
+  "label": "工商時報",
+  "agent": "工商時報agent",
+  "home": "https://www.ctee.com.tw",
+  "access": {
+    "method": "html",
+    "endpoints": [
+      "https://www.ctee.com.tw/livenews/ctee",
+      "https://www.ctee.com.tw/livenews/stock",
+      "https://www.ctee.com.tw/stock",
+      "https://www.ctee.com.tw/stock/twmarket",
+      "https://www.ctee.com.tw/stock/futures",
+      "https://www.ctee.com.tw/finance",
+      "https://www.ctee.com.tw/industry",
+      "https://www.ctee.com.tw/world",
+      "https://www.ctee.com.tw/view"
+    ],
+    "implemented_in": "scripts/ctee.py",
+    "history_backfill": true,
+    "note": "publish_ts 取自 URL 日期；WP REST API 404 不可用。列表頁靜態 HTML 解析文章連結，文章 URL 形如 /news/{YYYYMMDD}{6}-{6}，日期可直接內嵌取得免額外請求。即時頻道 /livenews/{slug}（stock, finance, house, china, world, ctee）；主題頻道 /stock、/stock/twmarket、/stock/futures、/finance、/industry、/industry/tech、/world、/view。言論名家另有子網域 view.ctee.com.tw。sitemap 可歷史回溯。"
+  },
+  "columns": [
+    {
+      "name": "證券（總覽）",
+      "url": "https://www.ctee.com.tw/stock",
+      "stock_relevant": true,
+      "note": "證券主頻道，台股盤勢、籌碼、法人動向，與股市投資最直接相關。即時版為 /livenews/stock。"
+    },
+    {
+      "name": "上市櫃",
+      "url": "https://www.ctee.com.tw/stock/twmarket",
+      "stock_relevant": true,
+      "note": "集中市場與櫃買（含興櫃 430201）個股與大盤新聞，核心選股與盤後分析來源。"
+    },
+    {
+      "name": "期貨",
+      "url": "https://www.ctee.com.tw/stock/futures",
+      "stock_relevant": true,
+      "note": "期交所行情、夜盤、衍生性商品，對股市避險與多空判斷有參考價值。"
+    },
+    {
+      "name": "金融",
+      "url": "https://www.ctee.com.tw/finance",
+      "stock_relevant": true,
+      "note": "銀行、保險、金控、利率、匯市政策。影響金融股與資金面，股市相關。即時版 /livenews/finance。"
+    },
+    {
+      "name": "產業",
+      "url": "https://www.ctee.com.tw/industry",
+      "stock_relevant": true,
+      "note": "各產業（半導體、電子、傳產）動態與企業營運，是個股基本面題材主要來源。科技動態子頁 /industry/tech。"
+    },
+    {
+      "name": "國際財經",
+      "url": "https://www.ctee.com.tw/world",
+      "stock_relevant": true,
+      "note": "全球政經、美股日股、外匯（/category/news/global/gforex）。影響台股外資與權值股，股市相關。即時版 /livenews/world。"
+    },
+    {
+      "name": "言論／名家評論",
+      "url": "https://www.ctee.com.tw/view",
+      "stock_relevant": true,
+      "note": "社論 /view/editorial 及名家專欄（子網域 view.ctee.com.tw 含產業分析、投資觀點），含看盤與投資觀點，部分文章股市相關。"
+    },
+    {
+      "name": "房市",
+      "url": "https://www.ctee.com.tw/livenews/house",
+      "stock_relevant": false,
+      "note": "不動產交易、政策、建案。偶涉營建與資產股，但多為實體房市消費資訊，整體股市相關性低。"
+    },
+    {
+      "name": "兩岸",
+      "url": "https://www.ctee.com.tw/livenews/china",
+      "stock_relevant": false,
+      "note": "兩岸經貿與政策。偶有供應鏈與台商題材影響個股，但多屬政經背景，預設不視為股市專欄。"
+    },
+    {
+      "name": "即時新聞（總覽）",
+      "url": "https://www.ctee.com.tw/livenews/ctee",
+      "stock_relevant": true,
+      "note": "全站即時混合流，含大量證券/產業即時，須依文章子分類過濾；作為新鮮度高的抓取入口。"
+    }
+  ],
+  "stock_relevant_columns": [
+    "證券（總覽）",
+    "上市櫃",
+    "期貨",
+    "金融",
+    "產業",
+    "國際財經",
+    "言論／名家評論",
+    "即時新聞（總覽）"
+  ],
+  "noise_notes": "房市、兩岸、生活/樂活、書房等頻道股市相關性低，預設排除。言論/名家為混合內容，需文章層面判斷主題；即時總覽 /livenews/ctee 為混流入口，須依文章證券/產業子分類（URL 尾碼如 4302xx 為證券）過濾。WP REST API 全站 404 不可用，僅能靠列表頁 HTML 與 sitemap。",
+  "cleaning": {
+    "publish_ts": "URL 內嵌 8 碼日期 -> 台北時間日粒度；需精確到分秒時 fetch_content=True 抓文章頁 <meta pubdate>",
+    "dedup": "norm_title 跨源去重"
+  },
+  "researched_via": "websearch",
+  "researched_at": "2026-06-13",
+  "verified_live": false
+}

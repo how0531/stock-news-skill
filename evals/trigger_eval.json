@@ -1,0 +1,262 @@
+{
+ "skill": "stock-news-skill",
+ "note": "觸發邊界測試：6 個應觸發 + 6 個近似但不該觸發(競爭 skill 該贏)。判定 = 給判官真實候選 skill 描述 + query，選最該負責的單一 skill。",
+ "history": [
+  "2026-06-28 初版 12 題。",
+  "2026-10-21 擴充到 42 題（新增研報、即時排行、聲量統計、盤前長文、App 行為數據、潤稿等近似題，以及不含『新聞』二字的難正例）。判定方式：盲測評審看真實的 skill 清單（含只顯示名稱的 skill）與題目，選最該負責的單一 skill。結果：舊 description 研報題被搶 3/3；新 description（355 字）兩輪全對。決策：『今天哪些族群在動』這類整理需求歸本 skill（使用者 2026-10-21 決定），做成推播或 0940 動能選股才歸 Sino-notify-skill。"
+ ],
+ "queries": [
+  {
+   "id": 1,
+   "query": "幫我看看華邦電最近有沒有什麼大消息，我手上有一些想加碼",
+   "should_trigger": true,
+   "expect": "stock-news-skill"
+  },
+  {
+   "id": 2,
+   "query": "希捷那個產能極限的說法是真的嗎？哪裡有報導，幫我看內文",
+   "should_trigger": true,
+   "expect": "stock-news-skill"
+  },
+  {
+   "id": 3,
+   "query": "整理一下這週低軌衛星的相關新聞給我看，含內文",
+   "should_trigger": true,
+   "expect": "stock-news-skill"
+  },
+  {
+   "id": 4,
+   "query": "今天盤後有什麼重點新聞，哪些族群或個股在動",
+   "should_trigger": true,
+   "expect": "stock-news-skill"
+  },
+  {
+   "id": 5,
+   "query": "2330 2454 3035 這幾檔最近三天的新聞幫我抓一下，重點看內文不要只看標題",
+   "should_trigger": true,
+   "expect": "stock-news-skill"
+  },
+  {
+   "id": 6,
+   "query": "工商時報有沒有報導記憶體漲價？想確認消息真假",
+   "should_trigger": true,
+   "expect": "stock-news-skill"
+  },
+  {
+   "id": 7,
+   "query": "幫我發一則 0940 盤中快訊到大戶投，記憶體族群那個",
+   "should_trigger": false,
+   "expect": "Sino-notify-skill / 盤中狙擊自動化skill (產出/發布推播)"
+  },
+  {
+   "id": 8,
+   "query": "跑 0629 盤前，照模板給我一份完整的投資早報",
+   "should_trigger": false,
+   "expect": "sinotrade-morning-briefing (完整盤前長文)"
+  },
+  {
+   "id": 9,
+   "query": "拉一下 2330 近一年的日線收盤價，存成 excel",
+   "should_trigger": false,
+   "expect": "sinopac-metabase (原始數據/SQL/Excel)"
+  },
+  {
+   "id": 10,
+   "query": "幫我把三大法人買賣超 TOP50 的原始數據撈出來",
+   "should_trigger": false,
+   "expect": "sinopac-metabase (原始數據)"
+  },
+  {
+   "id": 11,
+   "query": "今天哪些族群轉強，幫我整理成發給客戶的盤中推播",
+   "should_trigger": false,
+   "expect": "Sino-notify-skill (大戶投推播成品)"
+  },
+  {
+   "id": 12,
+   "query": "寫一個 RS 動能選股的 XScript 給我",
+   "should_trigger": false,
+   "expect": "xq-xscript (XS 程式碼)"
+  },
+  {
+   "id": 13,
+   "query": "連發科 這週有啥消息",
+   "should_trigger": true,
+   "expect": "stock-news-skill"
+  },
+  {
+   "id": 14,
+   "query": "我手上有5張力積電，成本42，剛看到PTT有人說他們要幫Intel代工，感覺像謠言但不確定，有沒有正式報導可以看？有的話內文也貼給我",
+   "should_trigger": true,
+   "expect": "stock-news-skill"
+  },
+  {
+   "id": 15,
+   "query": "南亞科怎麼突然鎖漲停，是有什麼利多嗎",
+   "should_trigger": true,
+   "expect": "stock-news-skill"
+  },
+  {
+   "id": 16,
+   "query": "盤前想先掃一下，昨晚到現在有什麼重要消息，美股那邊的也要",
+   "should_trigger": true,
+   "expect": "stock-news-skill（--today 彙整，時間窗涵蓋隔夜美股與今早盤前）"
+  },
+  {
+   "id": 17,
+   "query": "客戶一直問我欣興今天為什麼大漲，我先查一下有沒有相關報導再回他",
+   "should_trigger": true,
+   "expect": "stock-news-skill"
+  },
+  {
+   "id": 18,
+   "query": "看到一則標題「大立光 Q4 毛利率預估下滑」，這算利空嗎？幫我找內文確認一下",
+   "should_trigger": true,
+   "expect": "stock-news-skill"
+  },
+  {
+   "id": 19,
+   "query": "永豐金控 2890 最近有被報導什麼嗎？尤其財報跟配息那塊，要看內文",
+   "should_trigger": true,
+   "expect": "stock-news-skill"
+  },
+  {
+   "id": 20,
+   "query": "早報我想補一句 ABF 載板漲價的原因，先看看有沒有研報提過，近五天的就好",
+   "should_trigger": false,
+   "expect": "stock-report-skill（查口袋證券研報）"
+  },
+  {
+   "id": 21,
+   "query": "上週新聞裡出現最多次的個股前十名幫我跑一下，順便看哪個族群聲量最大",
+   "should_trigger": false,
+   "expect": "Sino-notify-skill（週報 weekly.py 區間聲量統計）"
+  },
+  {
+   "id": 22,
+   "query": "群聯今天噴出去了，幫我看一下同族群有沒有跟漲",
+   "should_trigger": false,
+   "expect": "Sino-notify-skill（0940 個股模式，某股漲了看同族群）"
+  },
+  {
+   "id": 23,
+   "query": "把昨晚美股和今天盤後的新聞都整合進去，寫成明天的盤前觀點，要發給投資人看的",
+   "should_trigger": false,
+   "expect": "sinotrade-morning-briefing（完整盤前長文）"
+  },
+  {
+   "id": 24,
+   "query": "cmoney 那張證券市場新聞的表，幫我算 2330 近 30 天每天各有幾則，匯出 excel",
+   "should_trigger": false,
+   "expect": "sinopac-metabase（SQL 統計與 Excel）"
+  },
+  {
+   "id": 25,
+   "query": "用 shioaji 抓一下現在漲幅前 20 名，帶成交金額，我想看今天哪些個股在動",
+   "should_trigger": false,
+   "expect": "sjxs-query（Rank 漲幅排行）"
+  },
+  {
+   "id": 26,
+   "query": "網/網市佔我算出來永豐 7.8%，跟證交所官方那份對不起來，這數字是真的嗎？幫我查一下",
+   "should_trigger": false,
+   "expect": "Sinopac_elec_share（排查市佔數字、對表）"
+  },
+  {
+   "id": 27,
+   "query": "今天哪些族群在動？",
+   "should_trigger": true,
+   "expect": "stock-news-skill"
+  },
+  {
+   "id": 28,
+   "query": "今天有哪些族群在漲，幫我整理一下原因",
+   "should_trigger": true,
+   "expect": "stock-news-skill"
+  },
+  {
+   "id": 29,
+   "query": "昨天美股收盤後有沒有什麼會影響台股的消息",
+   "should_trigger": true,
+   "expect": "stock-news-skill"
+  },
+  {
+   "id": 30,
+   "query": "news 2330 3d",
+   "should_trigger": true,
+   "expect": "stock-news-skill"
+  },
+  {
+   "id": 31,
+   "query": "幫我看看有沒有媒體報導台積電美國廠延後量產，Reuters 或中央社都可以",
+   "should_trigger": true,
+   "expect": "stock-news-skill"
+  },
+  {
+   "id": 32,
+   "query": "我朋友傳來說聯發科被美國制裁，真的假的",
+   "should_trigger": true,
+   "expect": "stock-news-skill"
+  },
+  {
+   "id": 33,
+   "query": "這週記憶體報價的報導整理給我，DRAM 跟 NAND 分開",
+   "should_trigger": true,
+   "expect": "stock-news-skill"
+  },
+  {
+   "id": 34,
+   "query": "口袋學堂最近有沒有寫到矽光子的報告",
+   "should_trigger": false,
+   "expect": "stock-report-skill"
+  },
+  {
+   "id": 35,
+   "query": "把今天的新聞重點寫成要發給客戶的 LINE 推播稿",
+   "should_trigger": false,
+   "expect": "Sino-notify-skill"
+  },
+  {
+   "id": 36,
+   "query": "大戶投 App 的新聞頁昨天有多少人點進去看",
+   "should_trigger": false,
+   "expect": "sensors-analytics"
+  },
+  {
+   "id": 37,
+   "query": "上週 cmoney 新聞表裡 2330 被報導幾次，幫我畫成每日折線圖",
+   "should_trigger": false,
+   "expect": "sinopac-metabase"
+  },
+  {
+   "id": 38,
+   "query": "幫我把這篇新聞稿潤飾得自然一點，不要有 AI 味",
+   "should_trigger": false,
+   "expect": "humanizer-zh-tw"
+  },
+  {
+   "id": 39,
+   "query": "跑 0940 動能選股，看今天哪些族群轉強",
+   "should_trigger": false,
+   "expect": "Sino-notify-skill"
+  },
+  {
+   "id": 40,
+   "query": "台積電現在股價多少，今天量有沒有比較大",
+   "should_trigger": false,
+   "expect": "sjxs-query"
+  },
+  {
+   "id": 41,
+   "query": "幫我發布剛剛那則盤中狙擊到 250 萬以上的客群",
+   "should_trigger": false,
+   "expect": "盤中狙擊自動化skill"
+  },
+  {
+   "id": 42,
+   "query": "明天的早報幫我跑一下，題材用今天新聞最多的那幾個",
+   "should_trigger": false,
+   "expect": "sinotrade-morning-briefing"
+  }
+ ]
+}

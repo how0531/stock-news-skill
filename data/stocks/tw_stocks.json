@@ -1,0 +1,2220 @@
+{
+  "2330.TW": {
+    "ticker": "2330.TW",
+    "name_zh": "台積電",
+    "name_en": "TSMC",
+    "market": "TW",
+    "sector": "半導體",
+    "aliases": [
+      "台積電",
+      "TSMC",
+      "2330.TW",
+      "2330",
+      "台積",
+      "TSM",
+      "護國神山",
+      "晶圓代工龍頭",
+      "TSM-US"
+    ]
+  },
+  "2317.TW": {
+    "ticker": "2317.TW",
+    "name_zh": "鴻海",
+    "name_en": "Hon Hai Precision",
+    "market": "TW",
+    "sector": "電子組裝",
+    "aliases": [
+      "鴻海",
+      "Hon Hai Precision",
+      "2317.TW",
+      "2317",
+      "鴻海精密",
+      "Foxconn",
+      "富士康",
+      "HNHPF"
+    ]
+  },
+  "2454.TW": {
+    "ticker": "2454.TW",
+    "name_zh": "聯發科",
+    "name_en": "MediaTek",
+    "market": "TW",
+    "sector": "半導體",
+    "aliases": [
+      "聯發科",
+      "MediaTek",
+      "2454.TW",
+      "2454",
+      "聯發",
+      "MTK"
+    ]
+  },
+  "2308.TW": {
+    "ticker": "2308.TW",
+    "name_zh": "台達電",
+    "name_en": "Delta Electronics",
+    "market": "TW",
+    "sector": "電子零組件",
+    "aliases": [
+      "台達電",
+      "Delta Electronics",
+      "2308.TW",
+      "2308",
+      "台達",
+      "Delta"
+    ]
+  },
+  "2382.TW": {
+    "ticker": "2382.TW",
+    "name_zh": "廣達",
+    "name_en": "Quanta Computer",
+    "market": "TW",
+    "sector": "電子組裝",
+    "aliases": [
+      "廣達",
+      "Quanta Computer",
+      "2382.TW",
+      "2382",
+      "Quanta",
+      "AI伺服器"
+    ]
+  },
+  "2891.TW": {
+    "ticker": "2891.TW",
+    "name_zh": "中信金",
+    "name_en": "CTBC Financial",
+    "market": "TW",
+    "sector": "金融",
+    "aliases": [
+      "中信金",
+      "CTBC Financial",
+      "2891.TW",
+      "2891",
+      "中國信託",
+      "CTBC"
+    ]
+  },
+  "2882.TW": {
+    "ticker": "2882.TW",
+    "name_zh": "國泰金",
+    "name_en": "Cathay Financial",
+    "market": "TW",
+    "sector": "金融",
+    "aliases": [
+      "國泰金",
+      "Cathay Financial",
+      "2882.TW",
+      "2882",
+      "國泰金控",
+      "Cathay"
+    ]
+  },
+  "2881.TW": {
+    "ticker": "2881.TW",
+    "name_zh": "富邦金",
+    "name_en": "Fubon Financial",
+    "market": "TW",
+    "sector": "金融",
+    "aliases": [
+      "富邦金",
+      "Fubon Financial",
+      "2881.TW",
+      "2881",
+      "富邦金控",
+      "Fubon"
+    ]
+  },
+  "2412.TW": {
+    "ticker": "2412.TW",
+    "name_zh": "中華電",
+    "name_en": "Chunghwa Telecom",
+    "market": "TW",
+    "sector": "電信",
+    "aliases": [
+      "中華電",
+      "Chunghwa Telecom",
+      "2412.TW",
+      "2412",
+      "中華電信",
+      "CHT"
+    ]
+  },
+  "2303.TW": {
+    "ticker": "2303.TW",
+    "name_zh": "聯電",
+    "name_en": "UMC",
+    "market": "TW",
+    "sector": "半導體",
+    "aliases": [
+      "聯電",
+      "UMC",
+      "2303.TW",
+      "2303",
+      "聯華電子",
+      "UMC-US"
+    ]
+  },
+  "3711.TW": {
+    "ticker": "3711.TW",
+    "name_zh": "日月光投控",
+    "name_en": "ASE Technology",
+    "market": "TW",
+    "sector": "半導體封測",
+    "aliases": [
+      "日月光投控",
+      "ASE Technology",
+      "3711.TW",
+      "3711",
+      "日月光",
+      "ASE",
+      "ASX-US"
+    ]
+  },
+  "2002.TW": {
+    "ticker": "2002.TW",
+    "name_zh": "中鋼",
+    "name_en": "China Steel",
+    "market": "TW",
+    "sector": "鋼鐵",
+    "aliases": [
+      "中鋼",
+      "China Steel",
+      "2002.TW",
+      "2002",
+      "中國鋼鐵"
+    ]
+  },
+  "1301.TW": {
+    "ticker": "1301.TW",
+    "name_zh": "台塑",
+    "name_en": "Formosa Plastics",
+    "market": "TW",
+    "sector": "塑化",
+    "aliases": [
+      "台塑",
+      "Formosa Plastics",
+      "1301.TW",
+      "1301",
+      "台灣塑膠"
+    ]
+  },
+  "1303.TW": {
+    "ticker": "1303.TW",
+    "name_zh": "南亞",
+    "name_en": "Nan Ya Plastics",
+    "market": "TW",
+    "sector": "塑化",
+    "aliases": [
+      "南亞",
+      "Nan Ya Plastics",
+      "1303.TW",
+      "1303",
+      "南亞塑膠"
+    ]
+  },
+  "1326.TW": {
+    "ticker": "1326.TW",
+    "name_zh": "台化",
+    "name_en": "Formosa Chemicals",
+    "market": "TW",
+    "sector": "塑化",
+    "aliases": [
+      "台化",
+      "Formosa Chemicals",
+      "1326.TW",
+      "1326",
+      "台灣化纖"
+    ]
+  },
+  "6505.TW": {
+    "ticker": "6505.TW",
+    "name_zh": "台塑化",
+    "name_en": "Formosa Petrochemical",
+    "market": "TW",
+    "sector": "塑化",
+    "aliases": [
+      "台塑化",
+      "Formosa Petrochemical",
+      "6505.TW",
+      "6505"
+    ]
+  },
+  "2886.TW": {
+    "ticker": "2886.TW",
+    "name_zh": "兆豐金",
+    "name_en": "Mega Financial",
+    "market": "TW",
+    "sector": "金融",
+    "aliases": [
+      "兆豐金",
+      "Mega Financial",
+      "2886.TW",
+      "2886",
+      "兆豐金控",
+      "Mega"
+    ]
+  },
+  "2884.TW": {
+    "ticker": "2884.TW",
+    "name_zh": "玉山金",
+    "name_en": "E.Sun Financial",
+    "market": "TW",
+    "sector": "金融",
+    "aliases": [
+      "玉山金",
+      "E.Sun Financial",
+      "2884.TW",
+      "2884",
+      "玉山金控",
+      "E.Sun"
+    ]
+  },
+  "2885.TW": {
+    "ticker": "2885.TW",
+    "name_zh": "元大金",
+    "name_en": "Yuanta Financial",
+    "market": "TW",
+    "sector": "金融",
+    "aliases": [
+      "元大金",
+      "Yuanta Financial",
+      "2885.TW",
+      "2885",
+      "元大金控",
+      "Yuanta"
+    ]
+  },
+  "2887.TW": {
+    "ticker": "2887.TW",
+    "name_zh": "台新金",
+    "name_en": "Taishin Financial",
+    "market": "TW",
+    "sector": "金融",
+    "aliases": [
+      "台新金",
+      "Taishin Financial",
+      "2887.TW",
+      "2887",
+      "台新金控"
+    ]
+  },
+  "2890.TW": {
+    "ticker": "2890.TW",
+    "name_zh": "永豐金",
+    "name_en": "SinoPac Financial",
+    "market": "TW",
+    "sector": "金融",
+    "aliases": [
+      "永豐金",
+      "SinoPac Financial",
+      "2890.TW",
+      "2890",
+      "永豐金控"
+    ]
+  },
+  "2892.TW": {
+    "ticker": "2892.TW",
+    "name_zh": "第一金",
+    "name_en": "First Financial",
+    "market": "TW",
+    "sector": "金融",
+    "aliases": [
+      "第一金",
+      "First Financial",
+      "2892.TW",
+      "2892",
+      "第一金控"
+    ]
+  },
+  "2880.TW": {
+    "ticker": "2880.TW",
+    "name_zh": "華南金",
+    "name_en": "Hua Nan Financial",
+    "market": "TW",
+    "sector": "金融",
+    "aliases": [
+      "華南金",
+      "Hua Nan Financial",
+      "2880.TW",
+      "2880",
+      "華南金控"
+    ]
+  },
+  "2883.TW": {
+    "ticker": "2883.TW",
+    "name_zh": "開發金",
+    "name_en": "CDF Holding",
+    "market": "TW",
+    "sector": "金融",
+    "aliases": [
+      "開發金",
+      "CDF Holding",
+      "2883.TW",
+      "2883",
+      "中華開發金控"
+    ]
+  },
+  "2888.TW": {
+    "ticker": "2888.TW",
+    "name_zh": "新光金",
+    "name_en": "Shin Kong Financial",
+    "market": "TW",
+    "sector": "金融",
+    "aliases": [
+      "新光金",
+      "Shin Kong Financial",
+      "2888.TW",
+      "2888",
+      "新光金控"
+    ]
+  },
+  "2889.TW": {
+    "ticker": "2889.TW",
+    "name_zh": "國票金",
+    "name_en": "Waterland Financial",
+    "market": "TW",
+    "sector": "金融",
+    "aliases": [
+      "國票金",
+      "Waterland Financial",
+      "2889.TW",
+      "2889"
+    ]
+  },
+  "5880.TW": {
+    "ticker": "5880.TW",
+    "name_zh": "合庫金",
+    "name_en": "Taiwan Cooperative",
+    "market": "TW",
+    "sector": "金融",
+    "aliases": [
+      "合庫金",
+      "Taiwan Cooperative",
+      "5880.TW",
+      "5880",
+      "合庫金控"
+    ]
+  },
+  "2801.TW": {
+    "ticker": "2801.TW",
+    "name_zh": "彰銀",
+    "name_en": "Chang Hwa Bank",
+    "market": "TW",
+    "sector": "金融",
+    "aliases": [
+      "彰銀",
+      "Chang Hwa Bank",
+      "2801.TW",
+      "2801",
+      "彰化銀行"
+    ]
+  },
+  "2823.TW": {
+    "ticker": "2823.TW",
+    "name_zh": "中壽",
+    "name_en": "China Life",
+    "market": "TW",
+    "sector": "金融",
+    "aliases": [
+      "中壽",
+      "China Life",
+      "2823.TW",
+      "2823",
+      "中國人壽"
+    ]
+  },
+  "2834.TW": {
+    "ticker": "2834.TW",
+    "name_zh": "臺企銀",
+    "name_en": "Taiwan Business Bank",
+    "market": "TW",
+    "sector": "金融",
+    "aliases": [
+      "臺企銀",
+      "Taiwan Business Bank",
+      "2834.TW",
+      "2834",
+      "台企銀"
+    ]
+  },
+  "3045.TW": {
+    "ticker": "3045.TW",
+    "name_zh": "台灣大",
+    "name_en": "Taiwan Mobile",
+    "market": "TW",
+    "sector": "電信",
+    "aliases": [
+      "台灣大",
+      "Taiwan Mobile",
+      "3045.TW",
+      "3045",
+      "台灣大哥大"
+    ]
+  },
+  "4904.TW": {
+    "ticker": "4904.TW",
+    "name_zh": "遠傳",
+    "name_en": "Far EasTone",
+    "market": "TW",
+    "sector": "電信",
+    "aliases": [
+      "遠傳",
+      "Far EasTone",
+      "4904.TW",
+      "4904",
+      "遠傳電信"
+    ]
+  },
+  "2357.TW": {
+    "ticker": "2357.TW",
+    "name_zh": "華碩",
+    "name_en": "ASUS",
+    "market": "TW",
+    "sector": "電子組裝",
+    "aliases": [
+      "華碩",
+      "ASUS",
+      "2357.TW",
+      "2357",
+      "華碩電腦"
+    ]
+  },
+  "2353.TW": {
+    "ticker": "2353.TW",
+    "name_zh": "宏碁",
+    "name_en": "Acer",
+    "market": "TW",
+    "sector": "電子組裝",
+    "aliases": [
+      "宏碁",
+      "Acer",
+      "2353.TW",
+      "2353"
+    ]
+  },
+  "2376.TW": {
+    "ticker": "2376.TW",
+    "name_zh": "技嘉",
+    "name_en": "Gigabyte",
+    "market": "TW",
+    "sector": "電子組裝",
+    "aliases": [
+      "技嘉",
+      "Gigabyte",
+      "2376.TW",
+      "2376",
+      "技嘉科技"
+    ]
+  },
+  "3231.TW": {
+    "ticker": "3231.TW",
+    "name_zh": "緯創",
+    "name_en": "Wistron",
+    "market": "TW",
+    "sector": "電子組裝",
+    "aliases": [
+      "緯創",
+      "Wistron",
+      "3231.TW",
+      "3231",
+      "AI伺服器"
+    ]
+  },
+  "3017.TW": {
+    "ticker": "3017.TW",
+    "name_zh": "奇鋐",
+    "name_en": "Auras Technology",
+    "market": "TW",
+    "sector": "電子零組件",
+    "aliases": [
+      "奇鋐",
+      "Auras Technology",
+      "3017.TW",
+      "3017",
+      "散熱"
+    ]
+  },
+  "2377.TW": {
+    "ticker": "2377.TW",
+    "name_zh": "微星",
+    "name_en": "MSI",
+    "market": "TW",
+    "sector": "電子組裝",
+    "aliases": [
+      "微星",
+      "MSI",
+      "2377.TW",
+      "2377",
+      "微星科技"
+    ]
+  },
+  "2356.TW": {
+    "ticker": "2356.TW",
+    "name_zh": "英業達",
+    "name_en": "Inventec",
+    "market": "TW",
+    "sector": "電子組裝",
+    "aliases": [
+      "英業達",
+      "Inventec",
+      "2356.TW",
+      "2356"
+    ]
+  },
+  "4938.TW": {
+    "ticker": "4938.TW",
+    "name_zh": "和碩",
+    "name_en": "Pegatron",
+    "market": "TW",
+    "sector": "電子組裝",
+    "aliases": [
+      "和碩",
+      "Pegatron",
+      "4938.TW",
+      "4938"
+    ]
+  },
+  "3034.TW": {
+    "ticker": "3034.TW",
+    "name_zh": "聯詠",
+    "name_en": "Novatek",
+    "market": "TW",
+    "sector": "半導體",
+    "aliases": [
+      "聯詠",
+      "Novatek",
+      "3034.TW",
+      "3034",
+      "聯詠科技",
+      "IC設計"
+    ]
+  },
+  "3008.TW": {
+    "ticker": "3008.TW",
+    "name_zh": "大立光",
+    "name_en": "Largan Precision",
+    "market": "TW",
+    "sector": "光學",
+    "aliases": [
+      "大立光",
+      "Largan Precision",
+      "3008.TW",
+      "3008",
+      "大立光電"
+    ]
+  },
+  "2474.TW": {
+    "ticker": "2474.TW",
+    "name_zh": "可成",
+    "name_en": "Catcher Technology",
+    "market": "TW",
+    "sector": "電子零組件",
+    "aliases": [
+      "可成",
+      "Catcher Technology",
+      "2474.TW",
+      "2474"
+    ]
+  },
+  "2912.TW": {
+    "ticker": "2912.TW",
+    "name_zh": "統一超",
+    "name_en": "President Chain Store",
+    "market": "TW",
+    "sector": "通路",
+    "aliases": [
+      "統一超",
+      "President Chain Store",
+      "2912.TW",
+      "2912",
+      "7-Eleven",
+      "統一超商"
+    ]
+  },
+  "1216.TW": {
+    "ticker": "1216.TW",
+    "name_zh": "統一",
+    "name_en": "Uni-President",
+    "market": "TW",
+    "sector": "食品",
+    "aliases": [
+      "統一",
+      "Uni-President",
+      "1216.TW",
+      "1216",
+      "統一企業"
+    ]
+  },
+  "2207.TW": {
+    "ticker": "2207.TW",
+    "name_zh": "和泰車",
+    "name_en": "Hotai Motor",
+    "market": "TW",
+    "sector": "汽車",
+    "aliases": [
+      "和泰車",
+      "Hotai Motor",
+      "2207.TW",
+      "2207",
+      "和泰汽車",
+      "Toyota台灣代理"
+    ]
+  },
+  "1101.TW": {
+    "ticker": "1101.TW",
+    "name_zh": "台泥",
+    "name_en": "Taiwan Cement",
+    "market": "TW",
+    "sector": "水泥",
+    "aliases": [
+      "台泥",
+      "Taiwan Cement",
+      "1101.TW",
+      "1101",
+      "台灣水泥"
+    ]
+  },
+  "1102.TW": {
+    "ticker": "1102.TW",
+    "name_zh": "亞泥",
+    "name_en": "Asia Cement",
+    "market": "TW",
+    "sector": "水泥",
+    "aliases": [
+      "亞泥",
+      "Asia Cement",
+      "1102.TW",
+      "1102",
+      "亞洲水泥"
+    ]
+  },
+  "2105.TW": {
+    "ticker": "2105.TW",
+    "name_zh": "正新",
+    "name_en": "Cheng Shin Rubber",
+    "market": "TW",
+    "sector": "橡膠",
+    "aliases": [
+      "正新",
+      "Cheng Shin Rubber",
+      "2105.TW",
+      "2105",
+      "正新橡膠"
+    ]
+  },
+  "2227.TW": {
+    "ticker": "2227.TW",
+    "name_zh": "裕日車",
+    "name_en": "Yulon Nissan",
+    "market": "TW",
+    "sector": "汽車",
+    "aliases": [
+      "裕日車",
+      "Yulon Nissan",
+      "2227.TW",
+      "2227"
+    ]
+  },
+  "2201.TW": {
+    "ticker": "2201.TW",
+    "name_zh": "裕隆",
+    "name_en": "Yulon Motor",
+    "market": "TW",
+    "sector": "汽車",
+    "aliases": [
+      "裕隆",
+      "Yulon Motor",
+      "2201.TW",
+      "2201",
+      "裕隆汽車"
+    ]
+  },
+  "2603.TW": {
+    "ticker": "2603.TW",
+    "name_zh": "長榮",
+    "name_en": "Evergreen Marine",
+    "market": "TW",
+    "sector": "航運",
+    "aliases": [
+      "長榮",
+      "Evergreen Marine",
+      "2603.TW",
+      "2603",
+      "長榮海運"
+    ]
+  },
+  "2609.TW": {
+    "ticker": "2609.TW",
+    "name_zh": "陽明",
+    "name_en": "Yang Ming",
+    "market": "TW",
+    "sector": "航運",
+    "aliases": [
+      "陽明",
+      "Yang Ming",
+      "2609.TW",
+      "2609",
+      "陽明海運"
+    ]
+  },
+  "2615.TW": {
+    "ticker": "2615.TW",
+    "name_zh": "萬海",
+    "name_en": "Wan Hai Lines",
+    "market": "TW",
+    "sector": "航運",
+    "aliases": [
+      "萬海",
+      "Wan Hai Lines",
+      "2615.TW",
+      "2615",
+      "萬海航運"
+    ]
+  },
+  "2618.TW": {
+    "ticker": "2618.TW",
+    "name_zh": "長榮航",
+    "name_en": "EVA Air",
+    "market": "TW",
+    "sector": "航運",
+    "aliases": [
+      "長榮航",
+      "EVA Air",
+      "2618.TW",
+      "2618",
+      "長榮航空"
+    ]
+  },
+  "2610.TW": {
+    "ticker": "2610.TW",
+    "name_zh": "華航",
+    "name_en": "China Airlines",
+    "market": "TW",
+    "sector": "航運",
+    "aliases": [
+      "華航",
+      "China Airlines",
+      "2610.TW",
+      "2610",
+      "中華航空"
+    ]
+  },
+  "3037.TW": {
+    "ticker": "3037.TW",
+    "name_zh": "欣興",
+    "name_en": "Unimicron",
+    "market": "TW",
+    "sector": "PCB",
+    "aliases": [
+      "欣興",
+      "Unimicron",
+      "3037.TW",
+      "3037",
+      "欣興電子",
+      "ABF載板"
+    ]
+  },
+  "3023.TW": {
+    "ticker": "3023.TW",
+    "name_zh": "信邦",
+    "name_en": "Sinbon Electronics",
+    "market": "TW",
+    "sector": "電子零組件",
+    "aliases": [
+      "信邦",
+      "Sinbon Electronics",
+      "3023.TW",
+      "3023"
+    ]
+  },
+  "2049.TW": {
+    "ticker": "2049.TW",
+    "name_zh": "上銀",
+    "name_en": "Hiwin",
+    "market": "TW",
+    "sector": "機械",
+    "aliases": [
+      "上銀",
+      "Hiwin",
+      "2049.TW",
+      "2049",
+      "上銀科技"
+    ]
+  },
+  "1605.TW": {
+    "ticker": "1605.TW",
+    "name_zh": "華新",
+    "name_en": "Walsin Lihwa",
+    "market": "TW",
+    "sector": "電線電纜",
+    "aliases": [
+      "華新",
+      "Walsin Lihwa",
+      "1605.TW",
+      "1605"
+    ]
+  },
+  "2912.TWO": {
+    "ticker": "2912.TWO",
+    "name_zh": "統一超商",
+    "name_en": "President Chain Store",
+    "market": "TW",
+    "sector": "通路",
+    "aliases": [
+      "統一超商",
+      "President Chain Store",
+      "2912.TWO",
+      "2912"
+    ]
+  },
+  "2345.TW": {
+    "ticker": "2345.TW",
+    "name_zh": "智邦",
+    "name_en": "Accton Technology",
+    "market": "TW",
+    "sector": "網通",
+    "aliases": [
+      "智邦",
+      "Accton Technology",
+      "2345.TW",
+      "2345",
+      "白牌交換器"
+    ]
+  },
+  "3661.TW": {
+    "ticker": "3661.TW",
+    "name_zh": "世芯-KY",
+    "name_en": "Alchip",
+    "market": "TW",
+    "sector": "半導體",
+    "aliases": [
+      "世芯-KY",
+      "Alchip",
+      "3661.TW",
+      "3661",
+      "世芯",
+      "Alchip Technologies"
+    ]
+  },
+  "6669.TW": {
+    "ticker": "6669.TW",
+    "name_zh": "緯穎",
+    "name_en": "Wiwynn",
+    "market": "TW",
+    "sector": "電子組裝",
+    "aliases": [
+      "緯穎",
+      "Wiwynn",
+      "6669.TW",
+      "6669",
+      "AI伺服器"
+    ]
+  },
+  "2059.TW": {
+    "ticker": "2059.TW",
+    "name_zh": "川湖",
+    "name_en": "King Slide",
+    "market": "TW",
+    "sector": "電子零組件",
+    "aliases": [
+      "川湖",
+      "King Slide",
+      "2059.TW",
+      "2059"
+    ]
+  },
+  "1590.TW": {
+    "ticker": "1590.TW",
+    "name_zh": "亞德客-KY",
+    "name_en": "AirTAC",
+    "market": "TW",
+    "sector": "機械",
+    "aliases": [
+      "亞德客-KY",
+      "AirTAC",
+      "1590.TW",
+      "1590",
+      "亞德客"
+    ]
+  },
+  "4763.TW": {
+    "ticker": "4763.TW",
+    "name_zh": "材料-KY",
+    "name_en": "Material Industries",
+    "market": "TW",
+    "sector": "塑化",
+    "aliases": [
+      "材料-KY",
+      "Material Industries",
+      "4763.TW",
+      "4763"
+    ]
+  },
+  "6415.TW": {
+    "ticker": "6415.TW",
+    "name_zh": "矽力-KY",
+    "name_en": "Silergy",
+    "market": "TW",
+    "sector": "半導體",
+    "aliases": [
+      "矽力-KY",
+      "Silergy",
+      "6415.TW",
+      "6415",
+      "矽力杰"
+    ]
+  },
+  "3653.TW": {
+    "ticker": "3653.TW",
+    "name_zh": "健策",
+    "name_en": "Chenming Electronic",
+    "market": "TW",
+    "sector": "電子零組件",
+    "aliases": [
+      "健策",
+      "Chenming Electronic",
+      "3653.TW",
+      "3653"
+    ]
+  },
+  "6488.TW": {
+    "ticker": "6488.TW",
+    "name_zh": "環球晶",
+    "name_en": "GlobalWafers",
+    "market": "TW",
+    "sector": "半導體",
+    "aliases": [
+      "環球晶",
+      "GlobalWafers",
+      "6488.TW",
+      "6488",
+      "環球晶圓"
+    ]
+  },
+  "8046.TW": {
+    "ticker": "8046.TW",
+    "name_zh": "南電",
+    "name_en": "Nan Ya PCB",
+    "market": "TW",
+    "sector": "PCB",
+    "aliases": [
+      "南電",
+      "Nan Ya PCB",
+      "8046.TW",
+      "8046",
+      "南亞電路板",
+      "ABF載板"
+    ]
+  },
+  "3661.TWO": {
+    "ticker": "3661.TWO",
+    "name_zh": "世芯-KY",
+    "name_en": "Alchip",
+    "market": "TW",
+    "sector": "半導體",
+    "aliases": [
+      "世芯-KY",
+      "Alchip",
+      "3661.TWO",
+      "3661"
+    ]
+  },
+  "3443.TW": {
+    "ticker": "3443.TW",
+    "name_zh": "創意",
+    "name_en": "Global Unichip",
+    "market": "TW",
+    "sector": "半導體",
+    "aliases": [
+      "創意",
+      "Global Unichip",
+      "3443.TW",
+      "3443",
+      "創意電子",
+      "GUC"
+    ]
+  },
+  "2360.TW": {
+    "ticker": "2360.TW",
+    "name_zh": "致茂",
+    "name_en": "Chroma ATE",
+    "market": "TW",
+    "sector": "電子設備",
+    "aliases": [
+      "致茂",
+      "Chroma ATE",
+      "2360.TW",
+      "2360"
+    ]
+  },
+  "2379.TW": {
+    "ticker": "2379.TW",
+    "name_zh": "瑞昱",
+    "name_en": "Realtek",
+    "market": "TW",
+    "sector": "半導體",
+    "aliases": [
+      "瑞昱",
+      "Realtek",
+      "2379.TW",
+      "2379",
+      "瑞昱半導體"
+    ]
+  },
+  "2408.TW": {
+    "ticker": "2408.TW",
+    "name_zh": "南亞科",
+    "name_en": "Nanya Technology",
+    "market": "TW",
+    "sector": "半導體",
+    "aliases": [
+      "南亞科",
+      "Nanya Technology",
+      "2408.TW",
+      "2408",
+      "DRAM"
+    ]
+  },
+  "3530.TW": {
+    "ticker": "3530.TW",
+    "name_zh": "晶相光",
+    "name_en": "Crystalwise Technology",
+    "market": "TW",
+    "sector": "光學",
+    "aliases": [
+      "晶相光",
+      "Crystalwise Technology",
+      "3530.TW",
+      "3530"
+    ]
+  },
+  "3231.TWO": {
+    "ticker": "3231.TWO",
+    "name_zh": "緯創",
+    "name_en": "Wistron",
+    "market": "TW",
+    "sector": "電子組裝",
+    "aliases": [
+      "緯創",
+      "Wistron",
+      "3231.TWO",
+      "3231"
+    ]
+  },
+  "2327.TW": {
+    "ticker": "2327.TW",
+    "name_zh": "國巨",
+    "name_en": "Yageo",
+    "market": "TW",
+    "sector": "電子零組件",
+    "aliases": [
+      "國巨",
+      "Yageo",
+      "2327.TW",
+      "2327",
+      "國巨電子",
+      "MLCC"
+    ]
+  },
+  "2383.TW": {
+    "ticker": "2383.TW",
+    "name_zh": "台光電",
+    "name_en": "Elite Material",
+    "market": "TW",
+    "sector": "PCB",
+    "aliases": [
+      "台光電",
+      "Elite Material",
+      "2383.TW",
+      "2383",
+      "EMC",
+      "CCL"
+    ]
+  },
+  "6271.TW": {
+    "ticker": "6271.TW",
+    "name_zh": "同欣電",
+    "name_en": "Tong Hsing Electronic",
+    "market": "TW",
+    "sector": "半導體封測",
+    "aliases": [
+      "同欣電",
+      "Tong Hsing Electronic",
+      "6271.TW",
+      "6271"
+    ]
+  },
+  "3702.TW": {
+    "ticker": "3702.TW",
+    "name_zh": "大聯大",
+    "name_en": "WPG Holdings",
+    "market": "TW",
+    "sector": "通路",
+    "aliases": [
+      "大聯大",
+      "WPG Holdings",
+      "3702.TW",
+      "3702",
+      "半導體通路"
+    ]
+  },
+  "5871.TW": {
+    "ticker": "5871.TW",
+    "name_zh": "中租-KY",
+    "name_en": "Chailease",
+    "market": "TW",
+    "sector": "金融",
+    "aliases": [
+      "中租-KY",
+      "Chailease",
+      "5871.TW",
+      "5871",
+      "中租控股"
+    ]
+  },
+  "5269.TW": {
+    "ticker": "5269.TW",
+    "name_zh": "祥碩",
+    "name_en": "Asmedia",
+    "market": "TW",
+    "sector": "半導體",
+    "aliases": [
+      "祥碩",
+      "Asmedia",
+      "5269.TW",
+      "5269"
+    ]
+  },
+  "8454.TW": {
+    "ticker": "8454.TW",
+    "name_zh": "富邦媒",
+    "name_en": "Fubon Media",
+    "market": "TW",
+    "sector": "通路",
+    "aliases": [
+      "富邦媒",
+      "Fubon Media",
+      "8454.TW",
+      "8454",
+      "momo"
+    ]
+  },
+  "2912.TWO2": {
+    "ticker": "2912.TWO2",
+    "name_zh": "統一超商",
+    "name_en": "PCSC",
+    "market": "TW",
+    "sector": "通路",
+    "aliases": [
+      "統一超商",
+      "PCSC",
+      "2912.TWO2",
+      "2912"
+    ]
+  },
+  "2492.TW": {
+    "ticker": "2492.TW",
+    "name_zh": "華新科",
+    "name_en": "Walsin Technology",
+    "market": "TW",
+    "sector": "電子零組件",
+    "aliases": [
+      "華新科",
+      "Walsin Technology",
+      "2492.TW",
+      "2492",
+      "MLCC"
+    ]
+  },
+  "3673.TW": {
+    "ticker": "3673.TW",
+    "name_zh": "TPK-KY",
+    "name_en": "TPK Holding",
+    "market": "TW",
+    "sector": "光學",
+    "aliases": [
+      "TPK-KY",
+      "TPK Holding",
+      "3673.TW",
+      "3673",
+      "宸鴻"
+    ]
+  },
+  "2492.TWO": {
+    "ticker": "2492.TWO",
+    "name_zh": "華新科",
+    "name_en": "Walsin Technology",
+    "market": "TW",
+    "sector": "電子零組件",
+    "aliases": [
+      "華新科",
+      "Walsin Technology",
+      "2492.TWO",
+      "2492"
+    ]
+  },
+  "8299.TW": {
+    "ticker": "8299.TW",
+    "name_zh": "群聯",
+    "name_en": "Phison Electronics",
+    "market": "TW",
+    "sector": "半導體",
+    "aliases": [
+      "群聯",
+      "Phison Electronics",
+      "8299.TW",
+      "8299",
+      "群聯電子"
+    ]
+  },
+  "3293.TW": {
+    "ticker": "3293.TW",
+    "name_zh": "鈊象",
+    "name_en": "International Games System",
+    "market": "TW",
+    "sector": "遊戲",
+    "aliases": [
+      "鈊象",
+      "International Games System",
+      "3293.TW",
+      "3293"
+    ]
+  },
+  "3105.TW": {
+    "ticker": "3105.TW",
+    "name_zh": "穩懋",
+    "name_en": "WIN Semiconductors",
+    "market": "TW",
+    "sector": "半導體",
+    "aliases": [
+      "穩懋",
+      "WIN Semiconductors",
+      "3105.TW",
+      "3105"
+    ]
+  },
+  "3019.TW": {
+    "ticker": "3019.TW",
+    "name_zh": "亞光",
+    "name_en": "Asia Optical",
+    "market": "TW",
+    "sector": "光學",
+    "aliases": [
+      "亞光",
+      "Asia Optical",
+      "3019.TW",
+      "3019"
+    ]
+  },
+  "2376.TWO": {
+    "ticker": "2376.TWO",
+    "name_zh": "技嘉",
+    "name_en": "Gigabyte",
+    "market": "TW",
+    "sector": "電子組裝",
+    "aliases": [
+      "技嘉",
+      "Gigabyte",
+      "2376.TWO",
+      "2376"
+    ]
+  },
+  "6213.TW": {
+    "ticker": "6213.TW",
+    "name_zh": "聯茂",
+    "name_en": "Iteq",
+    "market": "TW",
+    "sector": "PCB",
+    "aliases": [
+      "聯茂",
+      "Iteq",
+      "6213.TW",
+      "6213"
+    ]
+  },
+  "2371.TW": {
+    "ticker": "2371.TW",
+    "name_zh": "大同",
+    "name_en": "Tatung",
+    "market": "TW",
+    "sector": "電機",
+    "aliases": [
+      "大同",
+      "Tatung",
+      "2371.TW",
+      "2371"
+    ]
+  },
+  "2347.TW": {
+    "ticker": "2347.TW",
+    "name_zh": "聯強",
+    "name_en": "Synnex Technology",
+    "market": "TW",
+    "sector": "通路",
+    "aliases": [
+      "聯強",
+      "Synnex Technology",
+      "2347.TW",
+      "2347"
+    ]
+  },
+  "2603.TWO": {
+    "ticker": "2603.TWO",
+    "name_zh": "長榮",
+    "name_en": "Evergreen Marine",
+    "market": "TW",
+    "sector": "航運",
+    "aliases": [
+      "長榮",
+      "Evergreen Marine",
+      "2603.TWO",
+      "2603"
+    ]
+  },
+  "3035.TW": {
+    "ticker": "3035.TW",
+    "name_zh": "智原",
+    "name_en": "Faraday Technology",
+    "market": "TW",
+    "sector": "半導體",
+    "aliases": [
+      "智原",
+      "Faraday Technology",
+      "3035.TW",
+      "3035"
+    ]
+  },
+  "8210.TW": {
+    "ticker": "8210.TW",
+    "name_zh": "勤誠",
+    "name_en": "Chenbro Micom",
+    "market": "TW",
+    "sector": "電子組裝",
+    "aliases": [
+      "勤誠",
+      "Chenbro Micom",
+      "8210.TW",
+      "8210"
+    ]
+  },
+  "3017.TWO": {
+    "ticker": "3017.TWO",
+    "name_zh": "奇鋐",
+    "name_en": "Auras Technology",
+    "market": "TW",
+    "sector": "電子零組件",
+    "aliases": [
+      "奇鋐",
+      "Auras Technology",
+      "3017.TWO",
+      "3017"
+    ]
+  },
+  "1504.TW": {
+    "ticker": "1504.TW",
+    "name_zh": "東元",
+    "name_en": "Teco Electric",
+    "market": "TW",
+    "sector": "電機",
+    "aliases": [
+      "東元",
+      "Teco Electric",
+      "1504.TW",
+      "1504"
+    ]
+  },
+  "5347.TW": {
+    "ticker": "5347.TW",
+    "name_zh": "世界",
+    "name_en": "Vanguard International",
+    "market": "TW",
+    "sector": "半導體",
+    "aliases": [
+      "世界",
+      "Vanguard International",
+      "5347.TW",
+      "5347",
+      "世界先進"
+    ]
+  },
+  "8454.TWO": {
+    "ticker": "8454.TWO",
+    "name_zh": "富邦媒",
+    "name_en": "Fubon Media",
+    "market": "TW",
+    "sector": "通路",
+    "aliases": [
+      "富邦媒",
+      "Fubon Media",
+      "8454.TWO",
+      "8454"
+    ]
+  },
+  "2615.TWO": {
+    "ticker": "2615.TWO",
+    "name_zh": "萬海",
+    "name_en": "Wan Hai Lines",
+    "market": "TW",
+    "sector": "航運",
+    "aliases": [
+      "萬海",
+      "Wan Hai Lines",
+      "2615.TWO",
+      "2615"
+    ]
+  },
+  "6526.TW": {
+    "ticker": "6526.TW",
+    "name_zh": "達發",
+    "name_en": "Airoha Technology",
+    "market": "TW",
+    "sector": "半導體",
+    "aliases": [
+      "達發",
+      "Airoha Technology",
+      "6526.TW",
+      "6526"
+    ]
+  },
+  "2618.TWO": {
+    "ticker": "2618.TWO",
+    "name_zh": "長榮航",
+    "name_en": "EVA Air",
+    "market": "TW",
+    "sector": "航運",
+    "aliases": [
+      "長榮航",
+      "EVA Air",
+      "2618.TWO",
+      "2618"
+    ]
+  },
+  "2049.TWO": {
+    "ticker": "2049.TWO",
+    "name_zh": "上銀",
+    "name_en": "Hiwin",
+    "market": "TW",
+    "sector": "機械",
+    "aliases": [
+      "上銀",
+      "Hiwin",
+      "2049.TWO",
+      "2049"
+    ]
+  },
+  "6510.TW": {
+    "ticker": "6510.TW",
+    "name_zh": "精測",
+    "name_en": "Chunghwa Precision Test",
+    "market": "TW",
+    "sector": "半導體",
+    "aliases": [
+      "精測",
+      "Chunghwa Precision Test",
+      "6510.TW",
+      "6510"
+    ]
+  },
+  "4919.TW": {
+    "ticker": "4919.TW",
+    "name_zh": "新唐",
+    "name_en": "Nuvoton Technology",
+    "market": "TW",
+    "sector": "半導體",
+    "aliases": [
+      "新唐",
+      "Nuvoton Technology",
+      "4919.TW",
+      "4919"
+    ]
+  },
+  "3293.TWO": {
+    "ticker": "3293.TWO",
+    "name_zh": "鈊象",
+    "name_en": "International Games System",
+    "market": "TW",
+    "sector": "遊戲",
+    "aliases": [
+      "鈊象",
+      "International Games System",
+      "3293.TWO",
+      "3293"
+    ]
+  },
+  "9904.TW": {
+    "ticker": "9904.TW",
+    "name_zh": "寶成",
+    "name_en": "Pou Chen",
+    "market": "TW",
+    "sector": "紡織",
+    "aliases": [
+      "寶成",
+      "Pou Chen",
+      "9904.TW",
+      "9904"
+    ]
+  },
+  "9910.TW": {
+    "ticker": "9910.TW",
+    "name_zh": "豐泰",
+    "name_en": "Feng Tay",
+    "market": "TW",
+    "sector": "紡織",
+    "aliases": [
+      "豐泰",
+      "Feng Tay",
+      "9910.TW",
+      "9910"
+    ]
+  },
+  "1402.TW": {
+    "ticker": "1402.TW",
+    "name_zh": "遠東新",
+    "name_en": "Far Eastern New Century",
+    "market": "TW",
+    "sector": "紡織",
+    "aliases": [
+      "遠東新",
+      "Far Eastern New Century",
+      "1402.TW",
+      "1402",
+      "遠東新世紀"
+    ]
+  },
+  "1722.TW": {
+    "ticker": "1722.TW",
+    "name_zh": "台肥",
+    "name_en": "Taiwan Fertilizer",
+    "market": "TW",
+    "sector": "化工",
+    "aliases": [
+      "台肥",
+      "Taiwan Fertilizer",
+      "1722.TW",
+      "1722"
+    ]
+  },
+  "1717.TW": {
+    "ticker": "1717.TW",
+    "name_zh": "長興",
+    "name_en": "Eternal Materials",
+    "market": "TW",
+    "sector": "化工",
+    "aliases": [
+      "長興",
+      "Eternal Materials",
+      "1717.TW",
+      "1717"
+    ]
+  },
+  "1314.TW": {
+    "ticker": "1314.TW",
+    "name_zh": "中石化",
+    "name_en": "China Petrochemical",
+    "market": "TW",
+    "sector": "塑化",
+    "aliases": [
+      "中石化",
+      "China Petrochemical",
+      "1314.TW",
+      "1314"
+    ]
+  },
+  "1227.TW": {
+    "ticker": "1227.TW",
+    "name_zh": "佳格",
+    "name_en": "Standard Foods",
+    "market": "TW",
+    "sector": "食品",
+    "aliases": [
+      "佳格",
+      "Standard Foods",
+      "1227.TW",
+      "1227"
+    ]
+  },
+  "1210.TW": {
+    "ticker": "1210.TW",
+    "name_zh": "大成",
+    "name_en": "Great Wall Enterprise",
+    "market": "TW",
+    "sector": "食品",
+    "aliases": [
+      "大成",
+      "Great Wall Enterprise",
+      "1210.TW",
+      "1210"
+    ]
+  },
+  "1101.TWO": {
+    "ticker": "1101.TWO",
+    "name_zh": "台泥",
+    "name_en": "Taiwan Cement",
+    "market": "TW",
+    "sector": "水泥",
+    "aliases": [
+      "台泥",
+      "Taiwan Cement",
+      "1101.TWO",
+      "1101"
+    ]
+  },
+  "2059.TWO": {
+    "ticker": "2059.TWO",
+    "name_zh": "川湖",
+    "name_en": "King Slide",
+    "market": "TW",
+    "sector": "電子零組件",
+    "aliases": [
+      "川湖",
+      "King Slide",
+      "2059.TWO",
+      "2059"
+    ]
+  },
+  "3045.TWO": {
+    "ticker": "3045.TWO",
+    "name_zh": "台灣大",
+    "name_en": "Taiwan Mobile",
+    "market": "TW",
+    "sector": "電信",
+    "aliases": [
+      "台灣大",
+      "Taiwan Mobile",
+      "3045.TWO",
+      "3045"
+    ]
+  },
+  "0050.TW": {
+    "ticker": "0050.TW",
+    "name_zh": "元大台灣50",
+    "name_en": "Yuanta Taiwan 50 ETF",
+    "market": "TW",
+    "sector": "ETF",
+    "aliases": [
+      "元大台灣50",
+      "Yuanta Taiwan 50 ETF",
+      "0050.TW",
+      "0050",
+      "台灣50",
+      "台50"
+    ]
+  },
+  "0056.TW": {
+    "ticker": "0056.TW",
+    "name_zh": "元大高股息",
+    "name_en": "Yuanta High Dividend ETF",
+    "market": "TW",
+    "sector": "ETF",
+    "aliases": [
+      "元大高股息",
+      "Yuanta High Dividend ETF",
+      "0056.TW",
+      "0056",
+      "高股息ETF"
+    ]
+  },
+  "00878.TW": {
+    "ticker": "00878.TW",
+    "name_zh": "國泰永續高股息",
+    "name_en": "Cathay ESG Sustainability High Dividend ETF",
+    "market": "TW",
+    "sector": "ETF",
+    "aliases": [
+      "國泰永續高股息",
+      "Cathay ESG Sustainability High Dividend ETF",
+      "00878.TW",
+      "00878",
+      "國泰永續"
+    ]
+  },
+  "00929.TW": {
+    "ticker": "00929.TW",
+    "name_zh": "復華台灣科技優息",
+    "name_en": "Fuh Hwa Taiwan Tech Dividend ETF",
+    "market": "TW",
+    "sector": "ETF",
+    "aliases": [
+      "復華台灣科技優息",
+      "Fuh Hwa Taiwan Tech Dividend ETF",
+      "00929.TW",
+      "00929"
+    ]
+  },
+  "00919.TW": {
+    "ticker": "00919.TW",
+    "name_zh": "群益台灣精選高息",
+    "name_en": "Capital Taiwan Select High Dividend ETF",
+    "market": "TW",
+    "sector": "ETF",
+    "aliases": [
+      "群益台灣精選高息",
+      "Capital Taiwan Select High Dividend ETF",
+      "00919.TW",
+      "00919"
+    ]
+  },
+  "00940.TW": {
+    "ticker": "00940.TW",
+    "name_zh": "元大臺灣價值高息",
+    "name_en": "Yuanta Taiwan Value High Dividend ETF",
+    "market": "TW",
+    "sector": "ETF",
+    "aliases": [
+      "元大臺灣價值高息",
+      "Yuanta Taiwan Value High Dividend ETF",
+      "00940.TW",
+      "00940"
+    ]
+  },
+  "3289.TW": {
+    "ticker": "3289.TW",
+    "name_zh": "宜特",
+    "name_en": "iST",
+    "market": "TW",
+    "sector": "半導體",
+    "aliases": [
+      "宜特",
+      "iST",
+      "3289.TW",
+      "3289"
+    ]
+  },
+  "4966.TW": {
+    "ticker": "4966.TW",
+    "name_zh": "譜瑞-KY",
+    "name_en": "Parade Technologies",
+    "market": "TW",
+    "sector": "半導體",
+    "aliases": [
+      "譜瑞-KY",
+      "Parade Technologies",
+      "4966.TW",
+      "4966",
+      "譜瑞"
+    ]
+  },
+  "5388.TW": {
+    "ticker": "5388.TW",
+    "name_zh": "中磊",
+    "name_en": "Sercomm",
+    "market": "TW",
+    "sector": "網通",
+    "aliases": [
+      "中磊",
+      "Sercomm",
+      "5388.TW",
+      "5388"
+    ]
+  },
+  "4977.TW": {
+    "ticker": "4977.TW",
+    "name_zh": "眾達-KY",
+    "name_en": "Lightel",
+    "market": "TW",
+    "sector": "光通訊",
+    "aliases": [
+      "眾達-KY",
+      "Lightel",
+      "4977.TW",
+      "4977"
+    ]
+  },
+  "2455.TW": {
+    "ticker": "2455.TW",
+    "name_zh": "全新",
+    "name_en": "Visual Photonics",
+    "market": "TW",
+    "sector": "半導體",
+    "aliases": [
+      "全新",
+      "Visual Photonics",
+      "2455.TW",
+      "2455"
+    ]
+  },
+  "3450.TW": {
+    "ticker": "3450.TW",
+    "name_zh": "聯鈞",
+    "name_en": "Luxnet",
+    "market": "TW",
+    "sector": "光通訊",
+    "aliases": [
+      "聯鈞",
+      "Luxnet",
+      "3450.TW",
+      "3450"
+    ]
+  },
+  "3406.TW": {
+    "ticker": "3406.TW",
+    "name_zh": "玉晶光",
+    "name_en": "Genius Electronic Optical",
+    "market": "TW",
+    "sector": "光學",
+    "aliases": [
+      "玉晶光",
+      "Genius Electronic Optical",
+      "3406.TW",
+      "3406"
+    ]
+  },
+  "4961.TW": {
+    "ticker": "4961.TW",
+    "name_zh": "天鈺",
+    "name_en": "Fitipower",
+    "market": "TW",
+    "sector": "半導體",
+    "aliases": [
+      "天鈺",
+      "Fitipower",
+      "4961.TW",
+      "4961"
+    ]
+  },
+  "6770.TW": {
+    "ticker": "6770.TW",
+    "name_zh": "力積電",
+    "name_en": "Powerchip Semiconductor",
+    "market": "TW",
+    "sector": "半導體",
+    "aliases": [
+      "力積電",
+      "Powerchip Semiconductor",
+      "6770.TW",
+      "6770",
+      "力晶積成"
+    ]
+  },
+  "3576.TW": {
+    "ticker": "3576.TW",
+    "name_zh": "聯合再生",
+    "name_en": "United Renewable Energy",
+    "market": "TW",
+    "sector": "綠能",
+    "aliases": [
+      "聯合再生",
+      "United Renewable Energy",
+      "3576.TW",
+      "3576"
+    ]
+  },
+  "6116.TW": {
+    "ticker": "6116.TW",
+    "name_zh": "彩晶",
+    "name_en": "Hannstar Display",
+    "market": "TW",
+    "sector": "面板",
+    "aliases": [
+      "彩晶",
+      "Hannstar Display",
+      "6116.TW",
+      "6116"
+    ]
+  },
+  "2409.TW": {
+    "ticker": "2409.TW",
+    "name_zh": "友達",
+    "name_en": "AUO",
+    "market": "TW",
+    "sector": "面板",
+    "aliases": [
+      "友達",
+      "AUO",
+      "2409.TW",
+      "2409",
+      "友達光電",
+      "AUO-US"
+    ]
+  },
+  "3481.TW": {
+    "ticker": "3481.TW",
+    "name_zh": "群創",
+    "name_en": "Innolux",
+    "market": "TW",
+    "sector": "面板",
+    "aliases": [
+      "群創",
+      "Innolux",
+      "3481.TW",
+      "3481",
+      "群創光電"
+    ]
+  },
+  "2449.TW": {
+    "ticker": "2449.TW",
+    "name_zh": "京元電",
+    "name_en": "King Yuan Electronics",
+    "market": "TW",
+    "sector": "半導體封測",
+    "aliases": [
+      "京元電",
+      "King Yuan Electronics",
+      "2449.TW",
+      "2449",
+      "京元電子"
+    ]
+  },
+  "6533.TW": {
+    "ticker": "6533.TW",
+    "name_zh": "晶心科",
+    "name_en": "Andes Technology",
+    "market": "TW",
+    "sector": "半導體",
+    "aliases": [
+      "晶心科",
+      "Andes Technology",
+      "6533.TW",
+      "6533"
+    ]
+  },
+  "8081.TW": {
+    "ticker": "8081.TW",
+    "name_zh": "致新",
+    "name_en": "Global Mixed Mode Technology",
+    "market": "TW",
+    "sector": "半導體",
+    "aliases": [
+      "致新",
+      "Global Mixed Mode Technology",
+      "8081.TW",
+      "8081"
+    ]
+  },
+  "5274.TW": {
+    "ticker": "5274.TW",
+    "name_zh": "信驊",
+    "name_en": "Aspeed Technology",
+    "market": "TW",
+    "sector": "半導體",
+    "aliases": [
+      "信驊",
+      "Aspeed Technology",
+      "5274.TW",
+      "5274",
+      "伺服器BMC"
+    ]
+  },
+  "3653.TWO": {
+    "ticker": "3653.TWO",
+    "name_zh": "健策",
+    "name_en": "Chenming Electronic",
+    "market": "TW",
+    "sector": "電子零組件",
+    "aliases": [
+      "健策",
+      "Chenming Electronic",
+      "3653.TWO",
+      "3653"
+    ]
+  },
+  "6669.TWO": {
+    "ticker": "6669.TWO",
+    "name_zh": "緯穎",
+    "name_en": "Wiwynn",
+    "market": "TW",
+    "sector": "電子組裝",
+    "aliases": [
+      "緯穎",
+      "Wiwynn",
+      "6669.TWO",
+      "6669"
+    ]
+  },
+  "6741.TW": {
+    "ticker": "6741.TW",
+    "name_zh": "91APP-KY",
+    "name_en": "91APP",
+    "market": "TW",
+    "sector": "軟體",
+    "aliases": [
+      "91APP-KY",
+      "91APP",
+      "6741.TW",
+      "6741"
+    ]
+  },
+  "4174.TW": {
+    "ticker": "4174.TW",
+    "name_zh": "浩鼎",
+    "name_en": "OBI Pharma",
+    "market": "TW",
+    "sector": "生技",
+    "aliases": [
+      "浩鼎",
+      "OBI Pharma",
+      "4174.TW",
+      "4174"
+    ]
+  },
+  "4123.TW": {
+    "ticker": "4123.TW",
+    "name_zh": "晟德",
+    "name_en": "Center Laboratories",
+    "market": "TW",
+    "sector": "生技",
+    "aliases": [
+      "晟德",
+      "Center Laboratories",
+      "4123.TW",
+      "4123"
+    ]
+  },
+  "6446.TW": {
+    "ticker": "6446.TW",
+    "name_zh": "藥華藥",
+    "name_en": "PharmaEssentia",
+    "market": "TW",
+    "sector": "生技",
+    "aliases": [
+      "藥華藥",
+      "PharmaEssentia",
+      "6446.TW",
+      "6446"
+    ]
+  },
+  "2727.TW": {
+    "ticker": "2727.TW",
+    "name_zh": "王品",
+    "name_en": "Wowprime",
+    "market": "TW",
+    "sector": "餐飲",
+    "aliases": [
+      "王品",
+      "Wowprime",
+      "2727.TW",
+      "2727"
+    ]
+  },
+  "2723.TW": {
+    "ticker": "2723.TW",
+    "name_zh": "美食-KY",
+    "name_en": "Gourmet Master",
+    "market": "TW",
+    "sector": "餐飲",
+    "aliases": [
+      "美食-KY",
+      "Gourmet Master",
+      "2723.TW",
+      "2723",
+      "85度C"
+    ]
+  },
+  "5269.TWO": {
+    "ticker": "5269.TWO",
+    "name_zh": "祥碩",
+    "name_en": "Asmedia",
+    "market": "TW",
+    "sector": "半導體",
+    "aliases": [
+      "祥碩",
+      "Asmedia",
+      "5269.TWO",
+      "5269"
+    ]
+  },
+  "3037.TWO": {
+    "ticker": "3037.TWO",
+    "name_zh": "欣興",
+    "name_en": "Unimicron",
+    "market": "TW",
+    "sector": "PCB",
+    "aliases": [
+      "欣興",
+      "Unimicron",
+      "3037.TWO",
+      "3037"
+    ]
+  },
+  "3008.TWO": {
+    "ticker": "3008.TWO",
+    "name_zh": "大立光",
+    "name_en": "Largan Precision",
+    "market": "TW",
+    "sector": "光學",
+    "aliases": [
+      "大立光",
+      "Largan Precision",
+      "3008.TWO",
+      "3008"
+    ]
+  },
+  "4904.TWO": {
+    "ticker": "4904.TWO",
+    "name_zh": "遠傳",
+    "name_en": "Far EasTone",
+    "market": "TW",
+    "sector": "電信",
+    "aliases": [
+      "遠傳",
+      "Far EasTone",
+      "4904.TWO",
+      "4904"
+    ]
+  },
+  "2412.TWO": {
+    "ticker": "2412.TWO",
+    "name_zh": "中華電",
+    "name_en": "Chunghwa Telecom",
+    "market": "TW",
+    "sector": "電信",
+    "aliases": [
+      "中華電",
+      "Chunghwa Telecom",
+      "2412.TWO",
+      "2412"
+    ]
+  },
+  "3711.TWO": {
+    "ticker": "3711.TWO",
+    "name_zh": "日月光投控",
+    "name_en": "ASE Technology",
+    "market": "TW",
+    "sector": "半導體封測",
+    "aliases": [
+      "日月光投控",
+      "ASE Technology",
+      "3711.TWO",
+      "3711"
+    ]
+  },
+  "2454.TWO": {
+    "ticker": "2454.TWO",
+    "name_zh": "聯發科",
+    "name_en": "MediaTek",
+    "market": "TW",
+    "sector": "半導體",
+    "aliases": [
+      "聯發科",
+      "MediaTek",
+      "2454.TWO",
+      "2454"
+    ]
+  },
+  "2317.TWO": {
+    "ticker": "2317.TWO",
+    "name_zh": "鴻海",
+    "name_en": "Hon Hai Precision",
+    "market": "TW",
+    "sector": "電子組裝",
+    "aliases": [
+      "鴻海",
+      "Hon Hai Precision",
+      "2317.TWO",
+      "2317"
+    ]
+  },
+  "2330.TWO": {
+    "ticker": "2330.TWO",
+    "name_zh": "台積電",
+    "name_en": "TSMC",
+    "market": "TW",
+    "sector": "半導體",
+    "aliases": [
+      "台積電",
+      "TSMC",
+      "2330.TWO",
+      "2330"
+    ]
+  }
+}

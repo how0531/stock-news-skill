@@ -1,0 +1,115 @@
+{
+  "source_id": "udn",
+  "label": "經濟日報",
+  "agent": "經濟日報agent",
+  "home": "https://money.udn.com",
+  "access": {
+    "method": "sitemap",
+    "endpoints": [
+      "https://money.udn.com/money/cate/5589",
+      "https://money.udn.com/money/cate/5612",
+      "https://money.udn.com/money/cate/5590",
+      "https://money.udn.com/money/cate/5594",
+      "https://money.udn.com/money/cate/5588",
+      "https://money.udn.com/money/cate/11111",
+      "https://money.udn.com/rank/newest/1001",
+      "https://money.udn.com/rssfeed/news/1001/5588",
+      "https://money.udn.com/rssfeed/news/1001/5589/5591"
+    ],
+    "implemented_in": "scripts/udn.py",
+    "history_backfill": true,
+    "note": "現行 scripts/udn.py 以 RSS Feed (money.udn.com/rssfeed/...) 為主入口並解析內頁；sitemap/分週切片可做歷史回溯。cate 頁與 story/{cate}/{id} URL 結構穩定，cate ID 可作為頻道切片依據。"
+  },
+  "columns": [
+    {
+      "name": "要聞",
+      "url": "https://money.udn.com/money/cate/10846",
+      "stock_relevant": true,
+      "note": "總經、政策、財經頭條，影響大盤與類股氛圍，間接相關。"
+    },
+    {
+      "name": "產業",
+      "url": "https://money.udn.com/money/cate/5612",
+      "stock_relevant": true,
+      "note": "產業熱點/科技產業/AI，含個股與供應鏈題材，高度相關。子欄 story cate 5612。"
+    },
+    {
+      "name": "證券",
+      "url": "https://money.udn.com/money/cate/5590",
+      "stock_relevant": true,
+      "note": "市場焦點(cate 5607)、集中市場、櫃買動態、台股擂台、權證特區。核心台股欄目，最高相關。"
+    },
+    {
+      "name": "行情",
+      "url": "https://money.udn.com/money/cate/5594",
+      "stock_relevant": true,
+      "note": "台股/國際指數即時行情(子欄 5624 國際指數)，盤面數據，相關。"
+    },
+    {
+      "name": "國際",
+      "url": "https://money.udn.com/money/cate/5588",
+      "stock_relevant": true,
+      "note": "國際焦點、美股雷達、全球財經。美股與國際變數牽動台股，相關。對應 RSS 5588。"
+    },
+    {
+      "name": "金融",
+      "url": "https://money.udn.com/money/cate/5613",
+      "stock_relevant": true,
+      "note": "金融脈動、外匯市場、保險、稅務法規。金控/銀行股與利率匯率題材，相關。"
+    },
+    {
+      "name": "期貨",
+      "url": "https://money.udn.com/money/cate/11111",
+      "stock_relevant": true,
+      "note": "期貨市場(cate 11112)、期貨商論壇(11113)。台指期/電子期/金融期，與台股連動高，相關。"
+    },
+    {
+      "name": "兩岸",
+      "url": "https://money.udn.com/money/cate/5589",
+      "stock_relevant": false,
+      "note": "中國經濟與兩岸政策，影響電子/傳產供應鏈與陸股連動，間接相關。 〔依使用者檢核排除〕"
+    },
+    {
+      "name": "理財",
+      "url": "https://money.udn.com/money/cate/5592",
+      "stock_relevant": false,
+      "note": "基金天地、個人理財、退休金算盤、行家心法。基金/ETF 與資產配置部分相關，含較多軟性理財雜訊需過濾。 〔依使用者檢核排除〕"
+    },
+    {
+      "name": "房市",
+      "url": "https://money.udn.com/money/cate/5640",
+      "stock_relevant": false,
+      "note": "房市話題、不動產投資、房市點線面。多為房地產交易資訊，僅營建/資產股偶爾相關，整體弱相關，預設排除。"
+    },
+    {
+      "name": "專欄",
+      "url": "https://money.udn.com/money/cate/12937",
+      "stock_relevant": true,
+      "note": "名家投資與市場分析專欄，部分含選股觀點，相關但須留意評論性偏見。"
+    },
+    {
+      "name": "商情",
+      "url": "https://money.udn.com/money/cate/11160",
+      "stock_relevant": false,
+      "note": "商品/原物料與企業商情新聞稿，多為廣編與商品報價，雜訊偏多，預設排除。"
+    }
+  ],
+  "stock_relevant_columns": [
+    "要聞",
+    "產業",
+    "證券",
+    "行情",
+    "國際",
+    "金融",
+    "期貨",
+    "專欄"
+  ],
+  "noise_notes": "房市(交易/建案資訊)與商情(廣編、商品報價)股市相關性低，預設排除。理財欄含基金/退休/軟性理財內容，需挑出與股市/ETF 相關者。專欄為評論性內容，須與事實新聞區分並留意名家觀點偏見。要聞/兩岸偏總經，僅取與市場/個股連動者。",
+  "cleaning": {
+    "publish_ts": "RSS entry published/updated 或內頁時間，皆為台北時間 (UTC+8)，統一轉 ISO8601 +08:00；對應 scripts/common.to_taipei_iso。",
+    "dedup": "norm_title 跨源去重；UDN 與聯合報系內常見同稿轉載，需注意同集團重複。"
+  },
+  "researched_via": "websearch",
+  "researched_at": "2026-06-13",
+  "verified_live": false
+}

@@ -1,0 +1,72 @@
+{
+  "source_id": "ettoday",
+  "label": "ETtoday財經",
+  "agent": "ETtoday財經agent",
+  "home": "https://finance.ettoday.net",
+  "access": {
+    "method": "rss",
+    "endpoints": [
+      "https://feeds.feedburner.com/ettoday/finance"
+    ],
+    "implemented_in": "scripts/rss_sources.py",
+    "history_backfill": false
+  },
+  "columns": [
+    {
+      "name": "股市",
+      "url": "https://finance.ettoday.net/",
+      "stock_relevant": true,
+      "note": "台股大盤、個股、外資買賣超、收盤快訊；核心股市內容，含於財經 feed"
+    },
+    {
+      "name": "ETF",
+      "url": "https://finance.ettoday.net/",
+      "stock_relevant": true,
+      "note": "高股息/市值型 ETF 配息、績效、除息；散戶熱門題材，股市相關度高"
+    },
+    {
+      "name": "國際財經",
+      "url": "https://finance.ettoday.net/",
+      "stock_relevant": true,
+      "note": "美股、日股、韓股等國際股市與總經動向，影響台股風向"
+    },
+    {
+      "name": "產業",
+      "url": "https://finance.ettoday.net/",
+      "stock_relevant": true,
+      "note": "半導體、航運、營建等產業動態，與上市櫃個股題材高度連動"
+    },
+    {
+      "name": "理財",
+      "url": "https://finance.ettoday.net/",
+      "stock_relevant": false,
+      "note": "投資策略、達人觀點、存股；部分為一般理財科普，需依內容篩選 〔依使用者檢核排除〕"
+    },
+    {
+      "name": "消費",
+      "url": "https://finance.ettoday.net/",
+      "stock_relevant": false,
+      "note": "物價、優惠、商品消費資訊；多屬民生消費雜訊，少數連動零售/食品股"
+    },
+    {
+      "name": "房產雲",
+      "url": "https://house.ettoday.net/",
+      "stock_relevant": false,
+      "note": "房市、房價、建案；獨立子站(house.ettoday.net)，非財經 feed 範圍，偶涉營建股"
+    }
+  ],
+  "stock_relevant_columns": [
+    "股市",
+    "ETF",
+    "國際財經",
+    "產業"
+  ],
+  "noise_notes": "單一 FeedBurner feed (ettoday/finance) 為財經雲混合輸出，無法依專欄分流，須在標題/內文層級過濾。雜訊包含：消費/物價/優惠等民生資訊、純理財科普與生活財經話題；房產雲為獨立子站不在此 feed 內。建議以標題關鍵字(台股/個股/ETF/外資/盤/收盤/上市櫃/半導體等)判定股市相關度。",
+  "cleaning": {
+    "publish_ts": "RSS pubDate -> 台北時間 (Asia/Taipei, UTC+8)",
+    "dedup": "norm_title 跨源去重"
+  },
+  "researched_via": "websearch",
+  "researched_at": "2026-06-13",
+  "verified_live": false
+}
